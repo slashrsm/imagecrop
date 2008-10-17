@@ -1,0 +1,5 @@
+;$Id$
+
+6.x.1-0
+-------
+Port of imagecrop to Drupal 6
