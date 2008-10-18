@@ -42,11 +42,14 @@ $(document).ready(function(){
 	});
 	
 	$('#image-crop-container').css({ opacity: 0.5 });
-    $("#resizeMe").left($('#edit-image-crop-x').val());
-    $("#resizeMe").top($('#edit-image-crop-y').val());
+    //$("#resizeMe").top($('#edit-image-crop-y').val());
+    //$("#resizeMe").left($('#edit-image-crop-x').val());
     var leftpos = $('#edit-image-crop-x').val();
     var toppos = $('#edit-image-crop-y').val();
     $("#resizeMe").css({backgroundPosition: '-'+ leftpos + 'px -'+ toppos +'px'});
+  $("#resizeMe").width($('#edit-image-crop-width').val());
+  $("#resizeMe").height($('#edit-image-crop-height').val());
+
 });
 
 $(window).load(function(){

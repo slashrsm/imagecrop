@@ -54,10 +54,14 @@ function imagecrop_theme() {
       'arguments' => array('url' => NULL, 'width' => NULL, 'height' => NULL, 'resize' => NULL),
     ),
     'imagecrop_result' => array(
-      'arguments' => array('presetname' => NULL, 'filepath' => NULL, 'alt' => NULL, 'attributes' => array()),
+      'arguments' => array('presetname' => NULL, 'filepath' => NULL, 'alt' => NULL, 'attributes' => NULL),
     ),
-    'presettabes' => array(
+    'presettabs' => array(
       'arguments' => array('presets' => array(), 'fid' => NULL, 'presetid' => NULL, 'module' => NULL),
+    ),
+    'page' => array(
+      'arguments' => array('content' => NULL, 'show_blocks' => FALSE, 'show_messages' => FALSE),
+      'template' => 'page-imagecrop',
     ),
   );
 }
@@ -66,7 +70,10 @@ function imagecrop_theme() {
  * Implementation of hook_preprocess_page().
  */
 function imagecrop_preprocess_page(&$variables) {
-  if (arg(0) == 'imagecrop') $variables['template_file'] = 'page-imagecrop';
+  if (arg(0) == 'imagecrop') {
+    drupal_set_message('rock!');
+    $variables['template_file'] = 'page-imagecrop';
+  }
 }
 
 /**
@@ -327,12 +334,10 @@ function imagecrop_docrop($fid, $presetid, $module = '') {
       }
 
       // add jquery ui
-      if ($javascript_library == 'jquery_ui') {
-        if ($file->resizable)
-        jquery_ui_add(array('ui.resizable', 'ui.draggable', 'effects.scale'));
-        else
-        jquery_ui_add(array('ui.draggable'));
-      }
+      if ($file->resizable)
+      jquery_ui_add(array('ui.resizable', 'ui.draggable', 'effects.scale'));
+      else
+      jquery_ui_add(array('ui.draggable'));
 
       // output
       if ($size_warning == FALSE) {
@@ -367,7 +372,7 @@ function imagecrop_docrop($fid, $presetid, $module = '') {
  * @param $module specific module
  * @return array $form
  */
-function imageoffsets($xoffset, $yoffset, $crop_width, $crop_height, $presetid, $fid, $module, $width, $scale) {
+function imageoffsets(&$form_state, $xoffset, $yoffset, $crop_width, $crop_height, $presetid, $fid, $module, $width, $scale) {
   $form['buttons']['submit'] = array('#prefix' => '<table style="width: 400px; margin: 0;" id="imagecrop_table_actions"><tr><td>', '#suffix' => '</td>', '#type' => 'submit', '#value' => t('Create crop'));
   $form['buttons']['scaling'] = array('#prefix' => '<td>', '#suffix' => '</td>', '#type' => 'select', '#default_value' => $scale, '#options' => imagecrop_scale_options($width, $crop_width));
   $form['button']['scaledown'] = array('#prefix' => '<td>', '#suffix' => '</td></tr></table>', '#type' => 'submit', '#value' => t('Scale image'));
@@ -405,19 +410,19 @@ function imagecrop_scale_options($width, $cropboxwidth) {
  * @param $form_id id of the form
  * @param $form_values submitted values of the imageoffsets form
  */
-function imageoffsets_submit($form_id, $form_values) {
-  if ($form_values['op'] == t('Scale image')) {
-    $form_values['image-crop-x'] = 0;
-    $form_values['image-crop-y'] = 0;
+function imageoffsets_submit($form, &$form_state) {
+  if ($form_state['values']['op'] == t('Scale image')) {
+    $form_state['values']['image-crop-x'] = 0;
+    $form_state['values']['image-crop-y'] = 0;
   }
-  $module = (!empty($form_values['module'])) ? '/'. $form_values['module'] : '';
-  $reference = (!empty($form_values['module'])) ? $form_values['module'] : 'files';
-  db_query("DELETE FROM {imagecrop} WHERE fid=%d AND presetid=%d AND reference = '%s'", $form_values['fid'], $form_values['presetid'], $reference);
-  db_query("INSERT INTO {imagecrop} VALUES (%d,%d,'%s',%d,%d,%d,%d,'%s')", $form_values['fid'], $form_values['presetid'], $reference, $form_values['image-crop-x'], $form_values['image-crop-y'], $form_values['image-crop-width'], $form_values['image-crop-height'], $form_values['scaling']);
-  if ($form_values['op'] == t('Scale image'))
-    drupal_goto('imagecrop/docrop/'. $form_values['fid'] .'/'. $form_values['presetid'] . $module);
+  $module = (!empty($form_state['values']['module'])) ? '/'. $form_state['values']['module'] : '';
+  $reference = (!empty($form_state['values']['module'])) ? $form_state['values']['module'] : 'files';
+  db_query("DELETE FROM {imagecrop} WHERE fid=%d AND presetid=%d AND reference = '%s'", $form_state['values']['fid'], $form_values['presetid'], $reference);
+  db_query("INSERT INTO {imagecrop} VALUES (%d,%d,'%s',%d,%d,%d,%d,'%s')", $form_state['values']['fid'], $form_state['values']['presetid'], $reference, $form_state['values']['image-crop-x'], $form_state['values']['image-crop-y'], $form_state['values']['image-crop-width'], $form_state['values']['image-crop-height'], $form_state['values']['scaling']);
+  if ($form_state['values']['op'] == t('Scale image'))
+    drupal_goto('imagecrop/docrop/'. $form_state['values']['fid'] .'/'. $form_state['values']['presetid'] . $module);
   else
-    drupal_goto('imagecrop/showcrop/'. $form_values['fid'] .'/'. $form_values['presetid'] . $module);
+    drupal_goto('imagecrop/showcrop/'. $form_state['values']['fid'] .'/'. $form_state['values']['presetid'] . $module);
 }
 
 
@@ -604,7 +609,7 @@ function theme_imagecrop($url, $width, $height, $resize = 0) {
  */
 function theme_imagecrop_result($presetname, $filepath, $alt = '', $attributes = NULL) {
   $url = imagecache_create_url($presetname, $filepath);
-  return '<img src="'. $url .'?time='. time() .'" alt="'. check_plain($alt) .'" title="'. check_plain($title) .'" '. $attributes .' />';
+  return '<img src="'. $url .'?time='. time() .'" alt="'. check_plain($alt) .'" title="'. check_plain($alt) .'" '. $attributes .' />';
 }
 
 /**
