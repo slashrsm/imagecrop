@@ -60,7 +60,7 @@ function imagecrop_theme() {
       'arguments' => array('presets' => array(), 'fid' => NULL, 'presetid' => NULL, 'module' => NULL),
     ),
     'page' => array(
-      'arguments' => array('content' => NULL, 'show_blocks' => FALSE, 'show_messages' => FALSE),
+      'arguments' => array('content' => NULL, 'show_blocks' => TRUE, 'show_messages' => FALSE),
       'template' => 'page-imagecrop',
     ),
   );
@@ -417,7 +417,7 @@ function imageoffsets_submit($form, &$form_state) {
   }
   $module = (!empty($form_state['values']['module'])) ? '/'. $form_state['values']['module'] : '';
   $reference = (!empty($form_state['values']['module'])) ? $form_state['values']['module'] : 'files';
-  db_query("DELETE FROM {imagecrop} WHERE fid=%d AND presetid=%d AND reference = '%s'", $form_state['values']['fid'], $form_values['presetid'], $reference);
+  db_query("DELETE FROM {imagecrop} WHERE fid=%d AND presetid=%d AND reference = '%s'", $form_state['values']['fid'], $form_state['values']['presetid'], $reference);
   db_query("INSERT INTO {imagecrop} VALUES (%d,%d,'%s',%d,%d,%d,%d,'%s')", $form_state['values']['fid'], $form_state['values']['presetid'], $reference, $form_state['values']['image-crop-x'], $form_state['values']['image-crop-y'], $form_state['values']['image-crop-width'], $form_state['values']['image-crop-height'], $form_state['values']['scaling']);
   if ($form_state['values']['op'] == t('Scale image'))
     drupal_goto('imagecrop/docrop/'. $form_state['values']['fid'] .'/'. $form_state['values']['presetid'] . $module);
