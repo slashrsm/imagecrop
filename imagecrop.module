@@ -60,7 +60,7 @@ function imagecrop_theme() {
       'arguments' => array('presets' => array(), 'fid' => NULL, 'presetid' => NULL, 'module' => NULL),
     ),
     'page' => array(
-      'arguments' => array('content' => NULL, 'show_blocks' => TRUE, 'show_messages' => FALSE),
+      'arguments' => array('content' => NULL, 'show_blocks' => TRUE, 'show_messages' => TRUE),
       'template' => 'page-imagecrop',
     ),
   );
