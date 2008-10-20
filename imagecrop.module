@@ -59,7 +59,7 @@ function imagecrop_theme() {
     'presettabs' => array(
       'arguments' => array('presets' => array(), 'fid' => NULL, 'presetid' => NULL, 'module' => NULL),
     ),
-    'page' => array(
+    'page-imagecrop' => array(
       'arguments' => array('content' => NULL, 'show_blocks' => TRUE, 'show_messages' => TRUE),
       'template' => 'page-imagecrop',
     ),
@@ -71,7 +71,6 @@ function imagecrop_theme() {
  */
 function imagecrop_preprocess_page(&$variables) {
   if (arg(0) == 'imagecrop') {
-    drupal_set_message('rock!');
     $variables['template_file'] = 'page-imagecrop';
   }
 }
@@ -99,7 +98,7 @@ function imagecrop_settings() {
   }
   // hook into imagefield module
   if (module_exists('imagefield')) {
-    $result = db_query("SELECT field_name,label FROM {node_field_instance} WHERE widget_type = 'image'");
+    $result = db_query("SELECT field_name,label FROM {content_node_field_instance} WHERE widget_type = 'imagefield_widget'");
     while ($row = db_fetch_object($result)) {
       $options_fields[$row->field_name] = t('Hook into imagefield %s', array('%s' => $row->label));
     }
@@ -227,15 +226,19 @@ function imagecrop_form_alter(&$form, $form_state, $form_id) {
       $count = count($formfield);
       for ($i=0;$i<$count;$i++) {
         $a = 0;
-        while ($form[$formfield[$i]][$a]['fid']['#value']) {
-          if (!empty($form[$formfield[$i]][$a]['fid']['#value'])) {
-            $descr = $form[$formfield[$i]][$a]['description']['#value'] .'<br />'. imagecrop_linkitem($form[$formfield[$i]][$a]['fid']['#value']);
-            $form[$formfield[$i]][$a]['description']['#value'] = $descr;
+        //drupal_set_message('<pre>'. print_r($form[$formfield[$i]], true) .'</pre>');
+        while ($form[$formfield[$i]][$a]['#default_value']['fid']) {
+          //drupal_set_message('moeahahah');
+          if (!empty($form[$formfield[$i]][$a]['#default_value']['fid'])) {
+            $descr = $form[$formfield[$i]][$a]['#default_value']['description']['#value'] .'<br />'. 
+              imagecrop_linkitem($form[$formfield[$i]][$a]['#default_value']['fid']);
+            $form[$formfield[$i]][$a]['#description'] = imagecrop_linkitem($form[$formfield[$i]][$a]['#default_value']['fid']);
           }
           $a++;
         }
       }
     }
+    //drupal_set_message('<pre>'. print_r($form, true) .'</pre>');
   }
 
   // hook into image module
@@ -299,6 +302,7 @@ function imagecrop_linkitem($fid) {
  */
 function imagecrop_find_imagefields($form, $fields) {
   $temp_path = file_directory_temp();
+
   $count = count($fields);
   $return = FALSE;
   for ($i=0;$i<$count;$i++) {
