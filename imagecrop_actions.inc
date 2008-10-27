@@ -63,11 +63,18 @@ function theme_imagecrop_javascript($element) {
  */
 function imagecrop_javascript_image(&$image, $data) {
   // if a global presetid is been set, it meens the image is generated from the imagecrop module
-  if (isset($GLOBALS['imagecrop_presetid'])) $presetid = $GLOBALS['imagecrop_presetid'];
+  if (isset($GLOBALS['imagecrop_presetid'])) {
+    $presetid = $GLOBALS['imagecrop_presetid'];
+  }
   // and if not, then we'll have to make a database call to get the id
   else {
-    $presetname = arg(2);
-    $presetid = db_result(db_query("SELECT presetid FROM {imagecache_preset} WHERE presetname = '%s'", $presetname));
+    $args = explode('/', $_GET['q']);
+    $key = array_search('imagecache', $args);
+    if ($key != FALSE) {
+      $key++;
+      $presetname = $args[$key];
+      $presetid = db_result(db_query("SELECT presetid FROM {imagecache_preset} WHERE presetname = '%s'", $presetname));
+    }
   }
 
   $row = db_fetch_object(db_query("SELECT xoffset,yoffset,width,height,scale FROM {imagecrop} ic INNER JOIN {files} f on f.fid = ic.fid WHERE f.filepath = '%s' AND ic.presetid = %d AND reference = 'files'", $image->source, $presetid));
@@ -78,6 +85,7 @@ function imagecrop_javascript_image(&$image, $data) {
     if ($pos !== FALSE)
     $row = db_fetch_object(db_query("SELECT xoffset,yoffset,width,height,scale FROM {imagecrop} ic INNER JOIN {node_images} ni on ni.id = ic.fid WHERE ni.filepath = '%s' AND ic.presetid = %d AND reference = 'node_images'", $image->source, $presetid));
   }
+
   $firstscale = FALSE;
   if (!empty($row)) {
     $data['xoffset'] = $row->xoffset;
@@ -86,15 +94,17 @@ function imagecrop_javascript_image(&$image, $data) {
     $data['height'] = $row->height;
     $firstscale = TRUE;
   }
+
   // add scale if necessary
   if ($row->scale != 'original' && $firstscale == TRUE) {
     if (!imageapi_image_scale($image, $row->scale, '', TRUE)) {
-        watchdog('imagecrop', t('imagecache_scale_image failed before imagecrop'), WATCHDOG_ERROR);
+      watchdog('imagecrop', t('imagecache_scale_image failed before imagecrop'), WATCHDOG_ERROR);
       return FALSE;
     }
   }
+
   if (!imageapi_image_crop($image, $data['xoffset'], $data['yoffset'], $data['width'], $data['height'])) {
-      watchdog('imagecrop', t('imagecrop_javascript failed. image: %image, data: %data.', array('%path' => $image, '%data' => print_r($data, TRUE))), WATCHDOG_ERROR);
+    watchdog('imagecrop', t('imagecrop_javascript failed. image: %image, data: %data.', array('%path' => $image, '%data' => print_r($data, TRUE))), WATCHDOG_ERROR);
     return FALSE;
   }
   return TRUE;
