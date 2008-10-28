@@ -40,6 +40,11 @@ function imagecrop_javascript_form($data) {
     '#title' => t('Is the toolbox resizable or not?'),
     '#default_value' => $data['resizable'],
   );
+  $form['disable_if_no_data'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Don\'t crop if cropping region wasn\'t set.'),
+    '#default_value' => $data['disable_if_no_data'],
+  );
   return $form;
 }
 
@@ -51,7 +56,7 @@ function imagecrop_javascript_form($data) {
  */
 function theme_imagecrop_javascript($element) {
   $data = $element['#value'];
-  return 'width: '. $data['width'] .', height: '. $data['height'] .', xoffset: '. $data['xoffset'] .', yoffset: '. $data['yoffset'] .', resizable: '. $data['resizable'];
+  return 'width: '. $data['width'] .', height: '. $data['height'] .', xoffset: '. $data['xoffset'] .', yoffset: '. $data['yoffset'] .', resizable: '. $data['resizable'] .', don\'t crop if region is not set: '. $data['disable_if_no_data'];
 }
 
 /**
@@ -89,12 +94,19 @@ function imagecrop_javascript_image(&$image, $data) {
     }
 
     $firstscale = FALSE;
+    // fill cropping info from database
     if (!empty($row)) {
       $data['xoffset'] = $row->xoffset;
       $data['yoffset'] = $row->yoffset;
       $data['width'] = $row->width;
       $data['height'] = $row->height;
       $firstscale = TRUE;
+    }
+    else {
+      // If there is no data in DB, use default or exit
+      if ($data['disable_if_no_data'] == 1) {
+        return TRUE;
+      }
     }
 
     // add scale if necessary
