@@ -62,6 +62,7 @@ function theme_imagecrop_javascript($element) {
  * @return false or true
  */
 function imagecrop_javascript_image(&$image, $data) {
+  $presetid = '';
   // if a global presetid is been set, it meens the image is generated from the imagecrop module
   if (isset($GLOBALS['imagecrop_presetid'])) {
     $presetid = $GLOBALS['imagecrop_presetid'];
