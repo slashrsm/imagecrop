@@ -77,29 +77,31 @@ function imagecrop_javascript_image(&$image, $data) {
     }
   }
 
-  $row = db_fetch_object(db_query("SELECT xoffset,yoffset,width,height,scale FROM {imagecrop} ic INNER JOIN {files} f on f.fid = ic.fid WHERE f.filepath = '%s' AND ic.presetid = %d AND reference = 'files'", $image->source, $presetid));
-  // support for node images (this sucks in a way, because images are not stored in the files table)
-  if (module_exists('node_images')) {
-    $directory = variable_get('node_images_path', 'node_images');
-    $pos = strpos($image->source, $directory);
-    if ($pos !== FALSE)
-    $row = db_fetch_object(db_query("SELECT xoffset,yoffset,width,height,scale FROM {imagecrop} ic INNER JOIN {node_images} ni on ni.id = ic.fid WHERE ni.filepath = '%s' AND ic.presetid = %d AND reference = 'node_images'", $image->source, $presetid));
-  }
+  if (!empty($presetid)) {
+    $row = db_fetch_object(db_query("SELECT xoffset,yoffset,width,height,scale FROM {imagecrop} ic INNER JOIN {files} f on f.fid = ic.fid WHERE f.filepath = '%s' AND ic.presetid = %d AND reference = 'files'", $image->source, $presetid));
+    // support for node images (this sucks in a way, because images are not stored in the files table)
+    if (module_exists('node_images')) {
+      $directory = variable_get('node_images_path', 'node_images');
+      $pos = strpos($image->source, $directory);
+      if ($pos !== FALSE)
+      $row = db_fetch_object(db_query("SELECT xoffset,yoffset,width,height,scale FROM {imagecrop} ic INNER JOIN {node_images} ni on ni.id = ic.fid WHERE ni.filepath = '%s' AND ic.presetid = %d AND reference = 'node_images'", $image->source, $presetid));
+    }
 
-  $firstscale = FALSE;
-  if (!empty($row)) {
-    $data['xoffset'] = $row->xoffset;
-    $data['yoffset'] = $row->yoffset;
-    $data['width'] = $row->width;
-    $data['height'] = $row->height;
-    $firstscale = TRUE;
-  }
+    $firstscale = FALSE;
+    if (!empty($row)) {
+      $data['xoffset'] = $row->xoffset;
+      $data['yoffset'] = $row->yoffset;
+      $data['width'] = $row->width;
+      $data['height'] = $row->height;
+      $firstscale = TRUE;
+    }
 
-  // add scale if necessary
-  if ($row->scale != 'original' && $firstscale == TRUE) {
-    if (!imageapi_image_scale($image, $row->scale, '', TRUE)) {
-      watchdog('imagecrop', t('imagecache_scale_image failed before imagecrop'), WATCHDOG_ERROR);
-      return FALSE;
+    // add scale if necessary
+    if ($row->scale != 'original' && $firstscale == TRUE) {
+      if (!imageapi_image_scale($image, $row->scale, '', TRUE)) {
+        watchdog('imagecrop', t('imagecache_scale_image failed before imagecrop'), WATCHDOG_ERROR);
+        return FALSE;
+      }
     }
   }
 
