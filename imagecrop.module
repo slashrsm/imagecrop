@@ -59,20 +59,14 @@ function imagecrop_theme() {
     'presettabs' => array(
       'arguments' => array('presets' => array(), 'fid' => NULL, 'presetid' => NULL, 'module' => NULL),
     ),
-    'page-imagecrop' => array(
-      'arguments' => array('content' => NULL, 'show_blocks' => TRUE, 'show_messages' => TRUE),
-      'template' => 'page-imagecrop',
-    ),
   );
 }
 
 /**
- * Implementation of hook_preprocess_page().
+ * Implementation of hook_theme_registry_alter().
  */
-function imagecrop_preprocess_page(&$variables) {
-  if (arg(0) == 'imagecrop') {
-    $variables['template_file'] = 'page-imagecrop';
-  }
+function imagecrop_theme_registry_alter(&$theme_registry) {
+  array_unshift($theme_registry['page']['theme paths'], drupal_get_path('module', 'imagecrop'));
 }
 
 /**
