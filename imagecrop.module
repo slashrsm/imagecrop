@@ -123,6 +123,35 @@ function imagecrop_settings() {
       '#value' => t('No modules or fields are found to hook into.'),
     );
   }
+
+  $popups = array('basic' => t('Basic popup window'));
+  if (module_exists('thickbox')) {
+    $popups['thickbox'] = t('Thickbox');
+  }
+  
+  $form['imagecrop_popup'] = array(
+    '#type' => 'radios',
+    '#title' => t('Popup window type'),
+    '#default_value' => variable_get('imagecrop_popup', 'basic'),
+    '#options' => $popups,
+  );
+  
+  $form['imagecrop_popup_width'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Popup window width'),
+    '#default_value' => variable_get('imagecrop_popup_width', 700),
+    '#size' => 4,
+    '#field_suffix' => 'pixels',
+  );
+  
+  $form['imagecrop_popup_height'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Popup window height'),
+    '#default_value' => variable_get('imagecrop_popup_height', 600),
+    '#size' => 4,
+    '#field_suffix' => 'pixels',
+  );
+  
   // drupal message if no action is found with javascript_crop
   if (imagecrop_action_exists() == FALSE) {
     drupal_set_message(t('No preset is found with the javascript_crop action so far. If you want to take advantage of this module, you will need to create at least one preset with that action.'));
@@ -257,21 +286,11 @@ function imagecrop_form_alter(&$form, $form_state, $form_id) {
  * @return $form form markup
  */
 function imagecrop_formitem($fid, $weight = 0) {
-  if (!module_exists('thickbox')) {
-    $form = array(
-      '#type' => 'item',
-      '#value' => '<a href="javascript:;" onclick="window.open(\''. url('imagecrop/showcrop/'. $fid, array('absolute' => TRUE)) .'\',\'imagecrop\',\'menubar=0,resizable=1,width=700,height=650\');">'. t('Javascript crop') .'</a>',
-      '#weight' => $weight,
-    );
-  }
-  else {
-    $form = array(
-      '#type' => 'item',
-      '#value' => '<a class="thickbox" href="'. url('imagecrop/showcrop/'. $fid, array('absolute' => TRUE)) .'?KeepThis=true&TB_iframe=true&height=500&width=700">'. t('Javascript crop') .'</a>',
-      '#weight' => $weight,
-    );
-  }
-  return $form;
+  return array(
+    '#type' => 'item',
+    '#value' => imagecrop_linkitem($fid),
+    '#weight' => $weight,
+  );
 }
 
 /**
@@ -280,10 +299,17 @@ function imagecrop_formitem($fid, $weight = 0) {
  * @return $form form markup
  */
 function imagecrop_linkitem($fid) {
-  if (!module_exists('thickbox'))
-  return '<a href="javascript:;" onclick="window.open(\''. url('imagecrop/showcrop/'. $fid, array('absolute' => TRUE)) .'\',\'imagecrop\',\'menubar=0,resizable=1,width=700,height=650\');">'. t('Javascript crop') .'</a>';
-  else
-  return '<a class="thickbox" href="'. url('imagecrop/showcrop/'. $fid, array('absolute' => TRUE)) .'?KeepThis=true&TB_iframe=true&height=500&width=700">'. t('Javascript crop') .'</a>';
+  $popup = variable_get('imagecrop_popup', 'basic');
+  $width = variable_get('imagecrop_popup_width', 700);
+  $height = variable_get('imagecrop_popup_height', 600);
+  $url = url('imagecrop/showcrop/'. $fid, array('absolute' => TRUE));
+
+  if ($popup == 'thickbox' && module_exists('thickbox')) {
+    return '<a class="thickbox" href="'. $url .'?KeepThis=true&TB_iframe=true&height='. $height .'&width='. $width .'">'. t('Crop this image') .'</a>';
+  }
+  else {
+    return '<a href="javascript:;" onclick="window.open(\''. $url .'\',\'imagecrop\',\'menubar=0,scrollbars=1,width='. $width .',height='. $height .'\');">'. t('Crop this image') .'</a>';
+  }
 }
 
 /**
