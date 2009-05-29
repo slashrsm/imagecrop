@@ -244,24 +244,16 @@ function imagecrop_form_alter(&$form, $form_state, $form_id) {
 
   // hook into imagefield module
   if (module_exists('imagefield') && $exists != FALSE && $access) {
-    $formfield = imagecrop_find_imagefields($form, $fields);
-    if ($formfield != FALSE) {
-      $count = count($formfield);
-      for ($i=0;$i<$count;$i++) {
-        $a = 0;
-        //drupal_set_message('<pre>'. print_r($form[$formfield[$i]], true) .'</pre>');
-        while ($form[$formfield[$i]][$a]['#default_value']['fid']) {
-          //drupal_set_message('moeahahah');
-          if (!empty($form[$formfield[$i]][$a]['#default_value']['fid'])) {
-            $descr = $form[$formfield[$i]][$a]['#default_value']['description']['#value'] .'<br />'. 
-              imagecrop_linkitem($form[$formfield[$i]][$a]['#default_value']['fid']);
-            $form[$formfield[$i]][$a]['#description'] = imagecrop_linkitem($form[$formfield[$i]][$a]['#default_value']['fid']);
-          }
-          $a++;
+    foreach (imagecrop_find_imagefields($form, $fields) as $field) {
+      foreach (element_children($form[$field]) as $i) {
+        if ($form[$field][$i]['#default_value']['fid']) {
+          $form[$field][$i]['#description'] = imagecrop_linkitem($form[$field][$i]['#default_value']['fid'], 'imagefield', $field);
+        }
+        else {
+          $form[$field][$i]['#description'] = t('You will be able to crop this image after clicking Save.');
         }
       }
     }
-    //drupal_set_message('<pre>'. print_r($form, true) .'</pre>');
   }
 
   // hook into image module
@@ -321,15 +313,13 @@ function imagecrop_linkitem($fid) {
  * @return ckk imagefields array or false
  */
 function imagecrop_find_imagefields($form, $fields) {
+  $return = array();
   $temp_path = file_directory_temp();
-
-  $count = count($fields);
-  $return = FALSE;
-  for ($i=0;$i<$count;$i++) {
-    $temppath = strpos($form[$fields[$i]][0]['filepath']['#value'], $temp_path);
-    $deleteflag = $form[$fields[$i]][0]['flags']['delete']['#value'];
-    if (isset($form[$fields[$i]]) && $temppath === FALSE && $deleteflag != 1) {
-      $return[] = $fields[$i];
+  foreach ($fields as $field) {
+    $temppath = strpos($form[$field][0]['filepath']['#value'], $temp_path);
+    $deleteflag = $form[$field][0]['flags']['delete']['#value'];
+    if (isset($form[$field]) && $temppath === FALSE && $deleteflag != 1) {
+      $return[] = $field;
     }
   }
   return $return;
