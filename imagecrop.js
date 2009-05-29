@@ -45,8 +45,8 @@ $(document).ready(function(){
     var leftpos = $('#edit-image-crop-x').val();
     var toppos = $('#edit-image-crop-y').val();
     $("#resizeMe").css({backgroundPosition: '-'+ leftpos + 'px -'+ toppos +'px'});
-    $("#resizeMe").width($('#edit-image-crop-width').val());
-    $("#resizeMe").height($('#edit-image-crop-height').val());
+    $("#resizeMe").width($('#edit-image-crop-width').val() + 'px');
+    $("#resizeMe").height($('#edit-image-crop-height').val() + 'px');
     $("#resizeMe").css({top: $('#edit-image-crop-y').val() +'px' });
     $("#resizeMe").css({left: $('#edit-image-crop-x').val() +'px' });
 });
