@@ -350,7 +350,7 @@ function imagecrop_linkitem($fid, $module = '', $field = '') {
     return '<a class="thickbox" href="'. $url .'?KeepThis=true&TB_iframe=true&height='. $height .'&width='. $width .'">'. t('Crop this image') .'</a>';
   }
   else {
-    return '<a href="javascript:;" onclick="window.open(\''. $url .'\',\'imagecrop\',\'menubar=0,scrollbars=1,width='. $width .',height='. $height .'\');">'. t('Crop this image') .'</a>';
+    return '<a href="javascript:;" onclick="window.open(\''. $url .'\',\'imagecrop\',\'menubar=0,scrollbars=1,resizable=1,width='. $width .',height='. $height .'\');">'. t('Crop this image') .'</a>';
   }
 }
 
