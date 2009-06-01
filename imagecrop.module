@@ -634,6 +634,8 @@ function create_image_object($fid, $presetid, $module = '', $cutoff = FALSE) {
  * @return $file with properties of the file or false
  */
 function _imagecrop_file_load($fid, $module) {
+  global $user;
+
   if (empty($module) || $module == 'imagefield') {
     $file = db_fetch_object(db_query('SELECT * FROM {files} WHERE fid = %d', $fid));
   }
@@ -647,8 +649,7 @@ function _imagecrop_file_load($fid, $module) {
     $filemime = array('image/jpeg', 'image/gif', 'image/png', 'image/pjpeg');
     if (!in_array($file->filemime, $filemime)) return FALSE;
     // access denied if current user hasn't enough permissions
-    $node = node_load($file->nid);
-    if (!user_access('administer nodes') && !user_access('edit '. $node->type .' content') && !user_access('edit own '. $node->type .' content')) {
+    if (!user_access('administer nodes') && $user->uid != $file->uid) {
       drupal_access_denied();
       exit();
     }
