@@ -458,16 +458,16 @@ function imageoffsets(&$form_state, $xoffset, $yoffset, $crop_width, $crop_heigh
   $form['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Save'),
-    '#prefix' => '<table style="width: 400px; margin: 0;" id="imagecrop_table_actions"><tr><td>',
+    '#prefix' => '<table id="imagecrop_table_actions"><tr><td>',
     '#suffix' => '</td>',
   );
   $form['scaling'] = array(
     '#type' => 'select',
     '#options' => $options,
     '#default_value' => $scale,
-    '#prefix' => '<td>',
+    '#prefix' => '<td id="imagecrop-throbber">',
     '#suffix' => '</td></tr></table>',
-    '#attributes' => array('onchange' => "$('#edit-scaledown').click()"),
+    '#attributes' => array('onchange' => "$('#imagecrop-throbber').addClass('show'); $('#edit-scaledown').click();"),
   );
   $form['scaledown'] = array(
     '#type' => 'submit',

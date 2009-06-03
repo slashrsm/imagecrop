@@ -52,6 +52,10 @@ body { margin: 0 !important; padding: 0; background: none !important; }
 #imageoffsets .form-button , #imageoffsets .form-submit {
   margin: 2px;
 }
+#imagecrop_table_actions {
+  width: 250px;
+  margin: 0;
+}
 #imagecrop_table_actions tbody {
   border: none;
 }
@@ -106,3 +110,6 @@ body { margin: 0 !important; padding: 0; background: none !important; }
     #resizeSW{left: -10px;bottom: -10px;cursor: sw-resize;}
     #resizeS{bottom: -10px;left: 50%;margin-left: -5px;cursor: s-resize;}
 
+
+#imagecrop-throbber div { padding-left:18px; background:url(../../../../misc/throbber.gif) no-repeat -18px -18px; width:18px; height:18px; }
+#imagecrop-throbber.show div { background-position: 0px -18px; }
