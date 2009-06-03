@@ -111,7 +111,7 @@ function imagecrop_javascript_image(&$image, $data) {
 
     // add scale if necessary
     if ($row->scale != 'original' && $firstscale == TRUE) {
-      if (!imageapi_image_scale($image, $row->scale, '', TRUE)) {
+      if (!imageapi_image_scale($image, $row->scale, '', FALSE)) {
         watchdog('imagecrop', t('imagecache_scale_image failed before imagecrop'), WATCHDOG_ERROR);
         return FALSE;
       }
