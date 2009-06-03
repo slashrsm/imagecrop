@@ -142,6 +142,14 @@ function imagecrop_settings() {
     '#field_suffix' => 'pixels',
   );
   
+  $form['imagecrop_scale_step'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Step size for scale dropdown'),
+    '#default_value' => variable_get('imagecrop_scale_step', 50),
+    '#size' => 4,
+    '#field_suffix' => 'pixels',
+  );
+  
   // drupal message if no action is found with javascript_crop
   if (imagecrop_action_exists() == FALSE) {
     drupal_set_message(t('No preset is found with the javascript_crop action so far. If you want to take advantage of this module, you will need to create at least one preset with that action.'));
@@ -409,7 +417,7 @@ function imagecrop_docrop($fid, $presetid, $module = '', $field = '') {
         $output = theme('presettabs', $presets, $fid, $presetid, $module, $field);
         $output .= '<div id="imagecrop_help">'. t('To save the selected crop area, click the Save button.') .'</div>';
         $output .= theme('imagecrop', $url, $width, $height, $file->resizable);
-        $output .= drupal_get_form('imageoffsets', $file->xoffset, $file->yoffset, $file->crop_width, $file->crop_height, $presetid, $fid, $module, $field, $file->orig_width, $file->scale);
+        $output .= drupal_get_form('imageoffsets', $file->xoffset, $file->yoffset, $file->crop_width, $file->crop_height, $presetid, $fid, $module, $field, $file->orig_width, $file->orig_height, $file->scale);
       }
       else {
         $output .= '<div id="imagecrop_info" class="imagecrop_error">'. t('The crop toolbox is too big for this image.') .' <a href="javascript:history.back();"><span class="white">'. t('Back') .'</span></a></div>';
@@ -437,37 +445,73 @@ function imagecrop_docrop($fid, $presetid, $module = '', $field = '') {
  * @param $module specific module
  * @return array $form
  */
-function imageoffsets(&$form_state, $xoffset, $yoffset, $crop_width, $crop_height, $presetid, $fid, $module, $field, $width, $scale) {
-  $form['buttons']['submit'] = array('#prefix' => '<table style="width: 400px; margin: 0;" id="imagecrop_table_actions"><tr><td>', '#suffix' => '</td>', '#type' => 'submit', '#value' => t('Save'));
-  $form['buttons']['scaling'] = array('#prefix' => '<td>', '#suffix' => '</td>', '#type' => 'select', '#default_value' => $scale, '#options' => imagecrop_scale_options($width, $crop_width));
-  $form['button']['scaledown'] = array('#prefix' => '<td>', '#suffix' => '</td></tr></table>', '#type' => 'submit', '#value' => t('Scale image'));
-  $form['image-crop-x'] = array('#type' => 'hidden', '#default_value' => $xoffset, '#attributes' => array('class' => 'edit-image-crop-x'));
-  $form['image-crop-y'] = array('#type' => 'hidden', '#default_value' => $yoffset, '#attributes' => array('class' => 'edit-image-crop-y'));
-  $form['image-crop-width'] = array('#type' => 'hidden', '#default_value' => $crop_width, '#attributes' => array('class' => 'edit-image-crop-width'));
-  $form['image-crop-height'] = array('#type' => 'hidden', '#default_value' => $crop_height, '#attributes' => array('class' => 'edit-image-crop-height'));
-  $form['fid'] = array('#type' => 'hidden', '#value' => $fid);
-  $form['module'] = array('#type' => 'hidden', '#value' => $module);
-  $form['field'] = array('#type' => 'hidden', '#value' => $field);
-  $form['presetid'] = array('#type' => 'hidden', '#value' => $presetid);
-  return $form;
-}
-
-/**
- * Add scale options
- *
- * @param unknown_type original width of image
- * @param unknown_type width of give cropboxx
- * @return possible width options
- */
-function imagecrop_scale_options($width, $cropboxwidth) {
-  $options['original'] = 'Original ('. $width .'px)';
-  // experimental, we give the width always a bit more
-  $cropboxwidth += 60;
-  while ($width > $cropboxwidth) {
-    $width -= 50;
-    $options[$width] = $width .'px';
+function imageoffsets(&$form_state, $xoffset, $yoffset, $crop_width, $crop_height, $presetid, $fid, $module, $field, $width, $height, $scale) {
+  $step = variable_get('imagecrop_scale_step', 50);
+  $aspect = $width / $height;
+  $options['original'] = $width .' x ' . $height .'px (Original)';
+  $width -= $step;
+  while ($width > $crop_width && ($width / $aspect) > $crop_height) {
+    $options[$width] = $width .' x '. intval($width / $aspect) .'px';
+    $width -= $step;
   }
-  return $options;
+
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Save'),
+    '#prefix' => '<table style="width: 400px; margin: 0;" id="imagecrop_table_actions"><tr><td>',
+    '#suffix' => '</td>',
+  );
+  $form['scaling'] = array(
+    '#type' => 'select',
+    '#options' => $options,
+    '#default_value' => $scale,
+    '#prefix' => '<td>',
+    '#suffix' => '</td></tr></table>',
+    '#attributes' => array('onchange' => "$('#edit-scaledown').click()"),
+  );
+  $form['scaledown'] = array(
+    '#type' => 'submit',
+    '#value' => t('Scale image'),
+    '#attributes' => array('style' => "display:none;"),
+  );
+  $form['image-crop-x'] = array(
+    '#type' => 'hidden',
+    '#default_value' => $xoffset,
+    '#attributes' => array('class' => 'edit-image-crop-x'),
+  );
+  $form['image-crop-y'] = array(
+    '#type' => 'hidden',
+    '#default_value' => $yoffset,
+    '#attributes' => array('class' => 'edit-image-crop-y'),
+  );
+  $form['image-crop-width'] = array(
+    '#type' => 'hidden',
+    '#default_value' => $crop_width,
+    '#attributes' => array('class' => 'edit-image-crop-width'),
+  );
+  $form['image-crop-height'] = array(
+    '#type' => 'hidden',
+    '#default_value' => $crop_height,
+    '#attributes' => array('class' => 'edit-image-crop-height'),
+  );
+  $form['fid'] = array(
+    '#type' => 'hidden',
+    '#value' => $fid,
+  );
+  $form['module'] = array(
+    '#type' => 'hidden',
+    '#value' => $module,
+  );
+  $form['field'] = array(
+    '#type' => 'hidden',
+    '#value' => $field,
+  );
+  $form['presetid'] = array(
+    '#type' => 'hidden',
+    '#value' => $presetid,
+  );
+
+  return $form;
 }
 
 /**
@@ -615,6 +659,7 @@ function create_image_object($fid, $presetid, $module = '', $cutoff = FALSE) {
     // original size
     $orig = getimagesize($file->filepath);
     $file->orig_width = $orig[0];
+    $file->orig_height = $orig[1];
 
     // create the file to display for the crop,
     // we also set a global presetid variable, so I can use this in
