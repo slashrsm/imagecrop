@@ -653,7 +653,7 @@ function create_image_object($fid, $presetid, $module = '', $cutoff = FALSE) {
     }
     $src = $file->filepath;
     $file->presetname = $preset['presetname'];
-    $dst = imagecache_create_path($preset['presetname'], $file->filepath);
+    $dst = imagecache_create_path($cutoff ? $preset['presetname'] : '_imagecrop_temp', $file->filepath);
     $file->dst = $dst;
 
     // original size
