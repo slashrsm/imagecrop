@@ -15,7 +15,7 @@ $(document).ready(function(){
 		handles: 'all',
 		knobHandles: true,
 		//transparent: true,
-		aspectRatio: false,
+		aspectRatio: Drupal.settings.aspect,
 		autohide: true,
 
 		resize: function(e, ui) {

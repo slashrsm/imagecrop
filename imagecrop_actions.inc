@@ -39,6 +39,21 @@ function imagecrop_javascript_form($data) {
     '#type' => 'checkbox',
     '#title' => t('Is the toolbox resizable or not?'),
     '#default_value' => $data['resizable'],
+    '#description' => t('If the toolbox is resized, the crop values won\'t be respected, so you should add a Scale action after the ImageCrop.'),
+  );
+  
+  $description = t('Enter an aspect ratio to preserve during resizing. This can take one of the following formats:');
+  $description .= '<ul><li>'. t('A float (like 0.5 or 2).') .'</li>';
+  $description .= '<li>'. t('The string \'KEEP\'. This will constrain the aspect ratio to that of the original image.') .'</li>';
+  $description .= '<li>'. t('The string \'CROP\'. This will constrain the aspect ratio to the dimensions set above.') .'</li></ul>';
+  $description .= t('Leave blank for no aspect ratio constraints.');
+    
+  $form['aspect'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Aspect ratio'),
+    '#default_value' => $data['aspect'],
+    '#description' => $description,
+    '#element_validate' => array('imagecrop_validate_aspect'),
   );
   $form['disable_if_no_data'] = array(
     '#type' => 'checkbox',
@@ -56,7 +71,7 @@ function imagecrop_javascript_form($data) {
  */
 function theme_imagecrop_javascript($element) {
   $data = $element['#value'];
-  return 'width: '. $data['width'] .', height: '. $data['height'] .', xoffset: '. $data['xoffset'] .', yoffset: '. $data['yoffset'] .', resizable: '. $data['resizable'] .', don\'t crop if region is not set: '. $data['disable_if_no_data'];
+  return 'width: '. $data['width'] .', height: '. $data['height'] .', xoffset: '. $data['xoffset'] .', yoffset: '. $data['yoffset'] .', resizable: '. $data['resizable'] .', aspect ratio: '.$data['aspect'] .', don\'t crop if region is not set: '. $data['disable_if_no_data'];
 }
 
 /**
