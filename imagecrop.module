@@ -499,7 +499,8 @@ function imagecrop_docrop($fid, $presetid, $module = '', $field = '', $node_type
 
       // output
       if ($size_warning == FALSE) {
-        $url = file_create_url($file->dst) .'?time='. time();
+        $url = file_create_url($file->dst);
+        $url .= strstr($url, '?')? '&time='. time() : '?time='. time();
         $output = theme('presettabs', $presets, $fid, $presetid, $module, $field, $node_type);
         $output .= '<div id="imagecrop_help">'. t('To save the selected crop area, click the Save button.') .'</div>';
         $output .= theme('imagecrop', $url, $width, $height, $file->resizable);
@@ -831,8 +832,7 @@ function theme_imagecrop($url, $width, $height, $resize = 0) {
 }
 
 /**
- * Theme cropped image result. Adds time to the image so we make sure
- * the brower always loads the latest version of the image.
+ * Theme cropped image result.
  *
  * @param string $presetname
  * @param string $filepath
@@ -841,8 +841,8 @@ function theme_imagecrop($url, $width, $height, $resize = 0) {
  * @return image
  */
 function theme_imagecrop_result($presetname, $filepath, $alt = '', $attributes = NULL) {
-  $url = imagecache_create_url($presetname, $filepath);
-  return '<img src="'. $url .'?time='. time() .'" alt="'. check_plain($alt) .'" title="'. check_plain($alt) .'" '. $attributes .' />';
+  $url = imagecache_create_url($presetname, $filepath, TRUE);
+  return '<img src="'. $url .'" alt="'. check_plain($alt) .'" title="'. check_plain($alt) .'" '. $attributes .' />';
 }
 
 /**
