@@ -417,7 +417,7 @@ function imagecrop_linkitem($fid, $module = '', $element = '') {
   $module = $module ? ('/0/'. $module) : '';
   $field = $element['#field_name'] ? ('/'. $element['#field_name']) : '';
   $node_type = $element['#type_name'] ? ('/'. $element['#type_name']) : '';
-  $url = url('imagecrop/showcrop/'. $fid . $module . $field. $node_type, array('absolute' => TRUE));
+  $url = url('imagecrop/showcrop/'. $fid . $module . $field . $node_type, array('absolute' => TRUE));
 
   if ($popup == 'thickbox' && module_exists('thickbox')) {
     return '[<a class="thickbox" href="'. $url .'?KeepThis=true&TB_iframe=true&height='. $height .'&width='. $width .'">'. t('Crop this image') .'</a>]';
@@ -476,7 +476,7 @@ function imagecrop_docrop($fid, $presetid, $module = '', $field = '', $node_type
         
         // set aspect ration if needed
         if ($file->aspect) {
-          if(is_numeric($file->aspect)) {
+          if (is_numeric($file->aspect)) {
             drupal_add_js(array('aspect' => $file->aspect), 'setting');
             // set the initial aspect ratio of the crop region to the ratio chosen in the preset
             $file->crop_width = round($file->crop_height * $file->aspect);
@@ -535,7 +535,7 @@ function imagecrop_docrop($fid, $presetid, $module = '', $field = '', $node_type
 function imageoffsets(&$form_state, $xoffset, $yoffset, $crop_width, $crop_height, $presetid, $fid, $module, $field, $node_type, $width, $height, $scale) {
   $step = variable_get('imagecrop_scale_step', 50);
   $aspect = $width / $height;
-  $options['original'] = $width .' x ' . $height .'px (Original)';
+  $options['original'] = $width .' x '. $height .'px (Original)';
   $width -= $step;
   while ($width > $crop_width && ($width / $aspect) > $crop_height) {
     $options[$width] = $width .' x '. intval($width / $aspect) .'px';

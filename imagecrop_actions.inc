@@ -71,7 +71,7 @@ function imagecrop_javascript_form($data) {
  */
 function theme_imagecrop_javascript($element) {
   $data = $element['#value'];
-  return 'width: '. $data['width'] .', height: '. $data['height'] .', xoffset: '. $data['xoffset'] .', yoffset: '. $data['yoffset'] .', resizable: '. $data['resizable'] .', aspect ratio: '.$data['aspect'] .', don\'t crop if region is not set: '. $data['disable_if_no_data'];
+  return 'width: '. $data['width'] .', height: '. $data['height'] .', xoffset: '. $data['xoffset'] .', yoffset: '. $data['yoffset'] .', resizable: '. $data['resizable'] .', aspect ratio: '. $data['aspect'] .', don\'t crop if region is not set: '. $data['disable_if_no_data'];
 }
 
 /**
