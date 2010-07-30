@@ -63,6 +63,19 @@ body { margin: 0 !important; padding: 0; background: none !important; }
   padding: 0;
 }
 
+#imagecrop-throbber div {
+  padding-left:18px;
+  background:url(../../../../misc/throbber.gif) no-repeat -18px -18px;
+  width:18px;
+}
+
+#imagecrop-throbber.show div { background-position: 0px -18px; }
+
+#imagecrop_table_actions .form-item,
+#imagecrop_table_actions .form-submit {
+  margin: 0.5em 0;
+}
+
 /* Classes and divs to create the crop area */
 .imagefield-crop-wrapper { 
   background-color: #ccc;)
@@ -86,41 +99,54 @@ body { margin: 0 !important; padding: 0; background: none !important; }
   border: 1px dashed black;
 }
 
-#resizeSE,
-#resizeE,
-#resizeNE,
-#resizeN,
-#resizeNW,
-#resizeW,
-#resizeSW,
-#resizeS { 
-  position: absolute;
+.ui-resizable-handle {
   width: 8px;
   height: 8px;
-  background-color: #333;
-  border: 1px solid #fff;
-  overflow: hidden;
+  border: 1px solid #808080;
+  background-color:#F2F2F2;
+  position: absolute;
 }
 
-#resizeSE{bottom: -10px;right: -10px;cursor: se-resize;}
-#resizeE {top: 50%;right: -10px;margin-top: -5px;cursor: e-resize;}
-#resizeNE{top: -10px;right: -10px;cursor: ne-resize;}
-#resizeN {top: -10px;left: 50%;margin-left: -5px;cursor: n-resize;}
-#resizeNW{top: -10px;left: -10px;cursor: nw-resize;}
-#resizeW {top: 50%;left: -10px;margin-top: -5px;cursor: w-resize;}
-#resizeSW{left: -10px;bottom: -10px;cursor: sw-resize;}
-#resizeS{bottom: -10px;left: 50%;margin-left: -5px;cursor: s-resize;}
-
-
-#imagecrop-throbber div {
-  padding-left:18px;
-  background:url(../../../../misc/throbber.gif) no-repeat -18px -18px;
-  width:18px;
+.ui-resizable-n, .ui-resizable-s {
+  left: 45%;
+  cursor: n-resize;
 }
 
-#imagecrop-throbber.show div { background-position: 0px -18px; }
+.ui-resizable-e, .ui-resizable-w {
+  top: 45%;
+  cursor: e-resize;
+}
 
-#imagecrop_table_actions .form-item,
-#imagecrop_table_actions .form-submit {
-  margin: 0.5em 0;
+.ui-resizable-se {
+  bottom: -5px;
+  right: -5px;
+}
+
+.ui-resizable-e {
+  right: -5px;
+}
+
+.ui-resizable-s {
+  bottom: -5px;
+}
+
+.ui-resizable-sw {
+  bottom: 0;
+  left: 0;
+}
+
+.ui-resizable-ne {
+  right: 0;
+  top: 0;
+}
+
+.ui-resizable-se,
+.ui-resizable-nw {
+  cursor: nw-resize;
+}
+
+
+.ui-resizable-ne,
+.ui-resizable-sw {
+  cursor: ne-resize;
 }

@@ -6,17 +6,17 @@
  */
 
 $(document).ready(function(){
-	if ($('#resizeMe').resizable) {
+	if ($('#resizeMe').resizable) {	
+	
 	  $('#resizeMe').resizable({
 		containment: $('#image-crop-container'),
 		//proxy: 'proxy',
 		//ghost: true,
 		//animate:true,
-		handles: 'all',
-		knobHandles: true,
 		//transparent: true,
 		aspectRatio: Drupal.settings.aspect,
 		autohide: true,
+		handles: 'n, e, s, w, ne, se, sw, nw',
 
 		resize: function(e, ui) {
   		  this.style.backgroundPosition = '-' + (ui.position.left) + 'px -' + (ui.position.top) + 'px';
@@ -28,7 +28,8 @@ $(document).ready(function(){
 		stop: function(e, ui) {
   		  this.style.backgroundPosition = '-' + (ui.position.left) + 'px -' + (ui.position.top) + 'px';
   	    }
-	  })
+	  });
+	  
 	}
 
 	$('#resizeMe').draggable({
