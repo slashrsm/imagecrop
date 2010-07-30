@@ -455,11 +455,15 @@ function imagecrop_find_imagefields($form, $fields) {
  * @param $presetid id of preset
  */
 function imagecrop_docrop($fid, $presetid, $module = '', $field = '', $node_type = '') {
+
   imagecrop_markup(TRUE, TRUE);
   if (imagecrop_action_exists() == TRUE) {
+
     $presets = return_presets($presetid, $module, $field, $node_type);
     $file = create_image_object($fid, $presetid, $module);
+
     if ($file != FALSE) {
+
       $size_warning = FALSE;
       // get size of temporary image
       $size = getimagesize($file->dst);
@@ -504,20 +508,24 @@ function imagecrop_docrop($fid, $presetid, $module = '', $field = '', $node_type
         $output = theme('presettabs', $presets, $fid, $presetid, $module, $field, $node_type);
         $output .= '<div id="imagecrop_help">'. t("Resize image if needed, then select a crop area. Click 'Crop image thumbnail' to save your crop area.<br/>After that close the window and save your node form.") .'</div>';
         $output .= theme('imagecrop', $url, $width, $height, $file->resizable);
-        $output .= drupal_get_form('imageoffsets', $file->xoffset, $file->yoffset, $file->crop_width, $file->crop_height, $presetid, $fid, $module, $field, $node_type, $file->orig_width, $file->orig_height, $file->scale);
+        $output .= drupal_get_form('imageoffsets', $file->xoffset, $file->yoffset, $file->crop_width, $file->crop_height, $presetid, $fid, $module, $field, $node_type, $file->orig_width, $file->orig_height, $file->scale, $file->preset_destination);
       }
       else {
         $output .= '<div id="imagecrop_info" class="imagecrop_error">'. t('The crop toolbox is too big for this image.') .' <a href="javascript:history.back();"><span class="white">'. t('Back') .'</span></a></div>';
       }
+
       return $output;
+
     }
     else {
       return '<div id="imagecrop_info" class="imagecrop_error">'. t('Image to crop was not found.') .'</div>';
     }
+
   }
   else {
     return '<div id="imagecrop_info"  class="imagecrop_error">'. t('No preset is found with the javascript_crop action so far. If you want to take advantage of this module, you will need to create at least one preset with that action.') .'</div>';
   }
+
 }
 
 /**
@@ -530,9 +538,11 @@ function imagecrop_docrop($fid, $presetid, $module = '', $field = '', $node_type
  * @param $presetid id of preset
  * @param $fid id of file
  * @param $module specific module
+ * @param $preset_destination destination of the imagecache to save
  * @return array $form
  */
-function imageoffsets(&$form_state, $xoffset, $yoffset, $crop_width, $crop_height, $presetid, $fid, $module, $field, $node_type, $width, $height, $scale) {
+function imageoffsets(&$form_state, $xoffset, $yoffset, $crop_width, $crop_height, $presetid, $fid, $module, $field, $node_type, $width, $height, $scale, $preset_destination) {
+
   $step = variable_get('imagecrop_scale_step', 50);
   $aspect = $width / $height;
   $options['original'] = $width .' x '. $height .'px (Original)';
@@ -602,8 +612,13 @@ function imageoffsets(&$form_state, $xoffset, $yoffset, $crop_width, $crop_heigh
     '#type' => 'hidden',
     '#value' => $presetid,
   );
+  $form['preset-destination'] = array(
+    '#type' => 'hidden',
+    '#value' => $preset_destination,
+  );
 
   return $form;
+
 }
 
 /**
@@ -619,6 +634,7 @@ function imageoffsets_submit($form, &$form_state) {
     $form_state['values']['image-crop-y'] = 0;
   }
 
+  // save into imagecrop tables
   $module = (!empty($form_state['values']['module'])) ? '/'. $form_state['values']['module'] : '';
   $field = (!empty($form_state['values']['field'])) ? '/'. $form_state['values']['field'] : '';
   $node_type = (!empty($form_state['values']['node_type'])) ? '/'. $form_state['values']['node_type'] : '';
@@ -630,6 +646,8 @@ function imageoffsets_submit($form, &$form_state) {
     drupal_goto('imagecrop/docrop/'. $form_state['values']['fid'] .'/'. $form_state['values']['presetid'] . $module . $field . $node_type);
   }
   else {
+    // delete imagecache preset, so newest file is generated.
+    file_delete($form_state['values']['preset-destination']);
     drupal_goto('imagecrop/showcrop/'. $form_state['values']['fid'] .'/'. $form_state['values']['presetid'] . $module . $field . $node_type);
   }
 
@@ -711,15 +729,18 @@ function return_presets($presetid, $module = '', $field = '', $node_type = '') {
  * @return $file with file, javascript crop and preset properties
  */
 function create_image_object($fid, $presetid, $module = '', $cutoff = FALSE) {
+
   $file = _imagecrop_file_load($fid, $module);
   if ($file != FALSE) {
     $preset = imagecache_preset($presetid);
-    imagecache_image_flush($file->filename);
+
     if ($cutoff == FALSE) {
+
       // get the actions from the preset and and throw out the javascript_crop action
       // and every other action which comes after it.
       $break = FALSE;
       while (list($key, $val) = each($preset['actions'])) {
+
         if ($val['action'] == 'imagecrop_javascript') {
           $crop_width = $preset['actions'][$key]['data']['width'];
           $crop_height = $preset['actions'][$key]['data']['height'];
@@ -730,6 +751,7 @@ function create_image_object($fid, $presetid, $module = '', $cutoff = FALSE) {
         if ($break == TRUE) {
           unset($preset['actions'][$key]);
         }
+
       }
 
       if ($aspect == 'CROP') {
@@ -758,31 +780,45 @@ function create_image_object($fid, $presetid, $module = '', $cutoff = FALSE) {
       // aspect ratio
       $file->aspect = $aspect;
 
+      // original size after first imagecache actions
+      $src = $file->filepath;
+      $dst = imagecache_create_path($cutoff ? $preset['presetname'] : '_imagecrop_temp', $file->filepath);
+      file_delete($dst);
+      imagecache_build_derivative($preset['actions'], $src, $dst);
+
+      $orig = getimagesize($dst);
+      $file->orig_width = $orig[0];
+      $file->orig_height = $orig[1];
+
       // add scale action if necessary
       if ($row->scale != 'original' && $firstscale == TRUE) {
         $preset['actions'][] = array(
           'action' => 'imagecache_scale',
           'data' => array('width' => $row->scale, 'height' => '', 'upscale' => 'false'));
       }
-    }
-    $src = $file->filepath;
-    $file->presetname = $preset['presetname'];
-    $dst = imagecache_create_path($cutoff ? $preset['presetname'] : '_imagecrop_temp', $file->filepath);
-    $file->dst = $dst;
 
-    // original size
-    $orig = getimagesize($file->filepath);
-    $file->orig_width = $orig[0];
-    $file->orig_height = $orig[1];
+    }
+
+    $file->presetname = $preset['presetname'];
+
+    $file->dst = $dst;
+    $file->preset_destination = imagecache_create_path($file->presetname, $file->filepath);
 
     // create the file to display for the crop,
     // we also set a global presetid variable, so I can use this in
     // the javascript_crop action
     $GLOBALS['imagecrop_presetid'] = $presetid;
+
+    // flush first, then generate the final preset.
+    file_delete($dst);
     imagecache_build_derivative($preset['actions'], $src, $dst);
     return $file;
+
   }
-  else return FALSE;
+  else {
+    return FALSE;
+  }
+
 }
 
 /**
@@ -793,16 +829,18 @@ function create_image_object($fid, $presetid, $module = '', $cutoff = FALSE) {
  * @return $file with properties of the file or false
  */
 function _imagecrop_file_load($fid, $module) {
+
   global $user;
 
   if (empty($module) || $module == 'imagefield') {
     $file = db_fetch_object(db_query('SELECT * FROM {files} WHERE fid = %d', $fid));
   }
-  else if ($module == 'node_images') {
+  elseif ($module == 'node_images') {
     $file = db_fetch_object(db_query('SELECT * FROM {node_images} WHERE id = %d', $fid));
   }
 
   if ($file) {
+
     // make sure it's an image. Any other mime extensions possible?
     // return false if it's not the right mime type
     $filemime = array('image/jpeg', 'image/gif', 'image/png', 'image/pjpeg');
@@ -814,9 +852,12 @@ function _imagecrop_file_load($fid, $module) {
     }
     // all seems ok, return file
     return $file;
+
   }
+
   // return false if no file was found.
   return FALSE;
+
 }
 
 /**

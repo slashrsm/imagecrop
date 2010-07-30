@@ -24,6 +24,7 @@ function imagecrop_disable() {
  * Implementation of hook_schema().
  */
 function imagecrop_schema() {
+
   $schema['imagecrop'] = array(
     'fields' => array(
       'fid' => array('type' => 'int', 'not null' => TRUE, 'unsigned' => TRUE),
@@ -36,7 +37,9 @@ function imagecrop_schema() {
       'scale' => array('type' => 'varchar', 'length' => '10', 'not null' => TRUE, 'default' => 'original'),
     ),
   );
-  return $schema;  
+
+  return $schema;
+
 }
 
 /**
@@ -51,7 +54,7 @@ function imagecrop_install() {
  * Update 1 : set weight to 1
  */
 function imagecrop_update_2() {
-  $ret[] = db_query("UPDATE {system} SET weight = 1 WHERE name = 'imagecrop'");
+  $ret[] = update_sql("UPDATE {system} SET weight = 1 WHERE name = 'imagecrop'");
   return array();
 }
 

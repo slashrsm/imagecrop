@@ -41,13 +41,13 @@ function imagecrop_javascript_form($data) {
     '#default_value' => $data['resizable'],
     '#description' => t('If the toolbox is resized, the crop values won\'t be respected, so you should add a Scale action after the ImageCrop.'),
   );
-  
+
   $description = t('Enter an aspect ratio to preserve during resizing. This can take one of the following formats:');
   $description .= '<ul><li>'. t('A float (like 0.5 or 2).') .'</li>';
   $description .= '<li>'. t('The string \'KEEP\'. This will constrain the aspect ratio to that of the original image.') .'</li>';
   $description .= '<li>'. t('The string \'CROP\'. This will constrain the aspect ratio to the dimensions set above.') .'</li></ul>';
   $description .= t('Leave blank for no aspect ratio constraints.');
-    
+
   $form['aspect'] = array(
     '#type' => 'textfield',
     '#title' => t('Aspect ratio'),
