@@ -118,14 +118,14 @@ function imagecrop_settings() {
   if (module_exists('thickbox')) {
     $popups['thickbox'] = t('Thickbox');
   }
-  
+
   $form['imagecrop_popup'] = array(
     '#type' => 'radios',
     '#title' => t('Popup window type'),
     '#default_value' => variable_get('imagecrop_popup', 'basic'),
     '#options' => $popups,
   );
-  
+
   $form['imagecrop_popup_width'] = array(
     '#type' => 'textfield',
     '#title' => t('Popup window width'),
@@ -133,7 +133,7 @@ function imagecrop_settings() {
     '#size' => 4,
     '#field_suffix' => 'pixels',
   );
-  
+
   $form['imagecrop_popup_height'] = array(
     '#type' => 'textfield',
     '#title' => t('Popup window height'),
@@ -141,7 +141,7 @@ function imagecrop_settings() {
     '#size' => 4,
     '#field_suffix' => 'pixels',
   );
-  
+
   $form['imagecrop_scale_step'] = array(
     '#type' => 'textfield',
     '#title' => t('Step size for scale dropdown'),
@@ -149,7 +149,7 @@ function imagecrop_settings() {
     '#size' => 4,
     '#field_suffix' => 'pixels',
   );
-  
+
   // drupal message if no action is found with javascript_crop
   if (imagecrop_action_exists() == FALSE) {
     drupal_set_message(t('No preset is found with the javascript_crop action so far. If you want to take advantage of this module, you will need to create at least one preset with that action.'));
@@ -294,7 +294,7 @@ function imagecrop_widget_form($widget) {
       '#value' => t('No preset is found with the javascript_crop action so far. If you want to take advantage of this module, you will need to create at least one preset with that action.'),
     );
   }
-    
+
   return $form;
 }
 
@@ -335,7 +335,7 @@ function imagecrop_process($element) {
   if (!user_access('crop images with toolbox')) {
     return $element;
   }
-  
+
   // Bail out of imagecrop is not enabled on this field.
   if (!$field['widget']['imagecrop']) {
     return $element;
@@ -345,7 +345,7 @@ function imagecrop_process($element) {
   if (empty($imagecache_presets)) {
     return $element;
   }
-    
+
   $element['imagecrop'] = array(
     '#type' => 'markup',
     '#widget' => $field['widget'],
@@ -413,7 +413,7 @@ function imagecrop_linkitem($fid, $module = '', $element = '') {
   $popup = variable_get('imagecrop_popup', 'basic');
   $width = variable_get('imagecrop_popup_width', 700);
   $height = variable_get('imagecrop_popup_height', 600);
-  
+
   $module = $module ? ('/0/'. $module) : '';
   $field = $element['#field_name'] ? ('/'. $element['#field_name']) : '';
   $node_type = $element['#type_name'] ? ('/'. $element['#type_name']) : '';
@@ -473,7 +473,7 @@ function imagecrop_docrop($fid, $presetid, $module = '', $field = '', $node_type
       // add jquery ui
       if ($file->resizable) {
         jquery_ui_add(array('ui.resizable', 'ui.draggable', 'effects.scale'));
-        
+
         // set aspect ration if needed
         if ($file->aspect) {
           if (is_numeric($file->aspect)) {
@@ -502,7 +502,7 @@ function imagecrop_docrop($fid, $presetid, $module = '', $field = '', $node_type
         $url = file_create_url($file->dst);
         $url .= strstr($url, '?')? '&time='. time() : '?time='. time();
         $output = theme('presettabs', $presets, $fid, $presetid, $module, $field, $node_type);
-        $output .= '<div id="imagecrop_help">'. t('To save the selected crop area, click the Save button.') .'</div>';
+        $output .= '<div id="imagecrop_help">'. t("Resize image if needed, then select a crop area. Click 'Crop image thumbnail' to save your crop area.<br/>After that close the window and save your node form.") .'</div>';
         $output .= theme('imagecrop', $url, $width, $height, $file->resizable);
         $output .= drupal_get_form('imageoffsets', $file->xoffset, $file->yoffset, $file->crop_width, $file->crop_height, $presetid, $fid, $module, $field, $node_type, $file->orig_width, $file->orig_height, $file->scale);
       }
@@ -544,7 +544,7 @@ function imageoffsets(&$form_state, $xoffset, $yoffset, $crop_width, $crop_heigh
 
   $form['submit'] = array(
     '#type' => 'submit',
-    '#value' => t('Save'),
+    '#value' => t('Crop image thumbnail'),
     '#prefix' => '<table id="imagecrop_table_actions"><tr><td>',
     '#suffix' => '</td>',
   );
@@ -556,6 +556,7 @@ function imageoffsets(&$form_state, $xoffset, $yoffset, $crop_width, $crop_heigh
     '#suffix' => '</td></tr></table>',
     '#attributes' => array('onchange' => "$('#imagecrop-throbber').addClass('show'); $('#edit-scaledown').click();"),
   );
+
   $form['scaledown'] = array(
     '#type' => 'submit',
     '#value' => t('Scale image'),
@@ -612,20 +613,26 @@ function imageoffsets(&$form_state, $xoffset, $yoffset, $crop_width, $crop_heigh
  * @param $form_values submitted values of the imageoffsets form
  */
 function imageoffsets_submit($form, &$form_state) {
+
   if ($form_state['values']['op'] == t('Scale image')) {
     $form_state['values']['image-crop-x'] = 0;
     $form_state['values']['image-crop-y'] = 0;
   }
+
   $module = (!empty($form_state['values']['module'])) ? '/'. $form_state['values']['module'] : '';
   $field = (!empty($form_state['values']['field'])) ? '/'. $form_state['values']['field'] : '';
   $node_type = (!empty($form_state['values']['node_type'])) ? '/'. $form_state['values']['node_type'] : '';
   $reference = $form_state['values']['module'] == 'node_images' ? 'node_images' : 'files';
   db_query("DELETE FROM {imagecrop} WHERE fid=%d AND presetid=%d AND reference = '%s'", $form_state['values']['fid'], $form_state['values']['presetid'], $reference);
   db_query("INSERT INTO {imagecrop} VALUES (%d,%d,'%s',%d,%d,%d,%d,'%s')", $form_state['values']['fid'], $form_state['values']['presetid'], $reference, $form_state['values']['image-crop-x'], $form_state['values']['image-crop-y'], $form_state['values']['image-crop-width'], $form_state['values']['image-crop-height'], $form_state['values']['scaling']);
-  if ($form_state['values']['op'] == t('Scale image'))
+
+  if ($form_state['values']['op'] == t('Scale image')) {
     drupal_goto('imagecrop/docrop/'. $form_state['values']['fid'] .'/'. $form_state['values']['presetid'] . $module . $field . $node_type);
-  else
+  }
+  else {
     drupal_goto('imagecrop/showcrop/'. $form_state['values']['fid'] .'/'. $form_state['values']['presetid'] . $module . $field . $node_type);
+  }
+
 }
 
 
@@ -688,7 +695,7 @@ function return_presets($presetid, $module = '', $field = '', $node_type = '') {
       }
     }
   }
-  
+
   if (!isset($presets['presetid'])) {
     $presets['presetid'] = $presets['tabs'][0]['id'];
   }
@@ -724,11 +731,11 @@ function create_image_object($fid, $presetid, $module = '', $cutoff = FALSE) {
           unset($preset['actions'][$key]);
         }
       }
-      
+
       if ($aspect == 'CROP') {
         $aspect = $crop_width / $crop_height;
       }
-      
+
       // see if we have stored values allready for this file
       $file->xoffset = 0;
       $file->yoffset = 0;
@@ -823,7 +830,7 @@ function _imagecrop_file_load($fid, $module) {
  */
 function theme_imagecrop($url, $width, $height, $resize = 0) {
   $output = '
-    <div style="margin-left: 3px;"><div class="imagefield-crop-wrapper" id="imagefield-crop-wrapper" style="position: absolute; margin-top:60px; width: '. $width .'px; height: '. $height .'px;">
+    <div style="margin-left: 3px;"><div class="imagefield-crop-wrapper" id="imagefield-crop-wrapper" style="position: absolute; margin-top: 45px; width: '. $width .'px; height: '. $height .'px;">
       <div id="image-crop-container" style="background-image: url(\''. $url .'\'); width:'. $width  .'px; height:'. $height  .'px;"></div>
       <div id="resizeMe" style="background-image: url(\''. $url .'\'); width:'. $width  .'px; height:'. $height  .'px; top: 20px;">';
   $output .= '</div></div></div><div style="clear:both;"></div>';
@@ -863,7 +870,7 @@ function theme_presettabs($presets, $fid, $presetid, $module = '', $field = '', 
     $url = 'imagecrop/showcrop/'. $fid .'/'. $value['id'] . $module . $field . $node_type;
     $tab_output .= '<span class="'. $class .'">'. l($value['name'], $url) .'</span>';
   }
-  $output = '<div id="imagecrop_presettabs">'. t('Image presets &raquo;') .' '. $tab_output .'</div>';
+  $output = '<div id="imagecrop_presettabs">'. t('Select a preset to crop &raquo;') .' '. $tab_output .'</div>';
   return $output;
 }
 
