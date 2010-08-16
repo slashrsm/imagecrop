@@ -6,6 +6,7 @@
  */
 
 $(document).ready(function(){
+
 	if ($('#resizeMe').resizable) {	
 	
 	  $('#resizeMe').resizable({
@@ -43,6 +44,8 @@ $(document).ready(function(){
 	});
 	
 	$('#image-crop-container').css({ opacity: 0.5 });
+	$('#resizeMe').css({ position : 'absolute' });
+	
     var leftpos = $('#edit-image-crop-x').val();
     var toppos = $('#edit-image-crop-y').val();
     $("#resizeMe").css({backgroundPosition: '-'+ leftpos + 'px -'+ toppos +'px'});
@@ -50,4 +53,5 @@ $(document).ready(function(){
     $("#resizeMe").height($('#edit-image-crop-height').val() + 'px');
     $("#resizeMe").css({top: $('#edit-image-crop-y').val() +'px' });
     $("#resizeMe").css({left: $('#edit-image-crop-x').val() +'px' });
+    
 });
