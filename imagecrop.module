@@ -13,7 +13,7 @@
  * Implementation of hook_perm().
  */
 function imagecrop_perm() {
-  return array('crop images with toolbox', 'administer imagecrop');
+  return array('crop any image with toolbox', 'crop images with toolbox', 'administer imagecrop');
 }
 
 /**
@@ -264,7 +264,6 @@ function imagecrop_widget_settings() {
     'imagecrop_presets',
   );
 }
-
 
 /**
  * Configuration form for editing Imagecrop settings for a field instance.
@@ -856,7 +855,7 @@ function _imagecrop_file_load($fid, $module) {
     $filemime = array('image/jpeg', 'image/gif', 'image/png', 'image/pjpeg');
     if (!in_array($file->filemime, $filemime)) return FALSE;
     // access denied if current user hasn't enough permissions
-    if (!user_access('administer nodes') && $user->uid != $file->uid) {
+    if (!user_access('crop any image with toolbox') && !user_access('administer nodes') && $user->uid != $file->uid) {
       drupal_access_denied();
       exit();
     }
