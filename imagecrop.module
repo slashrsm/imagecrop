@@ -555,7 +555,7 @@ function imagecrop_docrop($fid, $presetid, $module = '', $field = '', $node_type
         $output = theme('presettabs', $presets, $fid, $presetid, $module, $field, $node_type);
         $output .= '<div id="imagecrop_help">'. t("Resize image if needed, then select a crop area. Click 'Crop image thumbnail' to save your crop area.<br/>After that close the window and save your node form.") .'</div>';
         $output .= theme('imagecrop', $url, $width, $height, $file->resizable);
-        $output .= drupal_get_form('imageoffsets', $file->xoffset, $file->yoffset, $file->crop_width, $file->crop_height, $presetid, $fid, $module, $field, $node_type, $file->orig_width, $file->orig_height, $file->scale, $file->preset_destination);
+        $output .= drupal_get_form('imageoffsets_form', $file->xoffset, $file->yoffset, $file->crop_width, $file->crop_height, $presetid, $fid, $module, $field, $node_type, $file->orig_width, $file->orig_height, $file->scale, $file->preset_destination);
       }
       else {
         $output .= '<div id="imagecrop_info" class="imagecrop_error">'. t('The crop toolbox is too big for this image.') .' <a href="javascript:history.back();"><span class="white">'. t('Back') .'</span></a></div>';
@@ -588,14 +588,17 @@ function imagecrop_docrop($fid, $presetid, $module = '', $field = '', $node_type
  * @param $preset_destination destination of the imagecache to save
  * @return array $form
  */
-function imageoffsets(&$form_state, $xoffset, $yoffset, $crop_width, $crop_height, $presetid, $fid, $module, $field, $node_type, $width, $height, $scale, $preset_destination) {
+function imageoffsets_form(&$form_state, $xoffset, $yoffset, $crop_width, $crop_height, $presetid, $fid, $module, $field, $node_type, $width, $height, $scale, $preset_destination) {
 
   $step = variable_get('imagecrop_scale_step', 50);
   $aspect = $width / $height;
+
+  $original_width = $width;
   $options['original'] = $width .' x '. $height .'px (Original)';
   $width -= $step;
+
   while ($width > $crop_width && ($width / $aspect) > $crop_height) {
-    $options[$width] = $width .' x '. intval($width / $aspect) .'px';
+    $options[$width] = $width .' x '. intval($width / $aspect) .'px ('. round((($width / $original_width) * 100), 2) .'%)';
     $width -= $step;
   }
 
@@ -674,7 +677,7 @@ function imageoffsets(&$form_state, $xoffset, $yoffset, $crop_width, $crop_heigh
  * @param $form_id id of the form
  * @param $form_values submitted values of the imageoffsets form
  */
-function imageoffsets_submit($form, &$form_state) {
+function imageoffsets_form_submit($form, &$form_state) {
 
   if ($form_state['values']['op'] == t('Scale image')) {
     $form_state['values']['image-crop-x'] = 0;
@@ -686,8 +689,8 @@ function imageoffsets_submit($form, &$form_state) {
   $field = (!empty($form_state['values']['field'])) ? '/'. $form_state['values']['field'] : '';
   $node_type = (!empty($form_state['values']['node_type'])) ? '/'. $form_state['values']['node_type'] : '';
   $reference = $form_state['values']['module'] == 'node_images' ? 'node_images' : 'files';
-  db_query("DELETE FROM {imagecrop} WHERE fid=%d AND presetid=%d AND reference = '%s'", $form_state['values']['fid'], $form_state['values']['presetid'], $reference);
-  db_query("INSERT INTO {imagecrop} VALUES (%d,%d,'%s',%d,%d,%d,%d,'%s')", $form_state['values']['fid'], $form_state['values']['presetid'], $reference, $form_state['values']['image-crop-x'], $form_state['values']['image-crop-y'], $form_state['values']['image-crop-width'], $form_state['values']['image-crop-height'], $form_state['values']['scaling']);
+  db_query("DELETE FROM {imagecrop} WHERE fid = %d AND presetid = %d AND reference = '%s'", $form_state['values']['fid'], $form_state['values']['presetid'], $reference);
+  db_query("INSERT INTO {imagecrop} VALUES (%d, %d, '%s', %d, %d, %d, %d, '%s')", $form_state['values']['fid'], $form_state['values']['presetid'], $reference, $form_state['values']['image-crop-x'], $form_state['values']['image-crop-y'], $form_state['values']['image-crop-width'], $form_state['values']['image-crop-height'], $form_state['values']['scaling']);
 
   if ($form_state['values']['op'] == t('Scale image')) {
     drupal_goto('imagecrop/docrop/'. $form_state['values']['fid'] .'/'. $form_state['values']['presetid'] . $module . $field . $node_type);
