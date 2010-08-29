@@ -117,34 +117,34 @@ body { margin: 0 !important; padding: 0; background: none !important; }
   cursor: e-resize;
 }
 
-.ui-resizable-se {
-  bottom: -5px;
-  right: -5px;
+.ui-resizable-n,
+.ui-resizable-ne,
+.ui-resizable-nw {
+  top: -5px;
 }
 
+.ui-resizable-ne,
+.ui-resizable-se,
 .ui-resizable-e {
   right: -5px;
 }
 
+.ui-resizable-se,
+.ui-resizable-sw,
 .ui-resizable-s {
   bottom: -5px;
 }
 
+.ui-resizable-nw,
+.ui-resizable-w,
 .ui-resizable-sw {
-  bottom: 0;
-  left: 0;
-}
-
-.ui-resizable-ne {
-  right: 0;
-  top: 0;
+  left: -5px;
 }
 
 .ui-resizable-se,
 .ui-resizable-nw {
   cursor: nw-resize;
 }
-
 
 .ui-resizable-ne,
 .ui-resizable-sw {
