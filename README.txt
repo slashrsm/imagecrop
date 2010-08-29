@@ -3,7 +3,7 @@ $Id$
 Description
 -----------
 This module makes a javascript toolbox action available thanks to the power
-of Imagecache 2. It can currently 'hook' into several modules by adding
+of Imagecache. It can currently 'hook' into several modules by adding
 a 'javascript crop' link on the edit forms of supported modules and/or fields. 
 The popup window will display all available imagecache presets with
 a javascript crop action. In your theming you can use the imagecache theme function with
@@ -23,7 +23,7 @@ imagefield : On node edit form. Previews & multiple values not supported (yet).
 
 Installation
 ------------
-You need imagecache 2, imageapi and jquery_ui
+You need imagecache, imageapi and jquery_ui
 After you enable the module, you can go to admin/settings/imagecrop and enable 
 support for modules & fields to display a link.
 
