@@ -894,6 +894,7 @@ function create_image_object($fid, $presetid, $module = '', $cutoff = FALSE) {
       // original size after first imagecache actions
       $src = $file->filepath;
       $dst = imagecache_create_path($cutoff ? $preset['presetname'] : '_imagecrop_temp', $file->filepath);
+
       file_delete($dst);
       imagecache_build_derivative($preset['actions'], $src, $dst);
 
@@ -920,9 +921,6 @@ function create_image_object($fid, $presetid, $module = '', $cutoff = FALSE) {
     // the javascript_crop action
     $GLOBALS['imagecrop_presetid'] = $presetid;
 
-    // flush first, then generate the final preset.
-    file_delete($dst);
-    imagecache_build_derivative($preset['actions'], $src, $dst);
     return $file;
 
   }
