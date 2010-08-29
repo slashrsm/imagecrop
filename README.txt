@@ -35,8 +35,13 @@ which do not exist anymore, so make sure cron is running.
 
 Extra Coolness
 --------------
-If you have the thickbox module installed, the popup isn't used but the thickbox overlay.
-
+Imagecrop supports several modal modules to open your popup with.
+Supported modules are:
+  - thickbox
+  - colorbox (make sure you included node/*/edit in the module settings)
+  - modalframe
+  - shadowbox (make sure you included node/*/edit in the module settings)
+  
 Specific installation instructions for node_images module
 ---------------------------------------------------------
 You need to paste the code underneath in the template.php file of your theme.

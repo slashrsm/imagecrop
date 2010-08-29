@@ -78,6 +78,7 @@ function imagecrop_imagecrop_popups() {
     'imagecrop_thickbox' => t('Thickbox'),
     'imagecrop_modalframe' => t('Modalframe'),
     'imagecrop_colorbox' => t('Colorbox'),  
+    'imagecrop_shadowbox' => t('Shadowbox'),    
   );  
   
 }
@@ -805,6 +806,19 @@ function imagecrop_modalframe($url, $width, $height) {
   modalframe_parent_js();
   $modalFrame = "Drupal.modalFrame.open({url:'$url',width:'$width',height:'$height'});";  
   return '[<a href="javascript:;" onclick="'. $modalFrame .'">'. t('Crop this image') .'</a>]';
+  
+}
+
+/**
+ * Render the imagecrop links for shadowbox.
+ */
+function imagecrop_shadowbox($url, $width, $height) {
+  
+  if (!module_exists('shadowbox')) {
+    return FALSE;
+  }
+  
+  return '[<a rel="shadowbox;height='.$height.';width='.$width.';player=iframe" href="'. $url .'">'. t('Crop this image') .'</a>]';
   
 }
 
