@@ -77,6 +77,7 @@ function imagecrop_imagecrop_popups() {
   return array(
     'imagecrop_thickbox' => t('Thickbox'),
     'imagecrop_modalframe' => t('Modalframe'),
+    'imagecrop_colorbox' => t('Colorbox'),  
   );  
   
 }
@@ -775,6 +776,19 @@ function imagecrop_thickbox($url, $width, $height) {
   }
   
   return '[<a class="thickbox" href="'. $url .'?KeepThis=true&TB_iframe=true&height='. $height .'&width='. $width .'">'. t('Crop this image') .'</a>]';
+  
+}
+
+/**
+ * Render the imagecrop links for colorbox.
+ */
+function imagecrop_colorbox($url, $width, $height) {
+  
+  if (!module_exists('colorbox')) {
+    return FALSE;
+  }
+  
+  return '[<a class="colorbox-load" href="'. $url .'?iframe=true&height='. $height .'&width='. $width .'">'. t('Crop this image') .'</a>]';
   
 }
 
