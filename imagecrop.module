@@ -465,13 +465,6 @@ function imagecrop_linkitem($fid, $module = '', $element = '') {
     return '[<a href="javascript:;" onclick="window.open(\''. $url .'\',\'imagecrop\',\'menubar=0,scrollbars=1,resizable=1,width='. $width .',height='. $height .'\');">'. t('Crop this image') .'</a>]';  
   }
   
-/*  foreach (module_implements('imagecrop_popups') as $prefix) {
-    $all_fields = $function($type_name, $build_mode, $extra);
-  }
-  if ($popup == 'thickbox' && module_exists('thickbox')) {
-    return '[<a class="thickbox" href="'. $url .'?KeepThis=true&TB_iframe=true&height='. $height .'&width='. $width .'">'. t('Crop this image') .'</a>]';
-  }*/
-  
 }
 
 /**
