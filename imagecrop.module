@@ -5,7 +5,7 @@
  * @file
  * Provides a javascript toolbox through an imagecache action.
  *
- * @author Kristof De Jaeger - http://drupal.org/user/107403 - http://realize.be
+ * @author Zuuperman - http://drupal.org/user/361625 - http://www.menhir.be
  * @version this is the drupal 6.x version
  */
 
@@ -70,13 +70,27 @@ function imagecrop_theme_registry_alter(&$theme_registry) {
 }
 
 /**
+ * Implementation of hook_imagecrop_popups().
+ */
+function imagecrop_imagecrop_popups() {
+  
+  return array(
+    'imagecrop_thickbox' => t('Thickbox'),
+    'imagecrop_modalframe' => t('Modalframe'),
+  );  
+  
+}
+
+/**
  * Imagecrop settings page
  */
 function imagecrop_settings() {
+  
   // hook into image module
   if (module_exists('image')) {
     $options_modules['image'] = t('Hook into image module');
   }
+  
   // hook into node_images module
   if (module_exists('node_images')) {
     $result = db_query("SELECT name,value FROM {variable} WHERE name LIKE 'node_images_position_%'");
@@ -90,6 +104,7 @@ function imagecrop_settings() {
       }
     }
   }
+  
   // show checkboxes if options are not empty
   if (!empty($options_modules)) {
     $form['imagecrop_modules'] = array(
@@ -114,16 +129,22 @@ function imagecrop_settings() {
     );
   }
 
-  $popups = array('basic' => t('Basic popup window'));
-  if (module_exists('thickbox')) {
-    $popups['thickbox'] = t('Thickbox');
+  $all_popups = array('basic' => t('Basic popup window'));
+  foreach (module_implements('imagecrop_popups') as $module_name) {
+    
+    $function = $module_name .'_imagecrop_popups';
+    $popups = $function();
+    if (is_array($popups)) {
+      $all_popups += $popups;
+    }
+    
   }
 
   $form['imagecrop_popup'] = array(
     '#type' => 'radios',
     '#title' => t('Popup window type'),
     '#default_value' => variable_get('imagecrop_popup', 'basic'),
-    '#options' => $popups,
+    '#options' => $all_popups,
   );
 
   $form['imagecrop_popup_width'] = array(
@@ -154,7 +175,9 @@ function imagecrop_settings() {
   if (imagecrop_action_exists() == FALSE) {
     drupal_set_message(t('No preset is found with the javascript_crop action so far. If you want to take advantage of this module, you will need to create at least one preset with that action.'));
   }
+  
   return system_settings_form($form);
+  
 }
 
 /**
@@ -309,6 +332,7 @@ function imagecrop_widget_form($widget) {
  * Get a list of styles suitable for an #options array.
  */
 function imagecrop_presets_list() {
+  
   $presets = array();
   foreach (imagecache_presets() as $preset) {
     foreach ($preset['actions'] as $action) {
@@ -318,18 +342,21 @@ function imagecrop_presets_list() {
     }
   }
   return $presets;
+  
 }
 
 /**
  * Implementation of hook_elements().
  */
 function imagecrop_elements() {
+  
   // Add our function to the form element declared by imagefield.
   // TODO: Do the same thing for the image and node_images modules.
   $elements = array();
   $elements['imagefield_widget'] = array('#after_build' => array('imagecrop_process'));
 
   return $elements;
+  
 }
 
 /**
@@ -419,7 +446,8 @@ function imagecrop_formitem($fid, $weight = 0) {
  * @return $form form markup
  */
 function imagecrop_linkitem($fid, $module = '', $element = '') {
-  $popup = variable_get('imagecrop_popup', 'basic');
+  
+  $popup_link_function = variable_get('imagecrop_popup', 'basic');
   $width = variable_get('imagecrop_popup_width', 700);
   $height = variable_get('imagecrop_popup_height', 600);
 
@@ -427,13 +455,21 @@ function imagecrop_linkitem($fid, $module = '', $element = '') {
   $field = $element['#field_name'] ? ('/'. $element['#field_name']) : '';
   $node_type = $element['#type_name'] ? ('/'. $element['#type_name']) : '';
   $url = url('imagecrop/showcrop/'. $fid . $module . $field . $node_type, array('absolute' => TRUE));
-
-  if ($popup == 'thickbox' && module_exists('thickbox')) {
-    return '[<a class="thickbox" href="'. $url .'?KeepThis=true&TB_iframe=true&height='. $height .'&width='. $width .'">'. t('Crop this image') .'</a>]';
+  
+  if ($popup != 'basic' && function_exists($popup_link_function) && $link = $popup_link_function($url, $width, $height)) {
+    return $link;
   }
   else {
-    return '[<a href="javascript:;" onclick="window.open(\''. $url .'\',\'imagecrop\',\'menubar=0,scrollbars=1,resizable=1,width='. $width .',height='. $height .'\');">'. t('Crop this image') .'</a>]';
+    return '[<a href="javascript:;" onclick="window.open(\''. $url .'\',\'imagecrop\',\'menubar=0,scrollbars=1,resizable=1,width='. $width .',height='. $height .'\');">'. t('Crop this image') .'</a>]';  
   }
+  
+/*  foreach (module_implements('imagecrop_popups') as $prefix) {
+    $all_fields = $function($type_name, $build_mode, $extra);
+  }
+  if ($popup == 'thickbox' && module_exists('thickbox')) {
+    return '[<a class="thickbox" href="'. $url .'?KeepThis=true&TB_iframe=true&height='. $height .'&width='. $width .'">'. t('Crop this image') .'</a>]';
+  }*/
+  
 }
 
 /**
@@ -727,6 +763,35 @@ function return_presets($presetid, $module = '', $field = '', $node_type = '') {
     $presets['presetid'] = $presets['tabs'][0]['id'];
   }
   return $presets;
+}
+
+/**
+ * Render the imagecrop links for thickbox.
+ */
+function imagecrop_thickbox($url, $width, $height) {
+  
+  if (!module_exists('thickbox')) {
+    return FALSE;
+  }
+  
+  return '[<a class="thickbox" href="'. $url .'?KeepThis=true&TB_iframe=true&height='. $height .'&width='. $width .'">'. t('Crop this image') .'</a>]';
+  
+}
+
+/**
+ * Render the imagecrop links for modalframe.
+ */
+function imagecrop_modalframe($url, $width, $height) {
+  
+  if (!module_exists('modalframe')) {
+    return FALSE;
+  }
+  
+  // Send the Modal Frame javascript for parent windows to the page.
+  modalframe_parent_js();
+  $modalFrame = "Drupal.modalFrame.open({url:'$url',width:'$width',height:'$height'});";  
+  return '[<a href="javascript:;" onclick="'. $modalFrame .'">'. t('Crop this image') .'</a>]';
+  
 }
 
 /**
