@@ -712,6 +712,7 @@ function imageoffsets_form_submit($form, &$form_state) {
  * @return cropped version of chosen image
  */
 function imagecrop_showcrop($fid, $presetid = 0, $module = '', $field = '', $node_type = '') {
+  
   imagecrop_markup(FALSE, TRUE);
   if (imagecrop_action_exists() == TRUE) {
     $presets = return_presets($presetid, $module, $field, $node_type);
@@ -733,6 +734,7 @@ function imagecrop_showcrop($fid, $presetid = 0, $module = '', $field = '', $nod
   else {
     return '<div id="imagecrop_info"  class="imagecrop_error">'. t('No preset is found with the javascript_crop action so far. If you want to take advantage of this module, you will need to create at least one preset with that action.') .'</div>';
   }
+  
 }
 
 /**
@@ -863,13 +865,16 @@ function create_image_object($fid, $presetid, $module = '', $cutoff = FALSE) {
         $aspect = $crop_width / $crop_height;
       }
 
-      // see if we have stored values allready for this file
+      // see if we have stored values already for this file
       $file->xoffset = 0;
       $file->yoffset = 0;
       $file->crop_width = $crop_width;
       $file->crop_height = $crop_height;
       $reference = $module == 'node_images' ? 'node_images' : 'files';
-      $row = db_fetch_object(db_query("SELECT xoffset,yoffset,width,height,scale FROM {imagecrop} ic where ic.fid = %d AND ic.presetid = %d AND ic.reference = '%s'", $fid, $presetid, $reference));
+      $row = db_fetch_object(db_query(
+        "SELECT xoffset, yoffset, width, height, scale
+            FROM {imagecrop} ic
+         WHERE ic.fid = %d AND ic.presetid = %d AND ic.reference = '%s'", $fid, $presetid, $reference));
       $firstscale = FALSE;
       if (!empty($row)) {
         $file->xoffset = $row->xoffset;
@@ -879,6 +884,7 @@ function create_image_object($fid, $presetid, $module = '', $cutoff = FALSE) {
         $file->scale = $row->scale;
         $firstscale = TRUE;
       }
+      
       // resizable or not
       $file->resizable = $resizable;
 
