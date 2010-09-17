@@ -1009,17 +1009,33 @@ function theme_imagecrop_result($presetname, $filepath, $alt = '', $attributes =
  * @return $output html of the tabs
  */
 function theme_presettabs($presets, $fid, $presetid, $module = '', $field = '', $node_type = '') {
+
   $module = $module ? ('/'. $module) : '';
   $field = $field ? ('/'. $field) : '';
   $node_type = $node_type ? ('/'. $node_type) : '';
-  $tab_output = '';
+
+  $tabs[0] = array(
+    'data' => t('Select a preset to crop &raquo;'),
+    'class' => 'preset-label'
+  );
+
   foreach ($presets['tabs'] as $key => $value) {
-    $class = ($value['id'] == $presetid) ? 'imagecrop_tab imagecrop_highlight' : 'imagecrop_tab ';
+
+    $key++;
+    $class = ($value['id'] == $presetid) ? 'imagecrop_highlight' : '';
     $url = 'imagecrop/showcrop/'. $fid .'/'. $value['id'] . $module . $field . $node_type;
-    $tab_output .= '<span class="'. $class .'">'. l($value['name'], $url) .'</span>';
+    $tabs[$key] = array(
+      'data' => l($value['name'], $url),
+    );
+
+    if ($value['id'] == $presetid) {
+      $tabs[$key]['class'] = 'active';
+    }
+
   }
-  $output = '<div id="imagecrop_presettabs">'. t('Select a preset to crop &raquo;') .' '. $tab_output .'</div>';
-  return $output;
+
+  return '<div id="imagecrop_presettabs">'. theme('item_list', $tabs, NULL, 'ul', array('id' => 'preset-tabs')) .'<br style="clear: both;"/></div>';
+
 }
 
 /**
