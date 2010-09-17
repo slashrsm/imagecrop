@@ -458,7 +458,7 @@ function imagecrop_linkitem($fid, $module = '', $element = '') {
   $node_type = $element['#type_name'] ? ('/'. $element['#type_name']) : '';
   $url = url('imagecrop/showcrop/'. $fid . $module . $field . $node_type, array('absolute' => TRUE));
 
-  if ($popup != 'basic' && function_exists($popup_link_function) && $link = $popup_link_function($url, $width, $height)) {
+  if ($popup_link_function != 'basic' && function_exists($popup_link_function) && $link = $popup_link_function($url, $width, $height)) {
     return $link;
   }
   else {
