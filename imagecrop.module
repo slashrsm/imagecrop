@@ -74,12 +74,25 @@ function imagecrop_theme_registry_alter(&$theme_registry) {
  */
 function imagecrop_imagecrop_popups() {
 
-  return array(
-    'imagecrop_thickbox' => t('Thickbox'),
-    'imagecrop_modalframe' => t('Modalframe'),
-    'imagecrop_colorbox' => t('Colorbox'),
-    'imagecrop_shadowbox' => t('Shadowbox'),
-  );
+  $popups = array();
+
+  if (module_exists('thickbox')) {
+    $popups['imagecrop_thickbox'] = t('Thickbox');
+  }
+
+  if (module_exists('modalframe')) {
+    $popups['imagecrop_modalframe'] = t('Modalframe');
+  }
+
+  if (module_exists('colorbox')) {
+    $popups['imagecrop_colorbox'] = t('Colorbox');
+  }
+
+  if (module_exists('shadowbox')) {
+    $popups['imagecrop_shadowbox'] = t('Shadowbox');
+  }
+
+  return $popups;
 
 }
 
