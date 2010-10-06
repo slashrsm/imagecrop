@@ -899,7 +899,8 @@ function create_image_object($fid, $presetid, $module = '', $cutoff = FALSE) {
 
       // start with original image size for upcoming actions.
       $src = $file->filepath;
-      $dst = imagecache_create_path($cutoff ? $preset['presetname'] : '_imagecrop_temp', $file->filepath);
+      $download_method = variable_get('file_downloads', FILE_DOWNLOADS_PUBLIC);
+      $dst = imagecache_create_path(($cutoff || ($download_method == FILE_DOWNLOADS_PRIVATE)) ? $preset['presetname'] : '_imagecrop_temp', $file->filepath);
       file_delete($dst);
       imagecache_build_derivative($preset['actions'], $src, $dst);
 
