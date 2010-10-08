@@ -254,25 +254,6 @@ function imagecrop_imagecache_actions() {
 }
 
 /**
- * Helper function to check if a preset exists with the imagecrop_javascript action.
- * Needed to determine if we have to display our javascript crop link.
- *
- * @return true or false
- */
-function imagecrop_action_exists() {
-
-  static $result = FALSE;
-
-  if ($result !== FALSE) {
-    return $result;
-  }
-
-  $result = db_result(db_query("SELECT actionid FROM {imagecache_action} WHERE action = 'imagecrop_javascript'"));
-  return $result;
-
-}
-
-/**
  * Implementation of hook_widget_settings_alter().
  */
 function imagecrop_widget_settings_alter(&$settings, $op, $widget) {
@@ -418,26 +399,39 @@ function imagecrop_process($element) {
  */
 function imagecrop_form_alter(&$form, $form_state, $form_id) {
 
-  // do we have presets with javascript_crop ?
-  $exists = imagecrop_action_exists();
-  // user access
   $access = user_access('crop images with toolbox');
-  // get array of available modules
-  $hooks = variable_get('imagecrop_modules', array());
+
+  if ($access) {
+    // get array of available modules
+    $hooks = variable_get('imagecrop_modules', array());
+  }
 
   // hook into image module
-  if (isset($form['images']['thumbnail']) && module_exists('image') && $exists != FALSE && $access && in_array('image', $hooks)) {
+  if ($access && isset($form['images']['thumbnail']) && module_exists('image') && in_array('image', $hooks)) {
+
+    // do we have presets with javascript_crop ?
+    if (count(return_presets() == 0)) {
+      return;
+    }
+
     // it's anonying we have to make a database call to get the right fid.
     $fid = db_result(db_query("SELECT i.fid FROM {image} i LEFT JOIN {files} f on f.fid = i.fid WHERE i.nid=%d AND filepath='%s' AND filename = '_original'", $form['nid']['#value'], $form['images']['_original']['#value']));
     $form['croptab'] = imagecrop_formitem($fid, -10);
   }
 
   // hook into node_images module
-  if ($form_id == '_node_images_list' && module_exists('node_images') && $exists != FALSE && $access) {
+  if ($access && $form_id == '_node_images_list' && module_exists('node_images') && $access) {
+
+    // do we have presets with javascript_crop ?
+    if (count(return_presets() == 0)) {
+      return;
+    }
+
     $type = $form['#parameters'][1]->type;
     if (variable_get('node_images_position_'. $type, 'hide') != 'hide' && in_array('node_images_position_'. $type, $hooks)) {
       $form['imagecrop'] = array('#type' => 'hidden', '#value' => '1');
     }
+
   }
 
 }
@@ -510,74 +504,71 @@ function imagecrop_find_imagefields($form, $fields) {
 function imagecrop_docrop($fid, $presetid, $module = '', $field = '', $node_type = '') {
 
   imagecrop_markup(TRUE, TRUE);
-  if (imagecrop_action_exists() == TRUE) {
+  $presets = return_presets($presetid, $module, $field, $node_type);
 
-    $presets = return_presets($presetid, $module, $field, $node_type);
-    $file = create_image_object($fid, $presetid, $module);
-
-    if ($file != FALSE) {
-
-      $size_warning = FALSE;
-      // get size of temporary image
-      $size = getimagesize($file->dst);
-      $width = $size[0];
-      $height = $size[1];
-      // return warning message if crop toolbox is too big and not resizable.
-      if (($width < $file->crop_width || $height < $file->crop_height) && $file->resizable == 0) {
-        $size_warning = FALSE;
-      }
-
-      // add jquery ui
-      if ($file->resizable) {
-        jquery_ui_add(array('ui.resizable', 'ui.draggable', 'effects.scale'));
-
-        // set aspect ration if needed
-        if ($file->aspect) {
-          if (is_numeric($file->aspect)) {
-            drupal_add_js(array('aspect' => $file->aspect), 'setting');
-            // set the initial aspect ratio of the crop region to the ratio chosen in the preset
-            $file->crop_width = round($file->crop_height * $file->aspect);
-          }
-          elseif ($file->aspect == 'KEEP') {
-            drupal_add_js(array('aspect' => TRUE), 'setting');
-            // set the initial aspect ratio of the crop region to the original image aspect ratio
-            $file->crop_width = round(($width * $file->crop_height) / $height);
-          }
-          elseif ($file->aspect == 'CROP') {
-            drupal_add_js(array('aspect' => TRUE), 'setting');
-            // set the initial aspect ratio of the crop region to the original image aspect ratio
-            $file->crop_width = round($width);
-          }
-        }
-      }
-      else {
-        jquery_ui_add(array('ui.draggable'));
-      }
-
-      // output
-      if ($size_warning == FALSE) {
-        $url = file_create_url($file->dst);
-        $url .= strstr($url, '?')? '&time='. time() : '?time='. time();
-        $output = theme('presettabs', $presets, $fid, $presetid, $module, $field, $node_type);
-        $output .= '<div id="imagecrop_help">'. t("Resize image if needed, then select a crop area. Click 'Crop image thumbnail' to save your crop area.<br/>After that close the window and save your node form.") .'</div>';
-        $output .= theme('imagecrop', $url, $width, $height, $file->resizable);
-        $output .= drupal_get_form('imageoffsets_form', $file->xoffset, $file->yoffset, $file->crop_width, $file->crop_height, $presetid, $fid, $module, $field, $node_type, $file->orig_width, $file->orig_height, $file->scale, $file->preset_destination);
-      }
-      else {
-        $output .= '<div id="imagecrop_info" class="imagecrop_error">'. t('The crop toolbox is too big for this image.') .' <a href="javascript:history.back();"><span class="white">'. t('Back') .'</span></a></div>';
-      }
-
-      return $output;
-
-    }
-    else {
-      return '<div id="imagecrop_info" class="imagecrop_error">'. t('Image to crop was not found.') .'</div>';
-    }
-
-  }
-  else {
+  // no presets found for imagecrop
+  if (count($presets) == 0) {
     return '<div id="imagecrop_info"  class="imagecrop_error">'. t('No preset is found with the javascript_crop action so far. If you want to take advantage of this module, you will need to create at least one preset with that action.') .'</div>';
   }
+
+  $file = create_image_object($fid, $presetid, $module);
+
+  // no image found
+  if (!$file) {
+    return '<div id="imagecrop_info" class="imagecrop_error">'. t('Image to crop was not found.') .'</div>';
+  }
+
+  $size_warning = FALSE;
+  // get size of temporary image
+  $size = getimagesize($file->dst);
+  $width = $size[0];
+  $height = $size[1];
+  // return warning message if crop toolbox is too big and not resizable.
+  if (($width < $file->crop_width || $height < $file->crop_height) && $file->resizable == 0) {
+    $size_warning = FALSE;
+  }
+
+  // add jquery ui
+  if ($file->resizable) {
+    jquery_ui_add(array('ui.resizable', 'ui.draggable', 'effects.scale'));
+
+    // set aspect ration if needed
+    if ($file->aspect) {
+      if (is_numeric($file->aspect)) {
+        drupal_add_js(array('aspect' => $file->aspect), 'setting');
+        // set the initial aspect ratio of the crop region to the ratio chosen in the preset
+        $file->crop_width = round($file->crop_height * $file->aspect);
+      }
+      elseif ($file->aspect == 'KEEP') {
+        drupal_add_js(array('aspect' => TRUE), 'setting');
+        // set the initial aspect ratio of the crop region to the original image aspect ratio
+        $file->crop_width = round(($width * $file->crop_height) / $height);
+      }
+      elseif ($file->aspect == 'CROP') {
+        drupal_add_js(array('aspect' => TRUE), 'setting');
+        // set the initial aspect ratio of the crop region to the original image aspect ratio
+        $file->crop_width = round($width);
+      }
+    }
+  }
+  else {
+    jquery_ui_add(array('ui.draggable'));
+  }
+
+  // output
+  if ($size_warning == FALSE) {
+    $url = file_create_url($file->dst);
+    $url .= strstr($url, '?')? '&time='. time() : '?time='. time();
+    $output = theme('presettabs', $presets, $fid, $presetid, $module, $field, $node_type);
+    $output .= '<div id="imagecrop_help">'. t("Resize image if needed, then select a crop area. Click 'Crop image thumbnail' to save your crop area.<br/>After that close the window and save your node form.") .'</div>';
+    $output .= theme('imagecrop', $url, $width, $height, $file->resizable);
+    $output .= drupal_get_form('imageoffsets_form', $file->xoffset, $file->yoffset, $file->crop_width, $file->crop_height, $presetid, $fid, $module, $field, $node_type, $file->orig_width, $file->orig_height, $file->scale, $file->preset_destination);
+  }
+  else {
+    $output .= '<div id="imagecrop_info" class="imagecrop_error">'. t('The crop toolbox is too big for this image.') .' <a href="javascript:history.back();"><span class="white">'. t('Back') .'</span></a></div>';
+  }
+
+  return $output;
 
 }
 
@@ -717,29 +708,29 @@ function imageoffsets_form_submit($form, &$form_state) {
  * @param $presetid id of preset
  * @return cropped version of chosen image
  */
-function imagecrop_showcrop($fid, $presetid = 0, $module = '', $field = '', $node_type = '') {
+function imagecrop_showcrop($fid, $presetid = '', $module = '', $field = '', $node_type = '') {
 
   imagecrop_markup(FALSE, TRUE);
-  if (imagecrop_action_exists() == TRUE) {
-    $presets = return_presets($presetid, $module, $field, $node_type);
-    $presetid = $presets['presetid'];
-    $file = create_image_object($fid, $presetid, $module, TRUE);
-    if ($file != FALSE) {
-      $output = theme('presettabs', $presets, $fid, $presetid, $module, $field, $node_type);
-      $module = (!empty($module)) ? '/'. $module : '';
-      $field = (!empty($field)) ? '/'. $field : '';
-      $node_type = (!empty($node_type)) ? '/'. $node_type : '';
-      $output .= '<div id="imagecrop_help">'. l(t('Click here to choose another crop area for this picture'), 'imagecrop/docrop/'. $fid .'/'. $presetid . $module . $field . $node_type) .'</div>';
-      $output .= theme('imagecrop_result', $file->presetname, $file->filepath);
-      return $output;
-    }
-    else {
-      return '<div id="imagecrop_info" class="imagecrop_error">'. t('Image to crop was not found.') .'</div>';
-    }
-  }
-  else {
+  $presets = return_presets($presetid, $module, $field, $node_type);
+
+  if (count($presets) == 0) {
     return '<div id="imagecrop_info"  class="imagecrop_error">'. t('No preset is found with the javascript_crop action so far. If you want to take advantage of this module, you will need to create at least one preset with that action.') .'</div>';
   }
+
+  $presetid = $presets['presetid'];
+  $file = create_image_object($fid, $presetid, $module, TRUE);
+
+  if (!$file) {
+    return '<div id="imagecrop_info" class="imagecrop_error">'. t('Image to crop was not found.') .'</div>';
+  }
+
+  $output = theme('presettabs', $presets, $fid, $presetid, $module, $field, $node_type);
+  $module = (!empty($module)) ? '/'. $module : '';
+  $field = (!empty($field)) ? '/'. $field : '';
+  $node_type = (!empty($node_type)) ? '/'. $node_type : '';
+  $output .= '<div id="imagecrop_help">'. l(t('Click here to choose another crop area for this picture'), 'imagecrop/docrop/'. $fid .'/'. $presetid . $module . $field . $node_type) .'</div>';
+  $output .= theme('imagecrop_result', $file->presetname, $file->filepath);
+  return $output;
 
 }
 
@@ -749,8 +740,10 @@ function imagecrop_showcrop($fid, $presetid = 0, $module = '', $field = '', $nod
  * @param $presetid id of preset
  * @return $presets array with presetid to load and list of all other possible presets
  */
-function return_presets($presetid, $module = '', $field = '', $node_type = '') {
+function return_presets($presetid = '', $module = '', $field = '', $node_type = '') {
+
   $filter = array();
+  // get possible presets for current imagefield
   if ($module == 'imagefield' && $field) {
     $element = content_fields($field, $node_type);
     if ($element['widget']['imagecrop']) {
@@ -772,10 +765,12 @@ function return_presets($presetid, $module = '', $field = '', $node_type = '') {
     }
   }
 
-  if (!isset($presets['presetid'])) {
+  if (!isset($presets['presetid']) && count($presets) > 0) {
     $presets['presetid'] = $presets['tabs'][0]['id'];
   }
+
   return $presets;
+
 }
 
 /**

@@ -82,20 +82,30 @@ function theme_imagecrop_javascript($element) {
  * @return false or true
  */
 function imagecrop_javascript_image(&$image, $data) {
+
   $presetid = '';
   // if a global presetid is been set, it meens the image is generated from the imagecrop module
   if (isset($GLOBALS['imagecrop_presetid'])) {
     $presetid = $GLOBALS['imagecrop_presetid'];
   }
-  // and if not, then we'll have to make a database call to get the id
+  // and if not, then get the id from list of all presets
   else {
+
     $args = explode('/', $_GET['q']);
     $key = array_search('imagecache', $args);
     if ($key != FALSE) {
       $key++;
       $presetname = $args[$key];
-      $presetid = db_result(db_query("SELECT presetid FROM {imagecache_preset} WHERE presetname = '%s'", $presetname));
+      $all_presets = imagecache_presets();
+      foreach ($all_presets as $preset) {
+        if ($preset['presetname'] == $presetname) {
+          $presetid = $preset['presetid'];
+          break;
+        }
+      }
+
     }
+
   }
 
   if (!empty($presetid)) {
