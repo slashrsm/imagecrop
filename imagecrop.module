@@ -187,7 +187,7 @@ function imagecrop_settings() {
   );
 
   // drupal message if no action is found with javascript_crop
-  if (imagecrop_action_exists() == FALSE) {
+  if (count(imagecrop_presets_list()) == 0) {
     drupal_set_message(t('No preset is found with the javascript_crop action so far. If you want to take advantage of this module, you will need to create at least one preset with that action.'));
   }
 
@@ -299,7 +299,7 @@ function imagecrop_widget_form($widget) {
   );
 
   $presets = imagecrop_presets_list();
-  if (count($presets)) {
+  if (count($presets) > 0) {
     $form['imagecrop']['imagecrop'] = array(
       '#type' => 'checkbox',
       '#title' => t('Enable JavaScript crop'),
@@ -359,6 +359,7 @@ function imagecrop_elements() {
  * Process function for imagecrop-enabled fields.
  */
 function imagecrop_process($element) {
+
   $field = content_fields($element['#field_name'], $element['#type_name']);
 
   // Bail out if user does not have permission to crop images.
@@ -382,6 +383,7 @@ function imagecrop_process($element) {
     '#weight' => 10,
     '#suffix' => '</div>',
   );
+
   if ($element['fid']['#value']) {
     $element['imagecrop']['#prefix'] = '<div class="imagecrop form-item container-inline">';
     $element['imagecrop']['#value'] = imagecrop_linkitem($element['fid']['#value'], 'imagefield', $element);
@@ -390,7 +392,9 @@ function imagecrop_process($element) {
     $element['imagecrop']['#prefix'] = '<div class="description">';
     $element['imagecrop']['#value'] = t('After uploading an image you\'ll be able to crop it.');
   }
+
   return $element;
+
 }
 
 /**
@@ -399,31 +403,39 @@ function imagecrop_process($element) {
  */
 function imagecrop_form_alter(&$form, $form_state, $form_id) {
 
-  $access = user_access('crop images with toolbox');
-
-  if ($access) {
-    // get array of available modules
-    $hooks = variable_get('imagecrop_modules', array());
+  // No need to do checks on forms, other then node form.
+  if ($form['#id'] != 'node-form' && $form_id != '_node_images_edit_page') {
+    return;
   }
 
+  $access = user_access('crop images with toolbox');
+
+  if (!$access) {
+    return;
+  }
+
+  // get array of available modules
+  $hooks = variable_get('imagecrop_modules', array());
+
   // hook into image module
-  if ($access && isset($form['images']['thumbnail']) && module_exists('image') && in_array('image', $hooks)) {
+  if (isset($form['images']['thumbnail']) && module_exists('image') && in_array('image', $hooks)) {
 
     // do we have presets with javascript_crop ?
-    if (count(return_presets() == 0)) {
+    if (count(imagecrop_presets_list()) == 0) {
       return;
     }
 
     // it's anonying we have to make a database call to get the right fid.
     $fid = db_result(db_query("SELECT i.fid FROM {image} i LEFT JOIN {files} f on f.fid = i.fid WHERE i.nid=%d AND filepath='%s' AND filename = '_original'", $form['nid']['#value'], $form['images']['_original']['#value']));
     $form['croptab'] = imagecrop_formitem($fid, -10);
+
   }
 
   // hook into node_images module
-  if ($access && $form_id == '_node_images_list' && module_exists('node_images') && $access) {
+  if ($form_id == '_node_images_edit_page' && module_exists('node_images')) {
 
     // do we have presets with javascript_crop ?
-    if (count(return_presets() == 0)) {
+    if (count(return_presets()) == 0) {
       return;
     }
 
@@ -752,6 +764,7 @@ function return_presets($presetid = '', $module = '', $field = '', $node_type = 
   }
 
   $all_presets = imagecache_presets();
+  $presets = array();
   foreach ($all_presets as $preset) {
     foreach ($preset['actions'] as $action) {
       if ($action['action'] == 'imagecrop_javascript') {
