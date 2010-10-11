@@ -439,9 +439,9 @@ function imagecrop_form_alter(&$form, $form_state, $form_id) {
       return;
     }
 
-    $type = $form['#parameters'][1]->type;
+    $type = $form['#parameters'][2]->type;
     if (variable_get('node_images_position_'. $type, 'hide') != 'hide' && in_array('node_images_position_'. $type, $hooks)) {
-      $form['imagecrop'] = array('#type' => 'hidden', '#value' => '1');
+      $form['node_images']['wrapper']['node_images']['imagecrop'] = array('#type' => 'hidden', '#value' => '1');
     }
 
   }
