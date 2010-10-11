@@ -50,31 +50,55 @@ This makes sure the javascript link is available for the thumbnail.
 /**
  * Theme function override of node_images to support imagecrop module
  */
-function phptemplate_node_images_list($form) {
-  $header = array(t('Thumbnail'), t('Description').' / '.t('Path'), t('Size'), t('Weight'), t('Delete'));
-  
-  $rows = array();
-  foreach($form['images']['#value'] as $id=>$image) {
+function phptemplate_node_images_form_list($form) {
+
+  $is_translation_source = $form['is_translation_source']['#value'];
+
+  $header = array();
+  if ($is_translation_source) {
+    $header = array('', t('Delete'), t('List'));
+  }
+  $header =  array_merge($header, array(t('Thumbnail'), t('Description and info'), t('Weight'), t('Size')));
+  drupal_add_tabledrag('node_images_list', 'order', 'sibling', 'node_images-weight');
+
+  foreach (element_children($form['images']) as $key) {
+    if (!$form['images'][$key]['thumbnail']) continue;
+
+    // Add class to group weight fields for drag and drop.
+    $form['images'][$key]['weight']['#attributes']['class'] = 'node_images-weight';
+
+    $info = '<div class="node_images_info">'. t('Author: !name', array('!name' => drupal_render($form['images'][$key]['author']))).'</div>';
+    $info .= '<div class="node_images_info">'. t('Uploaded on: %date', array('%date' => drupal_render($form['images'][$key]['date']))).'</div>';
+    $info .= '<div class="node_images_info">'. t('Path: !path', array('!path' => drupal_render($form['images'][$key]['filepath']))).'</div>';
+
+    if (isset($form['imagecrop'])) {
+      $info .= '<div class="node_images_info">'. imagecrop_linkitem($form['images'][$key]['id']['#value'], 'node_images') .'</div>';
+    }
+
     $row = array();
-    if (isset($form['imagecrop']) && module_exists('thickbox'))
-    $row[] = '<img src="'.file_create_url($image->thumbpath).'" vspace="5" /><br /><a class="thickbox" href="' . url('imagecrop/showcrop/'. $id .'/0/node_images', NULL, NULL, TRUE) . '?KeepThis=true&TB_iframe=true&height=600&width=700">'. t('Javascript crop') .'</a>';
-    elseif (isset($form['imagecrop']) && !module_exists('thickbox'))
-    $row[] = '<img src="'.file_create_url($image->thumbpath).'" vspace="5" /><br /><a href="javascript:;" onclick="window.open(\''. url('imagecrop/showcrop/'. $id .'/0/node_images', NULL, NULL, TRUE) .'\',\'imagecrop\',\'menubar=0,resizable=1,width=700,height=650\');">'. t('Javascript crop') .'</a>';
-    else
-    $row[] = '<img src="'.file_create_url($image->thumbpath).'" vspace="5" />';
-    $row[] = drupal_render($form['rows'][$image->id]['description']).$image->filepath;
-    $row[] = array('data' => format_size($image->filesize), 'style' => 'white-space: nowrap');
-    $row[] = drupal_render($form['rows'][$image->id]['weight']);
-    $row[] = array('data' => drupal_render($form['rows'][$image->id]['delete']), 'align' => 'center');
-    $rows[] = $row;
+    if ($is_translation_source) {
+      $row[] = '';
+      $row[] = drupal_render($form['images'][$key]['delete']);
+      $row[] = drupal_render($form['images'][$key]['list']);
+    }
+    $row[] = drupal_render($form['images'][$key]['thumbnail']);
+    $row[] = array('data' => drupal_render($form['images'][$key]['description']).$info, 'width' => '100%');
+    $row[] = drupal_render($form['images'][$key]['weight']);
+    $row[] = array('data' => drupal_render($form['images'][$key]['filesize']), 'class' => 'nowrap');
+    if ($is_translation_source) {
+      $rows[] = array('data' => $row, 'class' => 'draggable');
+    }
+    else {
+      $rows[] = $row;
+    }
   }
 
-  $output = '<fieldset><legend>'.t('Uploaded images').'</legend>';
-  $output .= theme('table', $header, $rows);
+  $output = '&nbsp;';
+  if (!empty($rows)) $output .= theme('table', $header, $rows, array('id' => 'node_images_list'));
+  $output .= drupal_render($form['translation_warning']);
   $output .= drupal_render($form);
-  $output .= '</fieldset>';
-  
   return $output;
+
 }
 
 Features, support, bugs etc
