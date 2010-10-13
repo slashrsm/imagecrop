@@ -4,3 +4,5 @@ description = Provides a javascript crop toolbox via the image effects.
 dependencies[] = image
 core = 7.x
 version = VERSION
+files[] = imagecrop.module
+files[] = imagecrop.admin.inc
