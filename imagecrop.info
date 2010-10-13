@@ -1,9 +1,6 @@
-; $Id$
-name = Imagecache javascript crop
-description = Provides a javascript crop toolbox via the imagecache action.
-package = ImageCache
-dependencies[] = imagecache
-dependencies[] = imageapi
-dependencies[] = jquery_ui
-core = 6.x
+; $Id $
+name = Image javascript crop
+description = Provides a javascript crop toolbox via the image effects.
+dependencies[] = image
+core = 7.x
 version = VERSION
