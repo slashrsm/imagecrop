@@ -1,4 +1,6 @@
 <?php
+// $Id $
+
 /**
  * @file
  * Administration tools for the imagecrop module.
