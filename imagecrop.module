@@ -10,3 +10,152 @@
  * @date
  * Oct 13, 2010
  */
+
+/**
+ * Implements hook_perm().
+ */
+function imagecrop_perm() {
+  return array('crop any image with toolbox', 'crop images with toolbox', 'administer imagecrop');
+}
+
+/**
+ * Implements hook_theme().
+ */
+function imagecrop_theme() {
+
+  return array(
+    'imagecrop_javascript' => array(
+      'variables' => array('element' => NULL),
+      'file' => 'imagecrop.theme.inc',
+    ),
+    'imagecrop' => array(
+      'variables' => array('url' => NULL, 'width' => NULL, 'height' => NULL, 'resize' => NULL),
+      'file' => 'imagecrop.theme.inc',
+    ),
+    'imagecrop_result' => array(
+      'variables' => array('presetname' => NULL, 'filepath' => NULL, 'alt' => NULL, 'attributes' => NULL),
+      'file' => 'imagecrop.theme.inc',
+    ),
+    'presettabs' => array(
+      'variables' => array('presets' => array(), 'fid' => NULL, 'presetid' => NULL, 'module' => NULL, 'field' => NULL, 'node_type' => NULL),
+      'file' => 'imagecrop.theme.inc',
+    ),
+  );
+
+}
+
+/**
+ * Implements hook_menu().
+ */
+function imagecrop_menu() {
+
+  $items = array();
+
+  $items['admin/configuration/media/imagecrop'] = array(
+    'title' => 'Image javascript crop',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('imagecrop_settings_form'),
+    'access arguments' => array('administer imagecrop'),
+    'file' => 'imagecrop.admin.inc',
+  );
+
+  $items['imagecrop/showcrop'] = array(
+    'page callback' => 'imagecrop_showcrop',
+    'type' => MENU_CALLBACK,
+    'access arguments' => array('crop images with toolbox'),
+  );
+
+  $items['imagecrop/docrop'] = array(
+    'page callback' => 'imagecrop_docrop',
+    'type' => MENU_CALLBACK,
+    'access arguments' => array('crop images with toolbox'),
+  );
+
+  return $items;
+
+}
+
+/**
+ * Implements hook_image_effect_info().
+ */
+function imagecrop_image_effect_info() {
+
+  $effects = array();
+
+  $effects['imagecrop_javascript'] = array(
+    'label' => t('Javascript crop'),
+    'help' => t('Create a crop with a javascript toolbox.'),
+    'effect callback' => 'imagecrop_effect',
+    'form callback' => 'imagecrop_effect_form',
+    'summary theme' => 'imagecrop_effect_summary',
+  );
+
+  return $effects;
+
+}
+
+/**
+ * Image effect callback: Crop the image based on the javascript selected crop.
+ *
+ * @param $image An image object returned by image_load().
+ * @param $data An array of settings from the user for cropping the image.
+ * @return TRUE on success. FALSE on failure to crop the image.
+ *
+ */
+function imagecrop_effect(&$image, $data) {
+  return TRUE;
+}
+
+/**
+ * Settings form for configuring a javascript imagecrop effect.
+ */
+function imagecrop_effect_form($data) {
+
+  $form = image_resize_form($data);
+
+  $form['xoffset'] = array(
+    '#type' => 'textfield',
+    '#title' => t('X offset'),
+    '#default_value' => isset($data['xoffset']) ? $data['xoffset'] : '',
+    '#description' => t('Enter an offset in pixels or use a keyword: <em>left</em>, <em>center</em>, or <em>right</em>.'),
+    '#element_validate' => array('imagecrop_validate_offset'),
+  );
+
+  $form['yoffset'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Y offset'),
+    '#default_value' => isset($data['yoffset']) ? $data['yoffset'] : '',
+    '#description' => t('Enter an offset in pixels or use a keyword: <em>top</em>, <em>center</em>, or <em>bottom</em>.'),
+    '#element_validate' => array('imagecrop_validate_offset'),
+  );
+
+  $form['resizable'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Is the toolbox resizable or not?'),
+    '#default_value' => isset($data['resizable']) ? $data['resizable'] : '',
+    '#description' => t('If the toolbox is resized, the crop values won\'t be respected, so you should add a Scale action after the ImageCrop.'),
+  );
+
+  $description = t('Enter an aspect ratio to preserve during resizing. This can take one of the following formats:');
+  $description .= '<ul><li>'. t('A float (like 0.5 or 2).') .'</li>';
+  $description .= '<li>'. t('The string \'KEEP\'. This will constrain the aspect ratio to that of the original image.') .'</li>';
+  $description .= '<li>'. t('The string \'CROP\'. This will constrain the aspect ratio to the dimensions set above.') .'</li></ul>';
+  $description .= t('Leave blank for no aspect ratio constraints.');
+
+  $form['aspect'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Aspect ratio'),
+    '#default_value' => isset($data['aspect']) ? $data['aspect'] : '',
+    '#description' => $description,
+    '#element_validate' => array('imagecrop_validate_aspect'),
+  );
+
+  $form['disable_if_no_data'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Don\'t crop if cropping region wasn\'t set.'),
+    '#default_value' => isset($data['disable_if_no_data']) ? $data['disable_if_no_data'] : FALSE,
+  );
+
+  return $form;
+
+}
