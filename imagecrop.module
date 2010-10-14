@@ -149,7 +149,7 @@ function imagecrop_effect_form($data) {
     '#type' => 'textfield',
     '#title' => t('X offset'),
     '#default_value' => isset($data['xoffset']) ? $data['xoffset'] : '',
-    '#description' => t('Enter an offset in pixels or use a keyword: <em>left</em>, <em>center</em>, or <em>right</em>.'),
+    '#description' => t('Enter an offset in pixels (without px) or use a keyword: <em>left</em>, <em>center</em>, or <em>right</em>.'),
     '#element_validate' => array('imagecrop_validate_offset'),
   );
 
@@ -157,7 +157,7 @@ function imagecrop_effect_form($data) {
     '#type' => 'textfield',
     '#title' => t('Y offset'),
     '#default_value' => isset($data['yoffset']) ? $data['yoffset'] : '',
-    '#description' => t('Enter an offset in pixels or use a keyword: <em>top</em>, <em>center</em>, or <em>bottom</em>.'),
+    '#description' => t('Enter an offset in pixels (without px) or use a keyword: <em>top</em>, <em>center</em>, or <em>bottom</em>.'),
     '#element_validate' => array('imagecrop_validate_offset'),
   );
 
@@ -190,4 +190,46 @@ function imagecrop_effect_form($data) {
 
   return $form;
 
+}
+
+/**
+ * Validation function to validate an entered offset value. (numbers or left / center / right)
+ */
+function imagecrop_validate_offset($element, &$form_state) {
+
+  if ($element['#value'] == '') {
+    return;
+  }
+  
+  // numbers are allowed.
+  if (is_numeric($element['#value'])) {
+    return;
+  }
+  
+  // if the value is a string, check on allowed strings
+  if ($element['#value'] != 'center' && $element['#value'] != 'left' && $element['#value'] != 'right') {
+    form_error($element, t('!name must be a correct offset value', array('!name' => $element['#title'])));
+  }
+  
+}
+
+/**
+ * Validation function to validate an entered aspect value.
+ */
+function imagecrop_validate_aspect($element, &$form_state) {
+
+  if ($element['#value'] == '') {
+    return;
+  }
+  
+  // numbers are allowed.
+  if (is_numeric($element['#value'])) {
+    return;
+  }
+  
+  // if the value is a string, check on allowed strings
+  if ($element['#value'] != 'KEEP' && $element['#value'] != 'CROP') {
+    form_error($element, t('!name must be a correct aspect value', array('!name' => $element['#title'])));
+  }
+  
 }
