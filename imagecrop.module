@@ -51,7 +51,7 @@ function imagecrop_menu() {
 
   $items = array();
 
-  $items['admin/configuration/media/imagecrop'] = array(
+  $items['admin/config/media/imagecrop'] = array(
     'title' => 'Image javascript crop',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('imagecrop_settings_form'),
@@ -91,6 +91,38 @@ function imagecrop_image_effect_info() {
   );
 
   return $effects;
+
+}
+
+/**
+ * Return a list of presets.
+ *
+ * @param $module module wherefor styles are beïng asked
+ * @return $presets array with presetid to load and list of all other possible presets.
+ */
+function get_imagecrop_styles($module = '') {
+
+  $filter = array();
+  // get possible presets for current imagefield
+/*  if ($module == 'imagefield' && $field) {
+    $element = content_fields($field, $node_type);
+    if ($element['widget']['imagecrop']) {
+      $filter = $element['widget']['imagecrop_presets'];
+    }
+  }*/
+
+  $all_styles = image_styles();
+  
+  $styles = array();
+  foreach ($all_styles as $style_id => $style) {
+    foreach ($style['effects'] as $effect) {
+      if ($effect['name'] == 'imagecrop_javascript') {
+        $styles[$style_id] = $style['name'];
+      }
+    }
+  }
+
+  return $styles;
 
 }
 
