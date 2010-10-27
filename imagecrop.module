@@ -121,14 +121,73 @@ function imagecrop_form_field_ui_field_edit_form_alter(&$form, $form_state) {
  * Implements hook_element_info_alter().
  */
 function imagecrop_element_info_alter(&$type) {
-  $type['managed_file']['#after_build'][] = 'imagecrop_process_element';
+  $type['managed_file']['#after_build'][] = 'process_imagecrop_form_element';
 }
 
 /**
  * Process function for imagecrop-enabled fields.
  */
-function imagecrop_process_element($element) {
+function process_imagecrop_form_element($element) {
+  
+  // Leave element when user doesn't have access.
+  if (!user_access('crop images with toolbox')) {
+    return $element;
+  }
+
+  $instance = field_info_instance($element['#entity_type'], $element['#field_name'], $element['#bundle']);
+  
+  // Leave element when no imagecrop settings are found.
+  if (!isset($instance['settings']['imagecrop'])) {
+    return $element;
+  }
+  
+  $enabled_styles = array_filter($instance['settings']['imagecrop']);
+  // Leave element when no image styles are selected.
+  if (count($enabled_styles) == 0) {
+    return $element;
+  }
+
+  $element['imagecrop'] = array(
+    '#type' => 'markup',
+    '#widget' => $instance['widget'],
+    '#weight' => 10,
+    '#suffix' => '</div>',
+  );
+
+  if ($element['fid']['#value']) {
+    $element['imagecrop']['#prefix'] = '<div class="imagecrop form-item container-inline">';
+    $element['imagecrop']['#markup'] = imagecrop_linkitem($element['fid']['#value'], $element);
+  }
+  else {
+    $element['imagecrop']['#prefix'] = '<div class="description">';
+    $element['imagecrop']['#markup'] = t('After uploading an image you\'ll be able to crop it.');
+  }
+
   return $element;
+  
+}
+/**
+ * Helper function to add click link.
+ * @param $fid fid from the file to crop
+ * @param $element the form element
+ *
+ * @return link for opening the imagecrop admin.
+ */
+function imagecrop_linkitem($fid, $element = '') {
+
+  $popup_link_function = variable_get('imagecrop_popup', 'basic');
+  $width = variable_get('imagecrop_popup_width', 700);
+  $height = variable_get('imagecrop_popup_height', 600);
+
+  $url = url('imagecrop/showcrop/'. $fid .'/'. $element['#entity_type'] .'/'. $element['#bundle'] .'/'. $element['#field_name'], array('absolute' => TRUE));
+
+  if ($popup_link_function != 'basic' && function_exists($popup_link_function) && $link = $popup_link_function($url, $width, $height)) {
+    return $link;
+  }
+  else {
+    return '[<a href="javascript:;" onclick="window.open(\''. $url .'\',\'imagecrop\',\'menubar=0,scrollbars=1,resizable=1,width='. $width .',height='. $height .'\');">'. t('Crop this image') .'</a>]';
+  }
+
 }
 
 /**
