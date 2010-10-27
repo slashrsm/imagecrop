@@ -128,6 +128,11 @@ function imagecrop_element_info_alter(&$type) {
  * Process function for imagecrop-enabled fields.
  */
 function process_imagecrop_form_element($element) {
+
+  // Leave alone if we are on the field ui settings.
+  if (!isset($element['#field_name'])) {
+    return $element;
+  }
   
   // Leave element when user doesn't have access.
   if (!user_access('crop images with toolbox')) {
