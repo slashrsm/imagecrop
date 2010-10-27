@@ -16,13 +16,11 @@ function imagecrop_settings_form() {
   
   $all_popups = array('basic' => t('Basic popup window'));
   foreach (module_implements('imagecrop_popups') as $module_name) {
-
     $function = $module_name .'_imagecrop_popups';
     $popups = $function();
     if (is_array($popups)) {
       $all_popups += $popups;
     }
-
   }
 
   $form['imagecrop_popup'] = array(
@@ -58,7 +56,7 @@ function imagecrop_settings_form() {
 
   // drupal message if no action is found with javascript_crop
   if (count(get_imagecrop_styles()) == 0) {
-    drupal_set_message(t('No preset is found with the javascript_crop action so far. If you want to take advantage of this module, you will need to create at least one preset with that action.'));
+    drupal_set_message(t('No image style is found with the javascript_crop action so far. If you want to take advantage of this module, you will need to create at least one image style with that action.'));
   }
 
   return system_settings_form($form);

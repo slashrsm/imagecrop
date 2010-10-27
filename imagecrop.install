@@ -26,3 +26,14 @@ function imagecrop_schema() {
   return $schema;  
   
 }
+
+/**
+ * Implements hook_uninstall().
+ */
+function imagecrop_uninstall() {
+  
+  variable_del('imagecrop_popup_height');
+  variable_del('imagecrop_popup_width');
+  variable_del('imagecrop_popup');
+  
+}
