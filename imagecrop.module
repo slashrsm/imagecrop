@@ -173,6 +173,7 @@ function process_imagecrop_form_element($element) {
 }
 /**
  * Helper function to add click link.
+ * 
  * @param $fid fid from the file to crop
  * @param $element the form element
  *
