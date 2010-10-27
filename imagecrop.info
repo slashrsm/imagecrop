@@ -7,3 +7,4 @@ version = VERSION
 files[] = imagecrop.module
 files[] = imagecrop.admin.inc
 files[] = imagecrop.theme.inc
+configure = admin/config/media/imagecrop
