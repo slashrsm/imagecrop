@@ -62,3 +62,20 @@ function imagecrop_settings_form() {
   return system_settings_form($form);
   
 }
+
+/**
+ * Show an overview from the enabled image styles for this file.
+ * Show an example from the first (or selected) image.
+ *
+ * @param $file file to be viewed
+ * @param $isid Style id that default needs to be shown
+ * @param $entity_type entity type from the field that triggered the imagecrop overview
+ * @param $bundle bundle from the field that triggered the imagecrop overview
+ * @param $field_name Field name that triggered the imagecrop overview.
+ */
+function imagecrop_image_styles_overview($file, $isid, $entity_type = '', $bundle = '', $field_name = '') {
+  dsm($file);
+  dsm($isid);
+ return ':)';
+  
+}

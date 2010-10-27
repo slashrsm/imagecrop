@@ -59,16 +59,18 @@ function imagecrop_menu() {
     'file' => 'imagecrop.admin.inc',
   );
 
-  $items['imagecrop/showcrop'] = array(
-    'page callback' => 'imagecrop_showcrop',
+  $items['imagecrop/overview/%file'] = array(
+    'page callback' => 'imagecrop_image_styles_overview',
     'type' => MENU_CALLBACK,
     'access arguments' => array('crop images with toolbox'),
+    'file' => 'imagecrop.admin.inc',
   );
 
-  $items['imagecrop/docrop'] = array(
-    'page callback' => 'imagecrop_docrop',
+  $items['imagecrop/crop/%file/%'] = array(
+    'page callback' => 'imagecrop_select_crop',
     'type' => MENU_CALLBACK,
     'access arguments' => array('crop images with toolbox'),
+    'file' => 'imagecrop.admin.inc',  
   );
 
   return $items;
@@ -185,7 +187,7 @@ function imagecrop_linkitem($fid, $element = '') {
   $width = variable_get('imagecrop_popup_width', 700);
   $height = variable_get('imagecrop_popup_height', 600);
 
-  $url = url('imagecrop/showcrop/'. $fid .'/'. $element['#entity_type'] .'/'. $element['#bundle'] .'/'. $element['#field_name'], array('absolute' => TRUE));
+  $url = url('imagecrop/overview/'. $fid .'/0/'. $element['#entity_type'] .'/'. $element['#bundle'] .'/'. $element['#field_name'], array('absolute' => TRUE));
 
   if ($popup_link_function != 'basic' && function_exists($popup_link_function) && $link = $popup_link_function($url, $width, $height)) {
     return $link;
