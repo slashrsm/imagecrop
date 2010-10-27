@@ -213,12 +213,11 @@ function get_imagecrop_styles($module = '') {
   }*/
 
   $all_styles = image_styles();
-  
   $styles = array();
-  foreach ($all_styles as $style_id => $style) {
+  foreach ($all_styles as $key => $style) {
     foreach ($style['effects'] as $effect) {
       if ($effect['name'] == 'imagecrop_javascript') {
-        $styles[$style_id] = $style['name'];
+        $styles[$style['isid']] = $style['name'];
       }
     }
   }
