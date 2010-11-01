@@ -73,9 +73,13 @@ function imagecrop_settings_form() {
  * @param $bundle bundle from the field that triggered the imagecrop overview
  * @param $field_name Field name that triggered the imagecrop overview.
  */
-function imagecrop_image_styles_overview($file, $isid, $entity_type = '', $bundle = '', $field_name = '') {
-  dsm($file);
-  dsm($isid);
- return ':)';
+function imagecrop_image_styles_overview($file, $isid, $entity_type = NULL, $bundle = NULL, $field_name = NULL) {
+
+  $enabled_styles = array();
+  if ($entity_type && $bundle && $field_name) {
+    $enabled_styles = imagecrop_get_fields_enabled_styles($entity_type, $bundle, $field_name);       
+  }
+  
+  return ':)';
   
 }
