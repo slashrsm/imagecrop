@@ -77,8 +77,10 @@ function imagecrop_image_styles_overview($file, $isid, $entity_type = NULL, $bun
 
   $enabled_styles = array();
   if ($entity_type && $bundle && $field_name) {
-    $enabled_styles = imagecrop_get_fields_enabled_styles($entity_type, $bundle, $field_name);       
+    $enabled_styles = imagecrop_get_fields_enabled_styles($entity_type, $field_name, $bundle);
   }
+
+  $styles = get_imagecrop_styles($enabled_styles);
   
   return ':)';
   

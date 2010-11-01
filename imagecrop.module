@@ -213,26 +213,25 @@ function imagecrop_linkitem($fid, $element = '') {
 /**
  * Return a list of presets.
  *
- * @param $module module wherefor styles are beïng asked
+ * @param $enabled_styles array of styles that are enabled for a field
  * @return $presets array with presetid to load and list of all other possible presets.
  */
-function get_imagecrop_styles($module = '') {
+function get_imagecrop_styles($enabled_styles = array()) {
 
-  $filter = array();
-  // get possible presets for current imagefield
-/*  if ($module == 'imagefield' && $field) {
-    $element = content_fields($field, $node_type);
-    if ($element['widget']['imagecrop']) {
-      $filter = $element['widget']['imagecrop_presets'];
-    }
-  }*/
-
+  $apply_filter = (count($enabled_styles) > 0);
+  
   $all_styles = image_styles();
   $styles = array();
   foreach ($all_styles as $key => $style) {
     foreach ($style['effects'] as $effect) {
       if ($effect['name'] == 'imagecrop_javascript') {
+        
+        // Skip if current style is not enabled.
+        if ($apply_filter && !in_array($style['isid'], $enabled_styles)) {
+          continue;
+        }
         $styles[$style['isid']] = $style['name'];
+        
       }
     }
   }
