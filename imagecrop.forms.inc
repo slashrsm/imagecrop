@@ -1,4 +1,6 @@
 <?php
+// $Id$
+
 /**
  * @file
  * Form alter functions for Imagecrop

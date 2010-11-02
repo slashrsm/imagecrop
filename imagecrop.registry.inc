@@ -1,4 +1,6 @@
 <?php
+// $Id$
+
 /**
  * @file
  * Registry file for Imagecrop
