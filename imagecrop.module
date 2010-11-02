@@ -192,13 +192,21 @@ function imagecrop_preprocess_page(&$variables) {
 }
 
 /**
- * Implements hook_preprocess_html().
+ * Implements hook_process_html().
  * Set the theme hook suggestion to html-imagecrop for imagecrop pages.
  */
-function imagecrop_preprocess_html(&$variables) {
+function imagecrop_process_html(&$variables) {
   
   if (arg(0) == 'imagecrop') {
+    
+    $js = drupal_add_js();
+    if (isset($js['sites/all/modules/admin_menu/admin_menu.js'])) {
+      unset($js['sites/all/modules/admin_menu/admin_menu.js']);
+      $variables['scripts'] = drupal_get_js('header', $js);
+    }
+
     $variables['theme_hook_suggestion'] = 'html-imagecrop';
+    
   }
     
 }
