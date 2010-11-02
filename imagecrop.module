@@ -27,11 +27,19 @@ function imagecrop_hook_info() {
 
 }
 
+/**
+ * Implements hook_preprocess_page().
+ * Set the theme hook suggestion to page-imagecrop for imagecrop pages.
+ */
 function imagecrop_preprocess_page(&$variables) {
   $variables['theme_hook_suggestion'] = 'page-imagecrop';
   include_once (dirname(__FILE__) .'/imagecrop.theme.inc');
 }
 
+/**
+ * Implements hook_preprocess_html().
+ * Set the theme hook suggestion to html-imagecrop for imagecrop pages.
+ */
 function imagecrop_preprocess_html(&$variables) {
   $variables['theme_hook_suggestion'] = 'html-imagecrop';
 }
