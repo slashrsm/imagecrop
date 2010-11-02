@@ -66,7 +66,7 @@ function imagecrop_menu() {
     'file' => 'imagecrop.admin.inc',
   );
 
-  $items['imagecrop/overview/%file'] = array(
+  $items['imagecrop/overview/%'] = array(
     'page callback' => 'imagecrop_image_styles_overview',
     'page arguments' => array(2),
     'type' => MENU_CALLBACK,
@@ -74,7 +74,7 @@ function imagecrop_menu() {
     'file' => 'imagecrop.admin.inc',
   );
 
-  $items['imagecrop/crop/%file/%'] = array(
+  $items['imagecrop/crop/%/%'] = array(
     'page callback' => 'imagecrop_select_crop',
     'page arguments' => array(2, 3),
     'type' => MENU_CALLBACK,

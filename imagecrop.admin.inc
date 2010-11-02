@@ -67,13 +67,13 @@ function imagecrop_settings_form() {
  * Show an overview from the enabled image styles for this file.
  * Show an example from the first (or selected) image.
  *
- * @param $file file to be viewed
+ * @param $fid fid from file to be viewed
  * @param $isid Style id that default needs to be shown
  * @param $entity_type entity type from the field that triggered the imagecrop overview
  * @param $bundle bundle from the field that triggered the imagecrop overview
  * @param $field_name Field name that triggered the imagecrop overview.
  */
-function imagecrop_image_styles_overview($file, $isid, $entity_type = NULL, $bundle = NULL, $field_name = NULL) {
+function imagecrop_image_styles_overview($fid, $isid, $entity_type = NULL, $bundle = NULL, $field_name = NULL) {
 
   $enabled_styles = array();
   if ($entity_type && $bundle && $field_name) {
@@ -81,7 +81,17 @@ function imagecrop_image_styles_overview($file, $isid, $entity_type = NULL, $bun
   }
 
   $styles = get_imagecrop_styles($enabled_styles);
+  if (count($styles) == 0) {
+    drupal_set_message(t('No preset is found with the javascript_crop action so far. If you want to take advantage of this module, you will need to create at least one preset with that action.'), 'error');
+    return '';
+  }  
+
+  $file = file_load($fid);
+  if (!$file) {
+    drupal_set_message(t('The requested file could not be found.'), 'error');
+    return '';    
+  }
   
-  return ':)';
+  return ':';
   
 }
