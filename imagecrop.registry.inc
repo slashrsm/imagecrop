@@ -22,6 +22,15 @@ function imagecrop_perm() {
 function imagecrop_theme() {
 
   return array(
+    'page-imagecrop' => array(
+      'variables' => array(),
+      'file' => 'imagecrop.theme.inc',
+      'function' => 'imagecrop_page',
+    ),
+    'html-imagecrop' => array(
+      'variables' => array(),
+      'template' => 'html-imagecrop',
+    ),
     'imagecrop_javascript' => array(
       'variables' => array('element' => NULL),
       'file' => 'imagecrop.theme.inc',

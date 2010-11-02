@@ -8,3 +8,10 @@
  * @date
  * Oct 7, 2010
  */
+
+/**
+ * Override the page theming for the imagecrop pages.
+ */
+function imagecrop_page($variables) {
+  return 'page';
+}

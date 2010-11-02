@@ -27,6 +27,15 @@ function imagecrop_hook_info() {
 
 }
 
+function imagecrop_preprocess_page(&$variables) {
+  $variables['theme_hook_suggestion'] = 'page-imagecrop';
+  include_once (dirname(__FILE__) .'/imagecrop.theme.inc');
+}
+
+function imagecrop_preprocess_html(&$variables) {
+  $variables['theme_hook_suggestion'] = 'html-imagecrop';
+}
+
 /**
  * Helper function to get all the enabled styles for a given field.
  */

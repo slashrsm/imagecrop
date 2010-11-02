@@ -24,7 +24,7 @@ function imagecrop_form_field_ui_field_edit_form_alter(&$form, $form_state) {
         '#title' => t('Available imagecrop styles'),
         '#description' => t('Select which imagecrop styles should be available for this field'),
         '#weight' => 12,
-        '#default_value' => $form_state['build_info']['args'][0]['settings']['imagecrop'],
+        '#default_value' => isset($form_state['build_info']['args'][0]['settings']['imagecrop']) ? $form_state['build_info']['args'][0]['settings']['imagecrop'] : array(),
       );
     }
 
