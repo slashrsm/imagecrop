@@ -32,8 +32,12 @@ function imagecrop_hook_info() {
  * Set the theme hook suggestion to page-imagecrop for imagecrop pages.
  */
 function imagecrop_preprocess_page(&$variables) {
-  $variables['theme_hook_suggestion'] = 'page-imagecrop';
-  include_once (dirname(__FILE__) .'/imagecrop.theme.inc');
+  
+  if (arg(0) == 'imagecrop') {
+    $variables['theme_hook_suggestion'] = 'page-imagecrop';
+    include (dirname(__FILE__) .'/imagecrop.theme.inc');    
+  }
+  
 }
 
 /**
@@ -41,7 +45,11 @@ function imagecrop_preprocess_page(&$variables) {
  * Set the theme hook suggestion to html-imagecrop for imagecrop pages.
  */
 function imagecrop_preprocess_html(&$variables) {
-  $variables['theme_hook_suggestion'] = 'html-imagecrop';
+  
+  if (arg(0) == 'imagecrop') {
+    $variables['theme_hook_suggestion'] = 'html-imagecrop';
+  }
+    
 }
 
 /**
