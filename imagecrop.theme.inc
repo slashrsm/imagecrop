@@ -13,5 +13,5 @@
  * Override the page theming for the imagecrop pages.
  */
 function imagecrop_page($variables) {
-  return 'page';
+  return drupal_render($variables['page']['content']);
 }
