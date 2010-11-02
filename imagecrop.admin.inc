@@ -91,7 +91,7 @@ function imagecrop_image_styles_overview($fid, $isid, $entity_type = NULL, $bund
     drupal_set_message(t('The requested file could not be found.'), 'error');
     return '';    
   }
-  dsm($styles);
+  
   $style_selection = drupal_get_form('imagecrop_style_selection_form', $styles);
   
   return $style_selection;
