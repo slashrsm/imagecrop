@@ -91,7 +91,25 @@ function imagecrop_image_styles_overview($fid, $isid, $entity_type = NULL, $bund
     drupal_set_message(t('The requested file could not be found.'), 'error');
     return '';    
   }
+  dsm($styles);
+  $style_selection = drupal_get_form('imagecrop_style_selection_form', $styles);
   
-  return ':';
+  return $style_selection;
+  
+}
+
+/**
+ * Show a selection form to switch styles preview.
+ */
+function imagecrop_style_selection_form($form, $form_state, $styles) {
+  
+  $form = array();
+  $form['styles'] = array(
+    '#type' => 'select',
+    '#title' => t('Select style to preview'),
+    '#options' => $styles,
+  );
+  
+  return $form;
   
 }
