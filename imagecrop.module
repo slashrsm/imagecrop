@@ -183,12 +183,12 @@ function process_imagecrop_form_element($element) {
  * Set the theme hook suggestion to page-imagecrop for imagecrop pages.
  */
 function imagecrop_preprocess_page(&$variables) {
-  
+
   if (arg(0) == 'imagecrop') {
     $variables['theme_hook_suggestion'] = 'page-imagecrop';
-    include_once (dirname(__FILE__) .'/imagecrop.theme.inc');    
+    include_once(dirname(__FILE__) . '/imagecrop.theme.inc');
   }
-  
+
 }
 
 /**
@@ -196,9 +196,9 @@ function imagecrop_preprocess_page(&$variables) {
  * Set the theme hook suggestion to html-imagecrop for imagecrop pages.
  */
 function imagecrop_process_html(&$variables) {
-  
+
   if (arg(0) == 'imagecrop') {
-    
+
     $js = drupal_add_js();
     if (isset($js['sites/all/modules/admin_menu/admin_menu.js'])) {
       unset($js['sites/all/modules/admin_menu/admin_menu.js']);
@@ -206,9 +206,9 @@ function imagecrop_process_html(&$variables) {
     }
 
     $variables['theme_hook_suggestion'] = 'html-imagecrop';
-    
+
   }
-    
+
 }
 
 /**
@@ -241,13 +241,13 @@ function imagecrop_linkitem($fid, $element = '') {
   $width = variable_get('imagecrop_popup_width', 700);
   $height = variable_get('imagecrop_popup_height', 600);
 
-  $url = url('imagecrop/overview/'. $fid .'/0/'. $element['#entity_type'] .'/'. $element['#bundle'] .'/'. $element['#field_name'], array('absolute' => TRUE));
+  $url = url('imagecrop/overview/' . $fid . '/0/' . $element['#entity_type'] . '/' . $element['#bundle'] . '/' . $element['#field_name'], array('absolute' => TRUE));
 
   if ($popup_link_function != 'basic' && function_exists($popup_link_function) && $link = $popup_link_function($url, $width, $height)) {
     return $link;
   }
   else {
-    return '[<a href="javascript:;" onclick="window.open(\''. $url .'\',\'imagecrop\',\'menubar=0,scrollbars=1,resizable=1,width='. $width .',height='. $height .'\');">'. t('Crop this image') .'</a>]';
+    return '[<a href="javascript:;" onclick="window.open(\'' . $url . '\',\'imagecrop\',\'menubar=0,scrollbars=1,resizable=1,width=' . $width . ',height=' . $height . '\');">' . t('Crop this image') . '</a>]';
   }
 
 }
@@ -325,9 +325,9 @@ function imagecrop_effect_form($data) {
   );
 
   $description = t('Enter an aspect ratio to preserve during resizing. This can take one of the following formats:');
-  $description .= '<ul><li>'. t('A float (like 0.5 or 2).') .'</li>';
-  $description .= '<li>'. t('The string \'KEEP\'. This will constrain the aspect ratio to that of the original image.') .'</li>';
-  $description .= '<li>'. t('The string \'CROP\'. This will constrain the aspect ratio to the dimensions set above.') .'</li></ul>';
+  $description .= '<ul><li>' . t('A float (like 0.5 or 2).') . '</li>';
+  $description .= '<li>' . t('The string \'KEEP\'. This will constrain the aspect ratio to that of the original image.') . '</li>';
+  $description .= '<li>' . t('The string \'CROP\'. This will constrain the aspect ratio to the dimensions set above.') . '</li></ul>';
   $description .= t('Leave blank for no aspect ratio constraints.');
 
   $form['aspect'] = array(

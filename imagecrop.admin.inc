@@ -13,10 +13,10 @@
  * General settings form from the imagecrop module.
  */
 function imagecrop_settings_form() {
-  
+
   $all_popups = array('basic' => t('Basic popup window'));
   foreach (module_implements('imagecrop_popups') as $module_name) {
-    $function = $module_name .'_imagecrop_popups';
+    $function = $module_name . '_imagecrop_popups';
     $popups = $function();
     if (is_array($popups)) {
       $all_popups += $popups;
@@ -60,7 +60,7 @@ function imagecrop_settings_form() {
   }
 
   return system_settings_form($form);
-  
+
 }
 
 /**
@@ -84,32 +84,32 @@ function imagecrop_image_styles_overview($fid, $isid, $entity_type = NULL, $bund
   if (count($styles) == 0) {
     drupal_set_message(t('No preset is found with the javascript_crop action so far. If you want to take advantage of this module, you will need to create at least one preset with that action.'), 'error');
     return '';
-  }  
+  }
 
   $file = file_load($fid);
   if (!$file) {
     drupal_set_message(t('The requested file could not be found.'), 'error');
-    return '';    
+    return '';
   }
-  
+
   $style_selection = drupal_get_form('imagecrop_style_selection_form', $styles);
-  
+
   return $style_selection;
-  
+
 }
 
 /**
  * Show a selection form to switch styles preview.
  */
 function imagecrop_style_selection_form($form, $form_state, $styles) {
-  
+
   $form = array();
   $form['styles'] = array(
     '#type' => 'select',
     '#title' => t('Select style to preview'),
     '#options' => $styles,
   );
-  
+
   return $form;
-  
+
 }
