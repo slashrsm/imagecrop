@@ -200,9 +200,12 @@ function imagecrop_process_html(&$variables) {
   if (arg(0) == 'imagecrop') {
 
     $js = drupal_add_js();
-    if (isset($js['sites/all/modules/admin_menu/admin_menu.js'])) {
-      unset($js['sites/all/modules/admin_menu/admin_menu.js']);
-      $variables['scripts'] = drupal_get_js('header', $js);
+    if (module_exists('admin_menu')) {
+    	$path = drupal_get_path('module', 'admin_menu');
+      if (isset($js[$path. '/admin_menu.js'])) {
+        unset($js[$path. '/admin_menu.js']);
+        $variables['scripts'] = drupal_get_js('header', $js);
+      }
     }
 
     $variables['theme_hook_suggestion'] = 'html-imagecrop';
