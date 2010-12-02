@@ -37,19 +37,28 @@ function imagecrop_theme() {
       'variables' => array('element' => NULL),
       'file' => 'imagecrop.theme.inc',
     ),
-    'imagecrop' => array(
-      'variables' => array('url' => NULL, 'width' => NULL, 'height' => NULL, 'resize' => NULL),
-      'file' => 'imagecrop.theme.inc',
-    ),
-    'imagecrop_result' => array(
-      'variables' => array('presetname' => NULL, 'filepath' => NULL, 'alt' => NULL, 'attributes' => NULL),
-      'file' => 'imagecrop.theme.inc',
-    ),
-    'presettabs' => array(
-      'variables' => array('presets' => array(), 'fid' => NULL, 'presetid' => NULL, 'module' => NULL, 'field' => NULL, 'node_type' => NULL),
+    'imagecrop_tabs' => array(
+      'variables' => array(
+        'styles' => array(),
+        'entity_type' => NULL,
+        'bundle' => NULL,
+        'field_name' => NULL
+      ),
       'file' => 'imagecrop.theme.inc',
     ),
   );
+
+}
+
+/**
+ * Implements hook_init().
+ */
+function imagecrop_init() {
+
+  if (arg(0) == 'imagecrop') {
+    $path = drupal_get_path('module', 'imagecrop');
+  	drupal_add_js($path . '/imagecrop.js');
+  }
 
 }
 
