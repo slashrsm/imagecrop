@@ -26,25 +26,12 @@ function imagecrop_theme() {
   return array(
     'page-imagecrop' => array(
       'variables' => array(),
-      'file' => 'imagecrop.theme.inc',
+      'file' => 'includes/imagecrop.theme.inc',
       'function' => 'imagecrop_page',
     ),
     'html-imagecrop' => array(
       'variables' => array(),
       'template' => 'html-imagecrop',
-    ),
-    'imagecrop_javascript' => array(
-      'variables' => array('element' => NULL),
-      'file' => 'imagecrop.theme.inc',
-    ),
-    'imagecrop_tabs' => array(
-      'variables' => array(
-        'styles' => array(),
-        'entity_type' => NULL,
-        'bundle' => NULL,
-        'field_name' => NULL
-      ),
-      'file' => 'imagecrop.theme.inc',
     ),
   );
 
@@ -74,7 +61,7 @@ function imagecrop_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('imagecrop_settings_form'),
     'access arguments' => array('administer imagecrop'),
-    'file' => 'imagecrop.admin.inc',
+    'file' => 'includes/imagecrop.admin.inc',
   );
 
   $items['imagecrop/overview/%'] = array(
@@ -82,7 +69,7 @@ function imagecrop_menu() {
     'page arguments' => array(2),
     'type' => MENU_CALLBACK,
     'access arguments' => array('crop images with toolbox'),
-    'file' => 'imagecrop.admin.inc',
+    'file' => 'includes/imagecrop.admin.inc',
   );
 
   $items['imagecrop/crop/%/%'] = array(
@@ -90,7 +77,7 @@ function imagecrop_menu() {
     'page arguments' => array(2, 3),
     'type' => MENU_CALLBACK,
     'access arguments' => array('crop images with toolbox'),
-    'file' => 'imagecrop.admin.inc',
+    'file' => 'includes/imagecrop.admin.inc',
   );
 
   return $items;
