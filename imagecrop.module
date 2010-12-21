@@ -182,7 +182,7 @@ function imagecrop_preprocess_page(&$variables) {
 
   if (arg(0) == 'imagecrop') {
     $variables['theme_hook_suggestion'] = 'page-imagecrop';
-    include_once(dirname(__FILE__) . '/imagecrop.theme.inc');
+    include_once(dirname(__FILE__) . '/includes/imagecrop.theme.inc');
   }
 
 }
