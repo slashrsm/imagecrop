@@ -38,18 +38,6 @@ function imagecrop_theme() {
 }
 
 /**
- * Implements hook_init().
- */
-function imagecrop_init() {
-
-  if (arg(0) == 'imagecrop') {
-    $path = drupal_get_path('module', 'imagecrop');
-  	drupal_add_js($path . '/imagecrop.js');
-  }
-
-}
-
-/**
  * Implements hook_menu().
  */
 function imagecrop_menu() {
@@ -73,7 +61,7 @@ function imagecrop_menu() {
   );
 
   $items['imagecrop/crop/%/%'] = array(
-    'page callback' => 'imagecrop_select_crop',
+    'page callback' => 'imagecrop_cropping_page',
     'page arguments' => array(2, 3),
     'type' => MENU_CALLBACK,
     'access arguments' => array('crop images with toolbox'),
