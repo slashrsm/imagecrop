@@ -75,26 +75,20 @@ function imagecrop_settings_form() {
  */
 function imagecrop_image_styles_overview($fid, $isid, $entity_type = NULL, $bundle = NULL, $field_name = NULL) {
 
-  $enabled_styles = array();
-  if ($entity_type && $bundle && $field_name) {
-    $enabled_styles = imagecrop_get_fields_enabled_styles($entity_type, $field_name, $bundle);
-  }
-
-  $styles = get_imagecrop_styles($enabled_styles);
-  if (count($styles) == 0) {
-    drupal_set_message(t('No preset is found with the javascript_crop action so far. If you want to take advantage of this module, you will need to create at least one preset with that action.'), 'error');
-    return '';
-  }
-
-  $style_name = current($styles);
-  if ($isid > 0) {
-    if (!isset($styles[$isid])) {
-      throw new Exception('The image style to crop was not found.');
-    }
-    $style_name = $styles[$isid];
-  }
-
   try {
+
+    $styles = imagecrop_get_enabled_styles_for_crop($entity_type, $bundle, $field_name);
+
+    $style_name = current($styles);
+    if ($isid > 0) {
+      if (!isset($styles[$isid])) {
+        throw new Exception('The image style to crop was not found.');
+      }
+      $style_name = $styles[$isid];
+    }
+    else {
+    	$isid = key($styles);
+    }
 
     global $user;
     $imagecrop = new ImageCrop();
@@ -106,7 +100,13 @@ function imagecrop_image_styles_overview($fid, $isid, $entity_type = NULL, $bund
       throw new Exception("You don't have permissions to crop this image.");
     }
 
-    $style_selection = drupal_render(drupal_get_form('imagecrop_style_selection_form', $styles, $fid, $isid, $entity_type, $bundle, $field_name, TRUE));
+    $imagecrop->setImageStyle($isid);
+    $imagecrop->setEntityType($entity_type);
+    $imagecrop->setBundle($bundle);
+    $imagecrop->setfieldName($field_name);
+    $imagecrop->addImagecropUi();
+
+    $style_selection = drupal_render(drupal_get_form('imagecrop_style_selection_form', $styles, $imagecrop));
     $style_selection .= theme('image_style', array(
       'style_name' => $style_name,
       'path' => $imagecrop->getFile()->uri,
@@ -135,10 +135,15 @@ function imagecrop_cropping_page($fid, $isid, $entity_type = NULL, $bundle = NUL
 
   try {
 
+    $styles = imagecrop_get_enabled_styles_for_crop($entity_type, $bundle, $field_name);
+
     global $user;
     $imagecrop = new ImageCrop();
     $imagecrop->loadFile($fid);
     $imagecrop->setImageStyle($isid);
+    $imagecrop->setEntityType($entity_type);
+    $imagecrop->setBundle($bundle);
+    $imagecrop->setFieldName($field_name);
     $imagecrop->setInCroppingMode(TRUE);
 
     global $user;
@@ -150,9 +155,11 @@ function imagecrop_cropping_page($fid, $isid, $entity_type = NULL, $bundle = NUL
     $imagecrop->loadCropSettings();
     $imagecrop->addImagecropUi();
 
-//    $style_selection = drupal_render(drupal_get_form('imagecrop_style_selection_form', $styles, $fid, $isid, $entity_type, $bundle, $field_name, TRUE));
-
-    return $imagecrop->getCropArea();
+    return theme('imagecrop_crop_ui', array(
+      'style_selection' => drupal_get_form('imagecrop_style_selection_form', $styles, $imagecrop),
+      'settings_form' => drupal_get_form('imagecrop_crop_settings_form', $imagecrop),
+      'imagecrop' => $imagecrop,
+    ));
 
   }
   catch (Exception $e) {
@@ -165,25 +172,96 @@ function imagecrop_cropping_page($fid, $isid, $entity_type = NULL, $bundle = NUL
 /**
  * Show a selection form to switch styles preview.
  */
-function imagecrop_style_selection_form($form, $form_state, $styles, $fid, $isid, $entity_type, $bundle, $field_name, $edit_link) {
+function imagecrop_style_selection_form($form, $form_state, $styles, $imagecrop) {
+
+  $image_style = $imagecrop->getImageStyle();
 
   $form = array();
   $form['styles'] = array(
     '#type' => 'select',
     '#title' => t('Select style to preview'),
     '#options' => $styles,
-    '#default_value' => $isid,
+    '#default_value' => $image_style['isid'],
   );
 
+  $path = $imagecrop->getFile()->fid . '/isid/' . $imagecrop->getEntityType() . '/' . $imagecrop->getBundle() . '/' . $imagecrop->getFieldName();
   $form['imagecrop-url'] = array(
     '#type' => 'hidden',
-    '#value' => url('imagecrop/overview/' . $fid . '/sid/' . $entity_type . '/' . $bundle . '/' . $field_name, array('absolute' => TRUE)),
+    '#value' => url('imagecrop/overview/' . $path, array('absolute' => TRUE)),
   );
 
-  if ($edit_link) {
-  	$form['#suffix'] = l(t('Edit this style'), 'imagecrop/crop/' . $fid . '/'. $isid .'/' . $entity_type . '/' . $bundle . '/' . $field_name);
+  if (!$imagecrop->getInCroppingMode()) {
+  	$form['#suffix'] = l(t('Edit this style'), 'imagecrop/crop/' . str_replace('/isid/', '/' . $image_style['isid'] . '/', $path));
   }
 
   return $form;
+
+}
+
+/**
+ * Settings form from the current crop.
+ */
+function imagecrop_crop_settings_form($form, $form_state, $imagecrop) {
+
+  $form['image-crop-x'] = array(
+    '#type' => 'hidden',
+    '#default_value' => $imagecrop->getXOffset(),
+    '#attributes' => array('class' => 'edit-image-crop-x'),
+  );
+
+  $form['image-crop-y'] = array(
+    '#type' => 'hidden',
+    '#default_value' => $imagecrop->getYOffset(),
+  );
+
+  $form['image-crop-width'] = array(
+    '#type' => 'hidden',
+    '#default_value' => $imagecrop->getWidth(),
+    '#attributes' => array('class' => 'edit-image-crop-width'),
+  );
+
+  $form['image-crop-height'] = array(
+    '#type' => 'hidden',
+    '#default_value' => $imagecrop->getHeight(),
+    '#attributes' => array('class' => 'edit-image-crop-height'),
+  );
+
+  $form['fid'] = array(
+    '#type' => 'hidden',
+    '#value' => $imagecrop->getFile()->fid,
+  );
+
+  $form['field'] = array(
+    '#type' => 'hidden',
+    '#value' => serialize(array($imagecrop->getEntityType(), $imagecrop->getBundle(), $imagecrop->getFieldName())),
+  );
+
+  $image_style = $imagecrop->getImageStyle();
+
+  $form['style_id'] = array(
+    '#type' => 'hidden',
+    '#value' => $image_style['isid'],
+  );
+
+  return $form;
+
+}
+
+/**
+ * Get all the enabled styles for the current crop url.
+ */
+function imagecrop_get_enabled_styles_for_crop($entity_type, $bundle, $field_name) {
+
+  $enabled_styles = array();
+  if ($entity_type && $bundle && $field_name) {
+    $enabled_styles = imagecrop_get_fields_enabled_styles($entity_type, $field_name, $bundle);
+  }
+
+  $styles = get_imagecrop_styles($enabled_styles);
+  if (count($styles) == 0) {
+    throw new Exception('No preset is found with the javascript_crop action so far. If you want to take advantage of this module, you will need to create at least one preset with that action.');
+  }
+
+  return $styles;
 
 }

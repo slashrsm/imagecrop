@@ -1,10 +1,12 @@
 // $Id$
 
-(function($) { 
-  
 Drupal.Imagecrop.cropUi = Drupal.Imagecrop.cropUi || {};
 
-Drupal.Imagecrop.cropUi.initControls();
+(function($) { 
+
+$(function () {
+  Drupal.Imagecrop.cropUi.initControls();
+});  
 
 /**
  * Init the controls.

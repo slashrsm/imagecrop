@@ -12,9 +12,13 @@
 class ImageCrop {
 
   private $allowedExtensions = array('image/jpeg', 'image/gif', 'image/png', 'image/pjpeg');
-  private $file = null;
-  private $imageStyle = null;
   private $inCroppingMode = FALSE;
+
+  private $file;
+  private $imageStyle;
+  private $entityType;
+  private $bundle;
+  private $fieldName;
 
   /**
    * Load the imagecrop settings for the given fid.
@@ -31,6 +35,8 @@ class ImageCrop {
     	throw new Extension('The file to crop was not an image.');
     }
 
+    $this->file->filepath = file_create_url($this->file->uri);
+
   }
 
   /**
@@ -41,14 +47,105 @@ class ImageCrop {
   }
 
   /**
-   * Setter for status of cropping mode.
+   * Set the entity type from the current imagecrop.
+   */
+  public function setEntityType($entity_type) {
+  	$this->entityType = $entity_type;
+  }
+
+ /**
+   * Get the entity type from the current imagecrop.
+   */
+  public function getEntityType() {
+    return $this->entityType;
+  }
+
+  /**
+   * Set the bundle from the current imagecrop.
+   */
+  public function setBundle($bundle) {
+    $this->bundle = $bundle;
+  }
+
+  /**
+   * Get the bundle from the current imagecrop.
+   */
+  public function getBundle() {
+    return $this->bundle;
+  }
+
+  /**
+   * Set the field name from the current imagecrop.
+   */
+  public function setFieldName($field_name) {
+    $this->fieldName = $field_name;
+  }
+
+  /**
+   * Get the field name from the current imagecrop.
+   */
+  public function getFieldName() {
+    return $this->fieldName;
+  }
+
+  /**
+   * Get the X offset from the current imagecrop object.
+   */
+  public function getXOffset() {
+
+  }
+
+  /**
+   * Get the X offset from the current imagecrop object.
+   */
+  public function getYOffset() {
+
+  }
+
+  /**
+   * Get the width from the current crop area.
+   */
+  public function getWidth() {
+    return $this->width;
+  }
+
+  /**
+   * Get the height from the current crop area.
+   */
+  public function getHeight() {
+    return $this->height;
+  }
+
+  /**
+   * Get the width from the image to crop.
+   */
+  public function getImageWidth() {
+    return $this->imageWidth;
+  }
+
+  /**
+   * Get the height from the image to crop.
+   */
+  public function getImageHeight() {
+    return $this->imageHeight;
+  }
+
+  /**
+   * Set the status of cropping mode (TRUE = busy cropping).
    */
   public function setInCroppingMode($inCroppingMode) {
   	$this->inCroppingMode = $inCroppingMode;
   }
 
   /**
-   * Set the current active image style.
+   * Get the current value for cropping mode.
+   */
+  public function getInCroppingMode() {
+  	return $this->inCroppingMode;
+  }
+
+  /**
+   * Set the current cropped image style.
    */
   public function setImageStyle($isid) {
 
@@ -70,6 +167,13 @@ class ImageCrop {
       }
     }
 
+  }
+
+  /**
+   * Get the current cropped image style.
+   */
+  public function getImageStyle() {
+    return $this->imageStyle;
   }
 
   /**
@@ -96,6 +200,9 @@ class ImageCrop {
    */
   public function loadCropSettings() {
 
+    $size = getimagesize($this->file->filepath);
+    $this->imageWidth = $size[0];
+    $this->imageHeight = $size[1];
 
   }
 
@@ -105,6 +212,7 @@ class ImageCrop {
   public function addImagecropUi() {
 
     drupal_add_js(drupal_get_path('module', 'imagecrop') .'/js/imagecrop.js');
+    drupal_add_css(drupal_get_path('module', 'imagecrop') .'/imagecrop.css');
 
     // Add crop ui if in cropping mode.
     if ($this->inCroppingMode) {
@@ -119,20 +227,6 @@ class ImageCrop {
       }
 
     }
-
-  }
-
-  public function getCropArea() {
-
-    $uri = file_create_url($this->file->uri);
-
-    $output = '
-    <div style="margin-left: 3px;"><div class="imagefield-crop-wrapper" id="imagefield-crop-wrapper" style="position: absolute; margin-top: 45px; width: '. $this->width .'px; height: '. $this->height .'px;">
-      <div id="image-crop-container" style="background-image: url(\''. $uri .'\'); width:'. $this->width  .'px; height:'. $this->height  .'px;"></div>
-      <div id="resizeMe" style="background-image: url(\''. $uri .'\'); width:'. $this->width  .'px; height:'. $this->height  .'px; top: 20px;">';
-    $output .= '</div></div></div><div style="clear:both;"></div>';
-
-    return $output;
 
   }
 

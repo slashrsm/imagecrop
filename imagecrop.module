@@ -33,6 +33,14 @@ function imagecrop_theme() {
       'variables' => array(),
       'template' => 'html-imagecrop',
     ),
+    'imagecrop_crop_ui' => array(
+      'variables' => array(
+        'style_selection' => array(),
+        'settings_form' => array(),
+        'imagecrop' => NULL
+      ),
+      'template' => 'imagecrop-crop-ui',
+    ),
   );
 
 }
