@@ -20,6 +20,13 @@ class ImageCrop {
   private $bundle;
   private $fieldName;
 
+  private $isResizable = FALSE;
+  private $resizeAspectRatio = FALSE;
+  private $width = 0;
+  private $height = 0;
+  private $xoffset = 0;
+  private $disableIfNoData = FALSE;
+
   /**
    * Load the imagecrop settings for the given fid.
    */
@@ -163,6 +170,7 @@ class ImageCrop {
         $this->yoffset = $effect['data']['yoffset'];
         $this->isResizable = $effect['data']['resizable'];
         $this->disableIfNoData = $effect['data']['disable_if_no_data'];
+        $this->resizeAspectRatio = $effect['data']['aspect_ratio'];
         break;
       }
     }
@@ -224,6 +232,7 @@ class ImageCrop {
       if ($this->isResizable) {
         drupal_add_library('system', 'ui.resizable');
         drupal_add_library('system', 'effects.scale');
+        drupal_add_js(array('imagecrop' => array('resizeAspectRatio' => $this->resizeAspectRatio)), 'setting');
       }
 
     }

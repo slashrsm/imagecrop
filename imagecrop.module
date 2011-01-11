@@ -325,10 +325,10 @@ function imagecrop_effect_form($data) {
   $description .= '<li>' . t('The string \'CROP\'. This will constrain the aspect ratio to the dimensions set above.') . '</li></ul>';
   $description .= t('Leave blank for no aspect ratio constraints.');
 
-  $form['aspect'] = array(
+  $form['aspect_ratio'] = array(
     '#type' => 'textfield',
     '#title' => t('Aspect ratio'),
-    '#default_value' => isset($data['aspect']) ? $data['aspect'] : '',
+    '#default_value' => isset($data['aspect_ratio']) ? $data['aspect_ratio'] : '',
     '#description' => $description,
     '#element_validate' => array('imagecrop_validate_aspect'),
   );

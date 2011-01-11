@@ -243,7 +243,19 @@ function imagecrop_crop_settings_form($form, $form_state, $imagecrop) {
     '#value' => $image_style['isid'],
   );
 
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Crop image thumbnail'),
+  );
+
   return $form;
+
+}
+
+/**
+ * Submit the settings form. Save all cropping settings.
+ */
+function imagecrop_crop_settings_form_submit($form, &$form_state) {
 
 }
 
