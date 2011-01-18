@@ -238,7 +238,7 @@ function imagecrop_crop_settings_form($form, $form_state, $imagecrop) {
 
   $image_style = $imagecrop->getImageStyle();
 
-  $form['style_id'] = array(
+  $form['isid'] = array(
     '#type' => 'hidden',
     '#value' => $image_style['isid'],
   );
@@ -256,6 +256,30 @@ function imagecrop_crop_settings_form($form, $form_state, $imagecrop) {
  * Submit the settings form. Save all cropping settings.
  */
 function imagecrop_crop_settings_form_submit($form, &$form_state) {
+
+  db_delete('image_crop_settings')
+    ->condition('fid', $form_state['values']['fid'])
+    ->condition('isid', $form_state['values']['isid'])
+  ->execute();
+
+  $record = new stdClass();
+  $record->fid = $form_state['values']['fid'];
+  $record->isid = $form_state['values']['isid'];
+  $record->xoffset = $form_state['values']['image-crop-x'];
+  $record->yoffset = $form_state['values']['image-crop-y'];
+  $record->width = $form_state['values']['image-crop-width'];
+  $record->height = $form_state['values']['image-crop-height'];
+
+  drupal_write_record('image_crop_settings', $record);
+
+  $field_info = unserialize($form_state['values']['field']);
+  // delete imagecache preset, so newest file is generated.
+/*  file_delete($form_state['values']['preset-destination']);
+  if ($form_state['values']['preset-destination'] != $form_state['values']['temp-preset-destination']) {
+    file_delete($form_state['values']['temp-preset-destination']);
+  }*/
+
+  drupal_goto('imagecrop/overview/'. $record->fid .'/'. $record->isid . '/'. $field_info[0] . '/'. $field_info[1] . '/'. $field_info[2]);
 
 }
 
