@@ -193,9 +193,9 @@ function imagecrop_process_html(&$variables) {
 
     $js = drupal_add_js();
     if (module_exists('admin_menu')) {
-    	$path = drupal_get_path('module', 'admin_menu');
-      if (isset($js[$path. '/admin_menu.js'])) {
-        unset($js[$path. '/admin_menu.js']);
+      $path = drupal_get_path('module', 'admin_menu');
+      if (isset($js[$path . '/admin_menu.js'])) {
+        unset($js[$path . '/admin_menu.js']);
         $variables['scripts'] = drupal_get_js('header', $js);
       }
     }
@@ -359,7 +359,7 @@ function imagecrop_validate_offset($element, &$form_state) {
 
   // if the value is a string, check on allowed strings
   if ($element['#value'] != 'center' && $element['#value'] != 'left' && $element['#value'] != 'right') {
-    form_error($element, t('!name must be a correct offset value', array('!name' => $element['#title'])));
+    form_error($element, t('@name must be a correct offset value', array('@name' => $element['#title'])));
   }
 
 }
@@ -380,7 +380,7 @@ function imagecrop_validate_aspect($element, &$form_state) {
 
   // if the value is a string, check on allowed strings
   if ($element['#value'] != 'KEEP' && $element['#value'] != 'CROP') {
-    form_error($element, t('!name must be a correct aspect value', array('!name' => $element['#title'])));
+    form_error($element, t('@name must be a correct aspect value', array('@name' => $element['#title'])));
   }
 
 }

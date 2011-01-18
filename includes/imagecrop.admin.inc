@@ -87,7 +87,7 @@ function imagecrop_image_styles_overview($fid, $isid, $entity_type = NULL, $bund
       $style_name = $styles[$isid];
     }
     else {
-    	$isid = key($styles);
+      $isid = key($styles);
     }
 
     global $user;
@@ -116,7 +116,7 @@ function imagecrop_image_styles_overview($fid, $isid, $entity_type = NULL, $bund
 
   }
   catch (Exception $e) {
-    drupal_set_message(t($e->getMessage()), 'error');
+    drupal_set_message(check_plain(t($e->getMessage())), 'error');
     return '';
   }
 
@@ -163,7 +163,7 @@ function imagecrop_cropping_page($fid, $isid, $entity_type = NULL, $bundle = NUL
 
   }
   catch (Exception $e) {
-    drupal_set_message(t($e->getMessage()), 'error');
+    drupal_set_message(check_plain(t($e->getMessage())), 'error');
     return '';
   }
 
@@ -191,7 +191,7 @@ function imagecrop_style_selection_form($form, $form_state, $styles, $imagecrop)
   );
 
   if (!$imagecrop->getInCroppingMode()) {
-  	$form['#suffix'] = l(t('Edit this style'), 'imagecrop/crop/' . str_replace('/isid/', '/' . $image_style['isid'] . '/', $path));
+    $form['#suffix'] = l(t('Edit this style'), 'imagecrop/crop/' . str_replace('/isid/', '/' . $image_style['isid'] . '/', $path));
   }
 
   return $form;
@@ -279,7 +279,7 @@ function imagecrop_crop_settings_form_submit($form, &$form_state) {
     file_delete($form_state['values']['temp-preset-destination']);
   }*/
 
-  drupal_goto('imagecrop/overview/'. $record->fid .'/'. $record->isid . '/'. $field_info[0] . '/'. $field_info[1] . '/'. $field_info[2]);
+  drupal_goto('imagecrop/overview/' . $record->fid . '/' . $record->isid . '/' . $field_info[0] . '/' . $field_info[1] . '/' . $field_info[2]);
 
 }
 

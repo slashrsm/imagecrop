@@ -35,11 +35,11 @@ class ImageCrop {
     $this->file = file_load($fid);
 
     if (!$this->file) {
-    	throw new Exception('The image to crop was not found.');
+      throw new Exception('The image to crop was not found.');
     }
 
     if (!in_array($this->file->filemime, $this->allowedExtensions)) {
-    	throw new Extension('The file to crop was not an image.');
+      throw new Extension('The file to crop was not an image.');
     }
 
     $this->file->filepath = file_create_url($this->file->uri);
@@ -50,14 +50,14 @@ class ImageCrop {
    * Get the current file.
    */
   public function getFile() {
-  	return $this->file;
+    return $this->file;
   }
 
   /**
    * Set the entity type from the current imagecrop.
    */
   public function setEntityType($entity_type) {
-  	$this->entityType = $entity_type;
+    $this->entityType = $entity_type;
   }
 
  /**
@@ -141,14 +141,14 @@ class ImageCrop {
    * Set the status of cropping mode (TRUE = busy cropping).
    */
   public function setInCroppingMode($inCroppingMode) {
-  	$this->inCroppingMode = $inCroppingMode;
+    $this->inCroppingMode = $inCroppingMode;
   }
 
   /**
    * Get the current value for cropping mode.
    */
   public function getInCroppingMode() {
-  	return $this->inCroppingMode;
+    return $this->inCroppingMode;
   }
 
   /**
@@ -219,13 +219,13 @@ class ImageCrop {
    */
   public function addImagecropUi() {
 
-    drupal_add_js(drupal_get_path('module', 'imagecrop') .'/js/imagecrop.js');
-    drupal_add_css(drupal_get_path('module', 'imagecrop') .'/imagecrop.css');
+    drupal_add_js(drupal_get_path('module', 'imagecrop') . '/js/imagecrop.js');
+    drupal_add_css(drupal_get_path('module', 'imagecrop') . '/imagecrop.css');
 
     // Add crop ui if in cropping mode.
     if ($this->inCroppingMode) {
 
-      drupal_add_js(drupal_get_path('module', 'imagecrop') .'/js/imagecrop.ui.crop.js');
+      drupal_add_js(drupal_get_path('module', 'imagecrop') . '/js/imagecrop.ui.crop.js');
 
       drupal_add_library('system', 'ui.draggable');
 
