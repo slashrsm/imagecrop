@@ -19,6 +19,8 @@ class ImageCrop {
   private $entityType;
   private $bundle;
   private $fieldName;
+  private $styleDestination;
+  private $cropDestination;
 
   private $isResizable = FALSE;
   private $resizeAspectRatio = FALSE;
@@ -196,6 +198,20 @@ class ImageCrop {
   }
 
   /**
+   * Get the destination from the image for current style.
+   */
+  public function getStyleDestination() {
+  	return $this->styleDestination;
+  }
+
+  /**
+   * Get the destination from the image for cropping the current style.
+   */
+  public function getCropDestination() {
+    return $this->cropDestination;
+  }
+
+  /**
    * Check if a user has permissions to the current file.
    */
   public function hasUserAccess($account) {
@@ -218,6 +234,18 @@ class ImageCrop {
    * Load the crop settings that are available.
    */
   public function loadCropSettings() {
+
+    if ($this->inCroppingMode) {
+
+      $this->styleDestination = image_style_path($this->imageStyle['name'], $this->file->uri);
+      if (file_uri_scheme($this->file->uri) != 'public') {
+      	$this->cropDestination = $this->styleDestination;
+      }
+      else {
+      	$this->cropDestination = image_style_path('_imagecrop_temp', $this->file->uri);
+      }
+
+    }
 
     $size = getimagesize($this->file->filepath);
     $this->imageWidth = $size[0];

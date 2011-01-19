@@ -243,6 +243,16 @@ function imagecrop_crop_settings_form($form, $form_state, $imagecrop) {
     '#value' => $image_style['isid'],
   );
 
+  $form['style-destination'] = array(
+    '#type' => 'hidden',
+    '#value' => $imagecrop->getStyleDestination(),
+  );
+
+  $form['temp-style-destination'] = array(
+    '#type' => 'hidden',
+    '#value' => $imagecrop->getCropDestination(),
+  );
+
   $form['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Crop image thumbnail'),
@@ -273,11 +283,16 @@ function imagecrop_crop_settings_form_submit($form, &$form_state) {
   drupal_write_record('image_crop_settings', $record);
 
   $field_info = unserialize($form_state['values']['field']);
-  // delete imagecache preset, so newest file is generated.
-/*  file_delete($form_state['values']['preset-destination']);
+
+  $file = new stdClass();
+  $file->uri = $form_state['values']['style-destination'];
+  $file->fid = 0;
+  // delete old imagestyles, so newest file is generated.
+  file_delete($file);
   if ($form_state['values']['preset-destination'] != $form_state['values']['temp-preset-destination']) {
-    file_delete($form_state['values']['temp-preset-destination']);
-  }*/
+    $file->uri = $form_state['values']['temp-preset-destination'];
+    file_delete($$file);
+  }
 
   drupal_goto('imagecrop/overview/' . $record->fid . '/' . $record->isid . '/' . $field_info[0] . '/' . $field_info[1] . '/' . $field_info[2]);
 
