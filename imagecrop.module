@@ -286,7 +286,33 @@ function get_imagecrop_styles($enabled_styles = array()) {
  *
  */
 function imagecrop_effect(&$image, $data) {
+
+  try {
+
+    $imagecrop = new ImageCrop();
+    $imagecrop->loadFile($image->source, FALSE);
+
+    // if a global presetid is been set, it meens the image is generated from the imagecrop module
+    if (isset($GLOBALS['imagecrop_isid'])) {
+      $isid = $GLOBALS['imagecrop_isid'];
+    }
+    // and if not, then get the id from list of all presets
+    else {
+      $isid = imagecrop_get_isid_from_url();
+    }
+
+    $imagecrop->setImageStyle($isid);
+    $imagecrop->loadCropSettings();
+    $imagecrop->applyCrop($image);
+
+  }
+  catch(Exception $e) {
+    watchdog($e->getMessage(), 'error');
+    return FALSE;
+  }
+
   return TRUE;
+
 }
 
 /**
@@ -382,5 +408,31 @@ function imagecrop_validate_aspect($element, &$form_state) {
   if ($element['#value'] != 'KEEP' && $element['#value'] != 'CROP') {
     form_error($element, t('@name must be a correct aspect value', array('@name' => $element['#title'])));
   }
+
+}
+
+/**
+ * Get the isid from the current requested url.
+ */
+function imagecrop_get_isid_from_url() {
+
+  $args = explode('/', $_GET['q']);
+  $key = array_search('styles', $args);
+
+  if ($key != FALSE) {
+
+    $key++;
+    $stylename = $args[$key];
+    $styles = get_imagecrop_styles();
+    foreach ($styles as $isid => $style) {
+      if ($style == $stylename) {
+        return $isid;
+        break;
+      }
+    }
+
+  }
+
+  return 0;
 
 }

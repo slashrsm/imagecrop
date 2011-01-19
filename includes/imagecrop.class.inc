@@ -26,20 +26,31 @@ class ImageCrop {
   private $height = 0;
   private $xoffset = 0;
   private $disableIfNoData = FALSE;
+  private $hasSettings = TRUE;
 
   /**
-   * Load the imagecrop settings for the given fid.
+   * Load the imagecrop settings for the given fid or filesource.
+   * @param $lookup fid of filesource
+   * @param $use_fid the first param is a fid
    */
-  public function loadFile($fid) {
+  public function loadFile($filesource, $use_fid = TRUE) {
 
-    $this->file = file_load($fid);
+    if ($use_fid) {
+      $this->file = file_load($filesource);
+    }
+    else {
+      $query = db_select('file_managed', 'f');
+      $query->fields('f', array('fid', 'uid', 'uri', 'filemime'));
+      $query->condition('uri', $filesource);
+      $this->file = $query->execute()->fetchObject();
+    }
 
     if (!$this->file) {
       throw new Exception('The image to crop was not found.');
     }
 
     if (!in_array($this->file->filemime, $this->allowedExtensions)) {
-      throw new Extension('The file to crop was not an image.');
+      throw new Exception('The file to crop was not an image.');
     }
 
     $this->file->filepath = file_create_url($this->file->uri);
@@ -211,6 +222,36 @@ class ImageCrop {
     $size = getimagesize($this->file->filepath);
     $this->imageWidth = $size[0];
     $this->imageHeight = $size[1];
+
+    $settings = db_select('image_crop_settings')
+      ->fields('image_crop_settings')
+      ->condition('fid', $this->file->fid)
+      ->condition('isid', $this->imageStyle['isid'])
+    ->execute()->fetchObject();
+
+    if ($settings) {
+    	$this->xoffset = $settings->xoffset;
+      $this->yoffset = $settings->yoffset;
+      $this->width = $settings->width;
+      $this->height = $settings->height;
+      $this->scale = $settings->scale;
+      $this->hasSettings = TRUE;
+    }
+
+  }
+
+  /**
+   * Apply all the crop settings to the given image source.
+   * @param $image image object from image module
+   */
+  public function applyCrop(&$image) {
+
+    $data = array(
+      'anchor' => $this->xoffset . '-'. $this->yoffset,
+      'width' => $this->width,
+      'height' => $this->height,
+    );
+    image_crop_effect($image, $data);
 
   }
 
