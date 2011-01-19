@@ -289,9 +289,9 @@ function imagecrop_crop_settings_form_submit($form, &$form_state) {
   $file->fid = 0;
   // delete old imagestyles, so newest file is generated.
   file_delete($file);
-  if ($form_state['values']['preset-destination'] != $form_state['values']['temp-preset-destination']) {
-    $file->uri = $form_state['values']['temp-preset-destination'];
-    file_delete($$file);
+  if ($file->uri != $form_state['values']['temp-style-destination']) {
+    $file->uri = $form_state['values']['temp-style-destination'];
+    file_delete($file);
   }
 
   drupal_goto('imagecrop/overview/' . $record->fid . '/' . $record->isid . '/' . $field_info[0] . '/' . $field_info[1] . '/' . $field_info[2]);
