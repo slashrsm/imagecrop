@@ -206,9 +206,10 @@ class ImageCrop {
 
   /**
    * Get the destination from the image for cropping the current style.
+   * @param $filepath Boolean, TRUE to return the filepath, FALSE to return the uri.
    */
-  public function getCropDestination() {
-    return $this->cropDestination;
+  public function getCropDestination($filepath = FALSE) {
+    return ($filepath) ?  file_create_url($this->cropDestination) : $this->cropDestination;
   }
 
   /**
@@ -266,6 +267,13 @@ class ImageCrop {
       $this->hasSettings = TRUE;
     }
 
+  }
+
+  /**
+   * Write the file to crop, and apply all effects, untill the imagecrop effectso cropping can be done.
+   */
+  public function writeCroppingFile() {
+    image_style_create_derivative($this->imageStyle, $this->file->uri, $this->cropDestination);
   }
 
   /**

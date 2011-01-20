@@ -153,6 +153,7 @@ function imagecrop_cropping_page($fid, $isid, $entity_type = NULL, $bundle = NUL
     }
 
     $imagecrop->loadCropSettings();
+    $imagecrop->writeCroppingFile();
     $imagecrop->addImagecropUi();
 
     return theme('imagecrop_crop_ui', array(
