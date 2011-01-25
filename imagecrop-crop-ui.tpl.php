@@ -10,6 +10,7 @@
  */
 print drupal_render($style_selection);
 print drupal_render($settings_form);
+print drupal_render($scale_form);
 ?>
 <div id="imagecrop-crop-wrapper" style="width: <?php print $imagecrop->getImageWidth() ?>px; height: <?php print $imagecrop->getImageHeight() ?>px;">
   <div id="image-crop-container" style="background-image: url('<?php print $imagecrop->getCropDestination(TRUE); ?>'); width:<?php print $imagecrop->getImageWidth() ?>px; height:<?php print $imagecrop->getImageHeight() ?>px;"></div>

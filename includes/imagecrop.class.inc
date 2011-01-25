@@ -112,14 +112,14 @@ class ImageCrop {
    * Get the X offset from the current imagecrop object.
    */
   public function getXOffset() {
-
+    return $this->xoffset;
   }
 
   /**
    * Get the X offset from the current imagecrop object.
    */
   public function getYOffset() {
-
+    return $this->yoffset;
   }
 
   /**
@@ -141,6 +141,13 @@ class ImageCrop {
    */
   public function getImageWidth() {
     return $this->imageWidth;
+  }
+
+  /**
+   * Get the scaling from the image to crop.
+   */
+  public function getScale() {
+    return $this->scale;
   }
 
   /**
@@ -240,10 +247,10 @@ class ImageCrop {
 
       $this->styleDestination = image_style_path($this->imageStyle['name'], $this->file->uri);
       if (file_uri_scheme($this->file->uri) != 'public') {
-      	$this->cropDestination = $this->styleDestination;
+        $this->cropDestination = $this->styleDestination;
       }
       else {
-      	$this->cropDestination = image_style_path('_imagecrop_temp', $this->file->uri);
+        $this->cropDestination = image_style_path('_imagecrop_temp', $this->file->uri);
       }
 
     }
@@ -270,13 +277,6 @@ class ImageCrop {
   }
 
   /**
-   * Write the file to crop, and apply all effects, untill the imagecrop effectso cropping can be done.
-   */
-  public function writeCroppingFile() {
-    image_style_create_derivative($this->imageStyle, $this->file->uri, $this->cropDestination);
-  }
-
-  /**
    * Apply all the crop settings to the given image source.
    * @param $image image object from image module
    */
@@ -288,6 +288,25 @@ class ImageCrop {
       'height' => $this->height,
     );
     image_crop_effect($image, $data);
+
+  }
+
+  /**
+   * Write the file to crop, and apply all effects, untill the imagecrop effectso cropping can be done.
+   */
+  public function writeCropreadyImage() {
+
+    $unset = FALSE;
+    $style = $this->imageStyle;
+
+    foreach ($this->imageStyle['effects'] as $key => $effect) {
+      if ($effect['name'] == 'imagecrop_javascript') {
+      	$unset = TRUE;
+      }
+      unset($style['effects'][$key]);
+    }
+
+    image_style_create_derivative($style, $this->file->uri, $this->cropDestination);
 
   }
 

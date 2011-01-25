@@ -6,6 +6,7 @@ Drupal.Imagecrop.cropUi = Drupal.Imagecrop.cropUi || {};
 
 $(function () {
   Drupal.Imagecrop.cropUi.initControls();
+  Drupal.Imagecrop.cropUi.initScaling();
 });  
 
 Drupal.Imagecrop.imageCropWidthField = null;
@@ -68,6 +69,32 @@ Drupal.Imagecrop.cropUi.initControls = function() {
   Drupal.Imagecrop.resizeMe.height($('#edit-image-crop-height').val() + 'px');
   Drupal.Imagecrop.resizeMe.css({top: toppos +'px' });
   Drupal.Imagecrop.resizeMe.css({left: leftpos +'px' });
+  
+}
+
+/**
+ * Init the scaling dropdown.
+ */
+Drupal.Imagecrop.cropUi.initScaling = function() {
+  $('#edit-scaling', '#imagecrop-scale-settings-form').bind('change', Drupal.Imagecrop.cropUi.scaleImage);
+}
+
+/**
+ * Scale the image to the selected width / height.
+ */
+Drupal.Imagecrop.cropUi.scaleImage = function() {
+  
+  var imagecropData = {
+      
+  }
+  
+  $.ajax({
+    url : Drupal.settings.imagecrop.manipulationUrl,
+    data : imagecropData,
+    success : function() {
+      // force new backgrounds
+    }
+  })
   
 }
 

@@ -153,12 +153,13 @@ function imagecrop_cropping_page($fid, $isid, $entity_type = NULL, $bundle = NUL
     }
 
     $imagecrop->loadCropSettings();
-    $imagecrop->writeCroppingFile();
+    $imagecrop->writeCropreadyImage();
     $imagecrop->addImagecropUi();
 
     return theme('imagecrop_crop_ui', array(
       'style_selection' => drupal_get_form('imagecrop_style_selection_form', $styles, $imagecrop),
       'settings_form' => drupal_get_form('imagecrop_crop_settings_form', $imagecrop),
+      'scale_form' => drupal_get_form('imagecrop_scale_settings_form', $imagecrop),
       'imagecrop' => $imagecrop,
     ));
 
@@ -288,6 +289,7 @@ function imagecrop_crop_settings_form_submit($form, &$form_state) {
   $file = new stdClass();
   $file->uri = $form_state['values']['style-destination'];
   $file->fid = 0;
+
   // delete old imagestyles, so newest file is generated.
   file_delete($file);
   if ($file->uri != $form_state['values']['temp-style-destination']) {
@@ -296,6 +298,43 @@ function imagecrop_crop_settings_form_submit($form, &$form_state) {
   }
 
   drupal_goto('imagecrop/overview/' . $record->fid . '/' . $record->isid . '/' . $field_info[0] . '/' . $field_info[1] . '/' . $field_info[2]);
+
+}
+
+/**
+ * Show the scale form for the current imagecrop.
+ */
+function imagecrop_scale_settings_form($form, $form_state, $imagecrop) {
+
+  $step = variable_get('imagecrop_scale_step', 50);
+  $image_width = $scale_width = $imagecrop->getImageWidth();
+  $image_height = $imagecrop->getImageHeight();
+  $aspect = $image_width / $image_height;
+  $crop_width = $imagecrop->getWidth();
+  $crop_height = $imagecrop->getHeight();
+
+  $form = array();
+  $options = array();
+  if ($step > 0) {
+    $options['original'] = $image_width .' x '. $image_height .'px (Original)';
+    $scale_width -= $step;
+
+    while ($scale_width > $crop_width && ($scale_width / $aspect) > $crop_height) {
+      $options[$scale_width] = $scale_width .' x '. intval($scale_width / $aspect) .'px ('. round((($scale_width / $image_width) * 100), 2) .'%)';
+      $scale_width -= $step;
+    }
+  }
+
+  // only show when there are multiple scaling options available
+  if (count($options) > 1) {
+    $form['scaling'] = array(
+      '#type' => 'select',
+      '#options' => $options,
+      '#default_value' => $imagecrop->getScale(),
+    );
+  }
+
+  return $form;
 
 }
 
