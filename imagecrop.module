@@ -77,9 +77,8 @@ function imagecrop_menu() {
     'file' => 'includes/imagecrop.admin.inc',
   );
 
-  $items['imagecrop/image/%/%'] = array(
-    'page callback' => 'imagecrop_show_image_to_crop',
-    'page arguments' => array(2, 3),
+  $items['imagecrop/generate_image'] = array(
+    'page callback' => 'imagecrop_generate_cropready_image',
     'access arguments' => array('crop images with toolbox'),
     'file' => 'includes/imagecrop.admin.inc',
   );

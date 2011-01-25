@@ -286,15 +286,10 @@ function imagecrop_crop_settings_form_submit($form, &$form_state) {
 
   $field_info = unserialize($form_state['values']['field']);
 
-  $file = new stdClass();
-  $file->uri = $form_state['values']['style-destination'];
-  $file->fid = 0;
-
   // delete old imagestyles, so newest file is generated.
-  file_delete($file);
-  if ($file->uri != $form_state['values']['temp-style-destination']) {
-    $file->uri = $form_state['values']['temp-style-destination'];
-    file_delete($file);
+  file_unmanaged_delete($form_state['values']['style-destination']);
+  if ($form_state['values']['style-destination'] != $form_state['values']['temp-style-destination']) {
+    file_unmanaged_delete($form_state['values']['temp-style-destination']);
   }
 
   drupal_goto('imagecrop/overview/' . $record->fid . '/' . $record->isid . '/' . $field_info[0] . '/' . $field_info[1] . '/' . $field_info[2]);
@@ -335,6 +330,13 @@ function imagecrop_scale_settings_form($form, $form_state, $imagecrop) {
   }
 
   return $form;
+
+}
+
+/**
+ * Generate a new scaled version from the image to crop.
+ */
+function imagecrop_generate_cropready_image() {
 
 }
 

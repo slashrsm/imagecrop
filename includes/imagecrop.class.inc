@@ -215,7 +215,7 @@ class ImageCrop {
    * Get the destination from the image for cropping the current style.
    * @param $filepath Boolean, TRUE to return the filepath, FALSE to return the uri.
    */
-  public function getCropDestination($filepath = FALSE) {
+  public function getCropDestination($filepath = TRUE) {
     return ($filepath) ?  file_create_url($this->cropDestination) : $this->cropDestination;
   }
 
@@ -325,11 +325,14 @@ class ImageCrop {
 
       drupal_add_library('system', 'ui.draggable');
 
+      $settings = array('manipulationUrl' => url('imagecrop/generate_image'));
       if ($this->isResizable) {
         drupal_add_library('system', 'ui.resizable');
         drupal_add_library('system', 'effects.scale');
-        drupal_add_js(array('imagecrop' => array('resizeAspectRatio' => $this->resizeAspectRatio)), 'setting');
+        $settings['resizeAspectRatio'] = $this->resizeAspectRatio;
       }
+
+      drupal_add_js(array('imagecrop' => $settings), 'setting');
 
     }
 
