@@ -338,6 +338,29 @@ function imagecrop_scale_settings_form($form, $form_state, $imagecrop) {
  */
 function imagecrop_generate_cropready_image() {
 
+  $result = new stdClass();
+  $result->result = FALSE;
+
+  try {
+
+    if (!isset($_POST['fid']) && !isset($_POST['isid']) && !isset($_POST['scale'])) {
+    	throw new Exception('Required fields are empty');
+    }
+
+    $imagecrop = new ImageCrop();
+    $imagecrop->loadFile($_POST['fid']);
+    $imagecrop->setImageStyle($_POST['isid']);
+    $imagecrop->setInCroppingMode(TRUE);
+
+    $imagecrop->setScale($_POST['scale']);
+    $imagecrop->writeCropreadyImage();
+
+  }
+  catch (Exception $e) {
+    watchdog('imagecrop', $e->getMessage());
+    drupal_json_output($result);
+  }
+
 }
 
 /**

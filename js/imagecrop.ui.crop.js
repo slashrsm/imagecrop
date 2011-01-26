@@ -91,7 +91,8 @@ Drupal.Imagecrop.cropUi.scaleImage = function() {
   
   var imagecropData = {
     'fid' : Drupal.Imagecrop.fid,
-    'isid' : Drupal.Imagecrop.isid
+    'isid' : Drupal.Imagecrop.isid,
+    'scale' : $(this).val()
   }
   
   $.ajax({

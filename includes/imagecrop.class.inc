@@ -27,6 +27,7 @@ class ImageCrop {
   private $width = 0;
   private $height = 0;
   private $xoffset = 0;
+  private $scale = 'original';
   private $disableIfNoData = FALSE;
   private $hasSettings = TRUE;
 
@@ -144,6 +145,13 @@ class ImageCrop {
   }
 
   /**
+   * Set the scaling width from the image to crop.
+   */
+  public function setScale($scale) {
+    $this->scale = $scale;
+  }
+
+  /**
    * Get the scaling from the image to crop.
    */
   public function getScale() {
@@ -239,21 +247,24 @@ class ImageCrop {
   }
 
   /**
+   * Prepare the cropping destinations.
+   */
+  public function prepareCroppingDestinations() {
+
+    $this->styleDestination = image_style_path($this->imageStyle['name'], $this->file->uri);
+    if (file_uri_scheme($this->file->uri) != 'public') {
+      $this->cropDestination = $this->styleDestination;
+    }
+    else {
+      $this->cropDestination = image_style_path('_imagecrop_temp', $this->file->uri);
+    }
+
+  }
+
+  /**
    * Load the crop settings that are available.
    */
   public function loadCropSettings() {
-
-    if ($this->inCroppingMode) {
-
-      $this->styleDestination = image_style_path($this->imageStyle['name'], $this->file->uri);
-      if (file_uri_scheme($this->file->uri) != 'public') {
-        $this->cropDestination = $this->styleDestination;
-      }
-      else {
-        $this->cropDestination = image_style_path('_imagecrop_temp', $this->file->uri);
-      }
-
-    }
 
     $size = getimagesize($this->file->filepath);
     $this->imageWidth = $size[0];
@@ -304,6 +315,15 @@ class ImageCrop {
       	$unset = TRUE;
       }
       unset($style['effects'][$key]);
+    }
+
+    if ($this->scale !== 'original') {
+      $style['effects'][] = array(
+        'effect callback' => 'image_scale_effect',
+        'data' => array(
+          'width' => $this->scale,
+        ),
+      );
     }
 
     image_style_create_derivative($style, $this->file->uri, $this->cropDestination);
