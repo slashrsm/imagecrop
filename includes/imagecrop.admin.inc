@@ -145,6 +145,7 @@ function imagecrop_cropping_page($fid, $isid, $entity_type = NULL, $bundle = NUL
     $imagecrop->setBundle($bundle);
     $imagecrop->setFieldName($field_name);
     $imagecrop->setInCroppingMode(TRUE);
+    $imagecrop->setCropDestinations();
 
     global $user;
     if (!$imagecrop->hasUserAccess($user)) {
@@ -154,7 +155,7 @@ function imagecrop_cropping_page($fid, $isid, $entity_type = NULL, $bundle = NUL
 
     $imagecrop->loadCropSettings();
     $imagecrop->writeCropreadyImage();
-    $imagecrop->addImagecropUi();
+    $imagecrop->addImagecropUi(TRUE);
 
     return theme('imagecrop_crop_ui', array(
       'style_selection' => drupal_get_form('imagecrop_style_selection_form', $styles, $imagecrop),
@@ -311,11 +312,12 @@ function imagecrop_scale_settings_form($form, $form_state, $imagecrop) {
   $form = array();
   $options = array();
   if ($step > 0) {
-    $options['original'] = $image_width .' x '. $image_height .'px (Original)';
+    $options['original'] = $image_width . ' x ' . $image_height . 'px (Original)';
     $scale_width -= $step;
 
     while ($scale_width > $crop_width && ($scale_width / $aspect) > $crop_height) {
-      $options[$scale_width] = $scale_width .' x '. intval($scale_width / $aspect) .'px ('. round((($scale_width / $image_width) * 100), 2) .'%)';
+      $scaled_height = intval($scale_width / $aspect);
+      $options[$scale_width . 'x' . $scaled_height] = $scale_width .' x '. $scaled_height .'px ('. round((($scale_width / $image_width) * 100), 2) .'%)';
       $scale_width -= $step;
     }
   }
@@ -350,7 +352,7 @@ function imagecrop_generate_cropready_image() {
     $imagecrop = new ImageCrop();
     $imagecrop->loadFile($_POST['fid']);
     $imagecrop->setImageStyle($_POST['isid']);
-    $imagecrop->setInCroppingMode(TRUE);
+    $imagecrop->setCropDestinations();
 
     $imagecrop->setScale($_POST['scale']);
     $imagecrop->writeCropreadyImage();

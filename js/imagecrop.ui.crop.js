@@ -100,9 +100,12 @@ Drupal.Imagecrop.cropUi.scaleImage = function() {
     data : imagecropData,
     type : 'post',
     success : function() {
-      // force new backgrounds
+      
+      // force new backgrounds and width / height
       var background = Drupal.Imagecrop.cropFile + '?time=' +  new Date().getTime();
       $('#image-crop-container').css({'background-image' : 'url(' + background + ')' });
+      
+      
     }
   })
   

@@ -213,6 +213,21 @@ class ImageCrop {
   }
 
   /**
+   * Set the crop destinations.
+   */
+  public function setCropDestinations() {
+
+    $this->styleDestination = image_style_path($this->imageStyle['name'], $this->file->uri);
+    if (file_uri_scheme($this->file->uri) != 'public') {
+      $this->cropDestination = $this->styleDestination;
+    }
+    else {
+      $this->cropDestination = image_style_path('_imagecrop_temp', $this->file->uri);
+    }
+
+  }
+
+  /**
    * Get the destination from the image for current style.
    */
   public function getStyleDestination() {
@@ -243,21 +258,6 @@ class ImageCrop {
     }
 
     return TRUE;
-
-  }
-
-  /**
-   * Prepare the cropping destinations.
-   */
-  public function prepareCroppingDestinations() {
-
-    $this->styleDestination = image_style_path($this->imageStyle['name'], $this->file->uri);
-    if (file_uri_scheme($this->file->uri) != 'public') {
-      $this->cropDestination = $this->styleDestination;
-    }
-    else {
-      $this->cropDestination = image_style_path('_imagecrop_temp', $this->file->uri);
-    }
 
   }
 
@@ -333,13 +333,13 @@ class ImageCrop {
   /**
    * Add all the files for the cropping UI.
    */
-  public function addImagecropUi() {
+  public function addImagecropUi($in_cropping_mode) {
 
     drupal_add_js(drupal_get_path('module', 'imagecrop') . '/js/imagecrop.js');
     drupal_add_css(drupal_get_path('module', 'imagecrop') . '/imagecrop.css');
 
     // Add crop ui if in cropping mode.
-    if ($this->inCroppingMode) {
+    if ($in_cropping_mode) {
 
       drupal_add_js(drupal_get_path('module', 'imagecrop') . '/js/imagecrop.ui.crop.js');
 
