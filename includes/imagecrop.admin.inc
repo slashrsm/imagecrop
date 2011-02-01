@@ -104,7 +104,7 @@ function imagecrop_image_styles_overview($fid, $isid, $entity_type = NULL, $bund
     $imagecrop->setEntityType($entity_type);
     $imagecrop->setBundle($bundle);
     $imagecrop->setfieldName($field_name);
-    $imagecrop->addImagecropUi();
+    $imagecrop->addImagecropUi(TRUE);
 
     $style_selection = drupal_render(drupal_get_form('imagecrop_style_selection_form', $styles, $imagecrop));
     $style_selection .= theme('image_style', array(
@@ -312,7 +312,7 @@ function imagecrop_scale_settings_form($form, $form_state, $imagecrop) {
   $form = array();
   $options = array();
   if ($step > 0) {
-    $options['original'] = $image_width . ' x ' . $image_height . 'px (Original)';
+    $options[$image_width . 'x' . $image_height] = $image_width . ' x ' . $image_height . 'px (Original)';
     $scale_width -= $step;
 
     while ($scale_width > $crop_width && ($scale_width / $aspect) > $crop_height) {

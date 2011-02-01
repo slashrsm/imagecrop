@@ -14,6 +14,7 @@ Drupal.Imagecrop.imageCropHeightField = null;
 Drupal.Imagecrop.imageCropXField = null;
 Drupal.Imagecrop.imageCropYField = null;
 Drupal.Imagecrop.resizeMe = null;
+Drupal.Imagecrop.hasUnsavedChanges = false;
 
 /**
  * Init the controls.
@@ -36,14 +37,12 @@ Drupal.Imagecrop.cropUi.initControls = function() {
       handles: 'n, e, s, w, ne, se, sw, nw',
 
       resize: function(e, ui) {
+        Drupal.Imagecrop.hasUnsavedChanges = true;
         this.style.backgroundPosition = '-' + (ui.position.left) + 'px -' + (ui.position.top) + 'px';
         Drupal.Imagecrop.imageCropWidthField.val(Drupal.Imagecrop.resizeMe.width());
         Drupal.Imagecrop.imageCropHeightField.val(Drupal.Imagecrop.resizeMe.height());
         Drupal.Imagecrop.imageCropXField.val(ui.position.left);
         Drupal.Imagecrop.imageCropYField.val(ui.position.top);
-      },
-      stop: function(e, ui) {
-        this.style.backgroundPosition = '-' + (ui.position.left) + 'px -' + (ui.position.top) + 'px';
       }
     });
     
@@ -56,6 +55,7 @@ Drupal.Imagecrop.cropUi.initControls = function() {
       this.style.backgroundPosition = '-' + (ui.position.left) + 'px -' + (ui.position.top) + 'px';
       Drupal.Imagecrop.imageCropXField.val(ui.position.left);
       Drupal.Imagecrop.imageCropYField.val(ui.position.top);
+      Drupal.Imagecrop.hasUnsavedChanges = true;
     }
   });
   
@@ -81,6 +81,8 @@ Drupal.Imagecrop.cropUi.initScaling = function() {
   Drupal.Imagecrop.isid = $('input[name="isid"]', '#imagecrop-crop-settings-form').val();
   Drupal.Imagecrop.cropFile = $('input[name="temp-style-destination"]', '#imagecrop-crop-settings-form').val();
   $('#edit-scaling', '#imagecrop-scale-settings-form').bind('change', Drupal.Imagecrop.cropUi.scaleImage);
+  Drupal.Imagecrop.cropUi.cropContainer = $('#image-crop-container');
+  Drupal.Imagecrop.cropUi.cropWrapper = $('#imagecrop-crop-wrapper');
   
 }
 
@@ -89,10 +91,15 @@ Drupal.Imagecrop.cropUi.initScaling = function() {
  */
 Drupal.Imagecrop.cropUi.scaleImage = function() {
   
+  var dimensions = $(this).val().split('x');
+  if (dimensions.length != 2) {
+    return false;
+  }
+  
   var imagecropData = {
     'fid' : Drupal.Imagecrop.fid,
     'isid' : Drupal.Imagecrop.isid,
-    'scale' : $(this).val()
+    'scale' : dimensions[0]
   }
   
   $.ajax({
@@ -101,10 +108,28 @@ Drupal.Imagecrop.cropUi.scaleImage = function() {
     type : 'post',
     success : function() {
       
+      Drupal.Imagecrop.hasUnsavedChanges = true;
+      
       // force new backgrounds and width / height
       var background = Drupal.Imagecrop.cropFile + '?time=' +  new Date().getTime();
-      $('#image-crop-container').css({'background-image' : 'url(' + background + ')' });
+      Drupal.Imagecrop.cropUi.cropContainer.css({
+        'background-image' : 'url(' + background + ')',
+        'width' : dimensions[0],
+        'height' : dimensions[1]
+      });
+
+      Drupal.Imagecrop.cropUi.cropWrapper.css({
+        'width' : dimensions[0],
+        'height' : dimensions[1]
+      });      
       
+      // make resize smaller when new image is smaller
+      if (Drupal.Imagecrop.resizeMe.height() > dimensions[1]) {
+        Drupal.Imagecrop.resizeMe.height(dimensions[1]);
+      }
+      if (Drupal.Imagecrop.resizeMe.width() > dimensions[0]) {
+        Drupal.Imagecrop.resizeMe.width(dimensions[0]);
+      }      
       
     }
   })
