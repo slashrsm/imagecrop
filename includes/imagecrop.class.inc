@@ -266,7 +266,7 @@ class ImageCrop {
    */
   public function loadCropSettings() {
 
-    $size = getimagesize($this->file->filepath);
+    $size = getimagesize(drupal_realpath($this->file->uri));
     $this->imageWidth = $size[0];
     $this->imageHeight = $size[1];
 
