@@ -17,6 +17,6 @@ header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
   <?php print $scripts; ?>
 </head>
 <body class="<?php print $classes; ?>" <?php print $attributes;?>>
-  <?php print $page; ?>
+    <?php print $page; ?>
 </body>
 </html>

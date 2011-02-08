@@ -106,13 +106,14 @@ function imagecrop_image_styles_overview($fid, $isid, $entity_type = NULL, $bund
     $imagecrop->setfieldName($field_name);
     $imagecrop->addImagecropUi(TRUE);
 
-    $style_selection = drupal_render(drupal_get_form('imagecrop_style_selection_form', $styles, $imagecrop));
-    $style_selection .= theme('image_style', array(
-      'style_name' => $style_name,
-      'path' => $imagecrop->getFile()->uri,
+    return theme('imagecrop_overview', array(
+      'style_selection' => drupal_get_form('imagecrop_style_selection_form', $styles, $imagecrop),
+      'viewed_style' => theme('image_style', array(
+        'style_name' => $style_name,
+        'path' => $imagecrop->getFile()->uri,
+      )),
+      'edit_url' => 'imagecrop/crop/' . $imagecrop->getFile()->fid . '/' . $isid . '/' . $imagecrop->getEntityType() . '/' . $imagecrop->getBundle() . '/' . $imagecrop->getFieldName(),
     ));
-
-    return $style_selection;
 
   }
   catch (Exception $e) {
@@ -182,7 +183,7 @@ function imagecrop_style_selection_form($form, $form_state, $styles, $imagecrop)
   $form = array();
   $form['styles'] = array(
     '#type' => 'select',
-    '#title' => t('Select style to preview'),
+    '#title' => $imagecrop->getInCroppingMode() ? t('Select other style to preview') : t('Select style to preview'),
     '#options' => $styles,
     '#default_value' => $image_style['isid'],
   );
@@ -192,10 +193,6 @@ function imagecrop_style_selection_form($form, $form_state, $styles, $imagecrop)
     '#type' => 'hidden',
     '#value' => url('imagecrop/overview/' . $path, array('absolute' => TRUE)),
   );
-
-  if (!$imagecrop->getInCroppingMode()) {
-    $form['#suffix'] = l(t('Edit this style'), 'imagecrop/crop/' . str_replace('/isid/', '/' . $image_style['isid'] . '/', $path));
-  }
 
   return $form;
 
@@ -258,7 +255,7 @@ function imagecrop_crop_settings_form($form, $form_state, $imagecrop) {
 
   $form['submit'] = array(
     '#type' => 'submit',
-    '#value' => t('Crop image thumbnail'),
+    '#value' => t('Save selection'),
   );
 
   return $form;
@@ -328,6 +325,7 @@ function imagecrop_scale_settings_form($form, $form_state, $imagecrop) {
       '#type' => 'select',
       '#options' => $options,
       '#default_value' => $imagecrop->getScale(),
+      '#title' => t('Scale image')
     );
   }
 

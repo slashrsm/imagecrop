@@ -1,5 +1,51 @@
 /* $Id$ */
 
+/** Basic layout **/
+
+.page-imagecrop .content {
+  margin-top: 0;
+}
+
+#imagecrop-selection {
+  border: 1px solid #ccc;
+  padding: 10px 0 0 12px;
+}
+
+.page-imagecrop label {
+  display: inline;
+  padding-right: 10px;
+}
+
+.page-imagecrop .form-item {
+  margin-bottom: 12px; 
+}
+
+#imagecrop-style-selection-form {
+  float: left;
+}
+
+.imagecrop-form-link {
+  padding: 4px;
+  margin-left: 20px;
+  float: left;
+}
+
+#imagecrop-forms,
+#imagecrop-help {
+  padding: 8px 12px;
+}
+
+/** Imagecrop crop UI **/
+#imagecrop-crop-settings-form,
+#imagecrop-scale-settings-form {
+  float: left;
+}
+
+#imagecrop-crop-settings-form {
+  float: left;
+  margin-right: 40px;
+}
+
 /* Classes and divs to create the crop area */
 #imagecrop-crop-wrapper { 
   background-color: #ccc;

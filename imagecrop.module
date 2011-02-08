@@ -53,6 +53,14 @@ function imagecrop_theme() {
       ),
       'template' => 'imagecrop-crop-ui',
     ),
+    'imagecrop_overview' => array(
+      'variables' => array(
+        'style_selection' => array(),
+        'viewed_style' => NULL,
+        'edit_url' => NULL,
+      ),
+      'template' => 'imagecrop-crop-overview',
+    ),
   );
 
 }
