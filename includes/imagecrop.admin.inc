@@ -317,7 +317,7 @@ function imagecrop_scale_settings_form($form, $form_state, $imagecrop) {
 
     while ($scale_width > $crop_width && ($scale_width / $aspect) > $crop_height) {
       $scaled_height = intval($scale_width / $aspect);
-      $options[$scale_width . 'x' . $scaled_height] = $scale_width .' x '. $scaled_height .'px ('. round((($scale_width / $image_width) * 100), 2) .'%)';
+      $options[$scale_width . 'x' . $scaled_height] = $scale_width . ' x ' . $scaled_height . 'px (' . round((($scale_width / $image_width) * 100), 2) . '%)';
       $scale_width -= $step;
     }
   }
@@ -346,7 +346,7 @@ function imagecrop_generate_cropready_image() {
   try {
 
     if (!isset($_POST['fid']) && !isset($_POST['isid']) && !isset($_POST['scale'])) {
-    	throw new Exception('Required fields are empty');
+      throw new Exception('Required fields are empty');
     }
 
     $imagecrop = new ImageCrop();

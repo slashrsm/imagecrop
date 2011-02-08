@@ -331,7 +331,7 @@ function imagecrop_effect(&$image, $data) {
     $imagecrop->applyCrop($image);
 
   }
-  catch(Exception $e) {
+  catch (Exception $e) {
     watchdog($e->getMessage(), 'error');
     return FALSE;
   }

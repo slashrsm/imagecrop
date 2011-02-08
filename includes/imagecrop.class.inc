@@ -231,7 +231,7 @@ class ImageCrop {
    * Get the destination from the image for current style.
    */
   public function getStyleDestination() {
-  	return $this->styleDestination;
+    return $this->styleDestination;
   }
 
   /**
@@ -277,7 +277,7 @@ class ImageCrop {
     ->execute()->fetchObject();
 
     if ($settings) {
-    	$this->xoffset = $settings->xoffset;
+      $this->xoffset = $settings->xoffset;
       $this->yoffset = $settings->yoffset;
       $this->width = $settings->width;
       $this->height = $settings->height;
@@ -294,7 +294,7 @@ class ImageCrop {
   public function applyCrop(&$image) {
 
     $data = array(
-      'anchor' => $this->xoffset . '-'. $this->yoffset,
+      'anchor' => $this->xoffset . '-' . $this->yoffset,
       'width' => $this->width,
       'height' => $this->height,
     );
@@ -312,7 +312,7 @@ class ImageCrop {
 
     foreach ($this->imageStyle['effects'] as $key => $effect) {
       if ($effect['name'] == 'imagecrop_javascript') {
-      	$unset = TRUE;
+        $unset = TRUE;
       }
       unset($style['effects'][$key]);
     }
