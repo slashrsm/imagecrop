@@ -12,10 +12,21 @@
  */
 
 /**
- * Implements hook_perm().
+ * Implements hook_permission().
  */
-function imagecrop_perm() {
-  return array('crop any image with toolbox', 'crop images with toolbox', 'administer imagecrop');
+function imagecrop_permission() {
+  return array(
+    'crop any image' => array(
+      'title' => t('Crop any image'),
+    ),
+    'crop own images' => array(
+      'title' => t('Crop own images'),
+    ),
+    'administer imagecrop' => array(
+      'title' => t('Administer imagecrop settings'),
+      'description' => t('Administer the basic settings from image javascript crop'),
+    ),
+  );
 }
 
 /**
@@ -65,7 +76,7 @@ function imagecrop_menu() {
     'page callback' => 'imagecrop_image_styles_overview',
     'page arguments' => array(2),
     'type' => MENU_CALLBACK,
-    'access arguments' => array('crop images with toolbox'),
+    'access callback' => 'imagecrop_has_access',
     'file' => 'includes/imagecrop.admin.inc',
   );
 
@@ -73,13 +84,13 @@ function imagecrop_menu() {
     'page callback' => 'imagecrop_cropping_page',
     'page arguments' => array(2, 3),
     'type' => MENU_CALLBACK,
-    'access arguments' => array('crop images with toolbox'),
+    'access callback' => 'imagecrop_has_access',
     'file' => 'includes/imagecrop.admin.inc',
   );
 
   $items['imagecrop/generate_image'] = array(
     'page callback' => 'imagecrop_generate_cropready_image',
-    'access arguments' => array('crop images with toolbox'),
+    'access callback' => 'imagecrop_has_access',
     'file' => 'includes/imagecrop.admin.inc',
   );
 
@@ -211,6 +222,13 @@ function imagecrop_process_html(&$variables) {
 
   }
 
+}
+
+/**
+ * Check if the current user has one of the required permissions.
+ */
+function imagecrop_has_access() {
+  return (user_access('crop any image') || user_access('crop own images'));
 }
 
 /**

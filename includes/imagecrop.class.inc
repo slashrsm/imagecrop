@@ -248,7 +248,7 @@ class ImageCrop {
   public function hasUserAccess($account) {
 
     // access to all images
-    if (user_access('crop any image with toolbox')) {
+    if (user_access('crop any image')) {
       return TRUE;
     }
 
