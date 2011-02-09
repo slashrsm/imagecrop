@@ -7,6 +7,7 @@ Drupal.Imagecrop.cropUi = Drupal.Imagecrop.cropUi || {};
 $(function () {
   Drupal.Imagecrop.cropUi.initControls();
   Drupal.Imagecrop.cropUi.initScaling();
+  
 });  
 
 Drupal.Imagecrop.imageCropWidthField = null;
@@ -14,7 +15,6 @@ Drupal.Imagecrop.imageCropHeightField = null;
 Drupal.Imagecrop.imageCropXField = null;
 Drupal.Imagecrop.imageCropYField = null;
 Drupal.Imagecrop.resizeMe = null;
-Drupal.Imagecrop.hasUnsavedChanges = false;
 
 /**
  * Init the controls.

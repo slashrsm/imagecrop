@@ -2,6 +2,16 @@
 
 /** Basic layout **/
 
+.page-imagecrop {
+  background: #fff;
+  height: 100%;
+  color: #333;
+}
+
+.page-imagecrop a {
+  color: #0074BD;  
+}
+
 .page-imagecrop .content {
   margin-top: 0;
 }
@@ -14,6 +24,8 @@
 .page-imagecrop label {
   display: inline;
   padding-right: 10px;
+  color: #333;
+  font-weight: bold;
 }
 
 .page-imagecrop .form-item {
@@ -33,6 +45,11 @@
 #imagecrop-forms,
 #imagecrop-help {
   padding: 8px 12px;
+}
+
+#imagecrop-preview,
+#imagecrop-crop-wrapper {
+  margin: 0 12px;
 }
 
 /** Imagecrop crop UI **/

@@ -8,15 +8,16 @@
  * @date Dec 27, 2010
  *
  */
+$style = $imagecrop->getImageStyle();
 ?>
 
 <div id="imagecrop-selection" class="clearfix">
   <?php print drupal_render($style_selection); ?>
-  <a href="#" class="form-item imagecrop-form-link"><?php print t('Back to preview from this style') ?></a>
+  <a href="#" onclick="javascript: Drupal.Imagecrop.changeViewedImage(<?php print $style['isid'] ?>); return false;" class="form-item imagecrop-form-link"><?php print t('Back to preview from this style') ?></a>
 </div>
 
 <div id="imagecrop-help">
-  <?php print t("Resize image if needed, then select a crop area. Click 'Crop image thumbnail' to save your selection."); ?>
+  <?php print t("Resize image if needed, then select a crop area. Click 'Save selection' to save the changes."); ?>
 </div>
 
 <div id="imagecrop-forms" class="clearfix">
