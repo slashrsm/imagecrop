@@ -126,6 +126,21 @@ function imagecrop_image_effect_info() {
 }
 
 /**
+ * Implements hook_imagecrop_popups().
+ */
+function imagecrop_imagecrop_popups() {
+
+  $popups = array();
+
+  if (module_exists('colorbox')) {
+    $popups['imagecrop_colorbox'] = t('Colorbox');
+  }
+
+  return $popups;
+
+}
+
+/**
  * Implements hook_form_field_ui_field_edit_form_alter().
  * Add the imagecrop setting to an imagefield.
  */
@@ -467,5 +482,26 @@ function imagecrop_get_isid_from_url() {
   }
 
   return 0;
+
+}
+
+/**
+ * Render the imagecrop links for colorbox.
+ */
+function imagecrop_colorbox($url, $width, $height) {
+
+  if (!module_exists('colorbox')) {
+    return FALSE;
+  }
+
+  // Force colorbox to load on this path.
+  global $conf;
+  $colorbox_pages = variable_get('colorbox_pages', "admin*\nimg_assist*\nimce*\nnode/add/*\nnode/*/edit");
+  $conf['colorbox_pages'] = 'none';
+  _colorbox_doheader();
+  drupal_add_js(drupal_get_path('module', 'colorbox') . '/js/colorbox_load.js');
+  $conf['colorbox_pages'] = $colorbox_pages;
+
+  return '[<a class="colorbox-load" href="'. $url .'?iframe=true&height='. $height .'&width='. $width .'">'. t('Crop this image') .'</a>]';
 
 }
