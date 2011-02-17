@@ -393,6 +393,13 @@ function imagecrop_effect_form($data) {
     '#description' => t('If the toolbox is resized, the crop values won\'t be respected, so you should add a Scale action after the ImageCrop.'),
   );
 
+  $form['downscaling'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Do not allow down scaling'),
+    '#default_value' => isset($data['downscaling']) ? $data['downscaling'] : FALSE,
+    '#description' => t('If checked, you can\'t resize the toolbox smaller than width and height.'),
+  );
+
   $description = t('Enter an aspect ratio to preserve during resizing. This can take one of the following formats:');
   $description .= '<ul><li>' . t('A float (like 0.5 or 2).') . '</li>';
   $description .= '<li>' . t('The string \'KEEP\'. This will constrain the aspect ratio to that of the original image.') . '</li>';

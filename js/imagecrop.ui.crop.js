@@ -32,18 +32,53 @@ Drupal.Imagecrop.cropUi.initControls = function() {
 
     Drupal.Imagecrop.resizeMe.resizable({
       containment: $('#image-crop-container'),
-      aspectRatio: Drupal.settings.imagecrop.aspectRatio,
+      aspectRatio: Drupal.settings.imagecrop.resizeAspectRatio,
       autohide: true,
       handles: 'n, e, s, w, ne, se, sw, nw',
 
       resize: function(e, ui) {
+        
+        var curr_width = Drupal.Imagecrop.resizeMe.width();
+        var curr_height = Drupal.Imagecrop.resizeMe.height();
+
+        if (curr_width < Drupal.settings.imagecrop.minWidth) {
+          curr_width = Drupal.settings.imagecrop.minWidth;
+          Drupal.Imagecrop.resizeMe.width(curr_width);
+          if (Drupal.settings.imagecrop.resizeAspectRatio !== false) {
+            curr_height = Drupal.settings.imagecrop.minWidth / Drupal.settings.imagecrop.resizeAspectRatio;
+            Drupal.Imagecrop.resizeMe.height(curr_height);
+          }
+        }
+        
+        if (curr_height < Drupal.settings.imagecrop.minHeight ) {
+          curr_height = Drupal.settings.imagecrop.minHeight;
+          Drupal.Imagecrop.resizeMe.height(curr_height);
+          if (Drupal.settings.imagecrop.resizeAspectRatio !== false) {
+            curr_width = Drupal.settings.imagecrop.minHeight * Drupal.settings.imagecrop.resizeAspectRatio;
+            Drupal.Imagecrop.resizeMe.width(curr_width);
+          }
+        }
+        
         Drupal.Imagecrop.hasUnsavedChanges = true;
-        this.style.backgroundPosition = '-' + (ui.position.left) + 'px -' + (ui.position.top) + 'px';
-        Drupal.Imagecrop.imageCropWidthField.val(Drupal.Imagecrop.resizeMe.width());
-        Drupal.Imagecrop.imageCropHeightField.val(Drupal.Imagecrop.resizeMe.height());
-        Drupal.Imagecrop.imageCropXField.val(ui.position.left);
-        Drupal.Imagecrop.imageCropYField.val(ui.position.top);
+        
+        var left = (ui.position.left > 0) ? ui.position.left : 0;
+        var top = (ui.position.top > 0) ? ui.position.top : 0;
+        this.style.backgroundPosition = '-' + left + 'px -' + top + 'px';
+        
+        Drupal.Imagecrop.imageCropWidthField.val(curr_width);
+        Drupal.Imagecrop.imageCropHeightField.val(curr_height);
+        Drupal.Imagecrop.imageCropXField.val(left);
+        Drupal.Imagecrop.imageCropYField.val(top);
+        
+        if (curr_width < Drupal.settings.imagecrop.startWidth || curr_height < Drupal.settings.imagecrop.startHeight ) {
+          Drupal.Imagecrop.resizeMe.addClass('boxwarning');
+        }
+        else {
+          Drupal.Imagecrop.resizeMe.removeClass('boxwarning');
+        }        
+        
       }
+    
     });
     
   }

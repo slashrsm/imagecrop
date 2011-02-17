@@ -23,9 +23,12 @@ class ImageCrop {
   private $cropDestination;
 
   private $isResizable = FALSE;
+  private $downscalingAllowed = TRUE;
   private $resizeAspectRatio = FALSE;
   private $width = 0;
+  private $startWidth = 0;
   private $height = 0;
+  private $startHeight = 0;
   private $xoffset = 0;
   private $scale = 'original';
   private $disableIfNoData = FALSE;
@@ -193,12 +196,15 @@ class ImageCrop {
     foreach ($this->imageStyle['effects'] as $effect) {
       if ($effect['name'] == 'imagecrop_javascript') {
         $this->width = $effect['data']['width'];
+        $this->startWidth = $effect['data']['width'];
         $this->height = $effect['data']['height'];
+        $this->startHeight = $effect['data']['height'];
         $this->xoffset = $effect['data']['xoffset'];
         $this->yoffset = $effect['data']['yoffset'];
         $this->isResizable = $effect['data']['resizable'];
         $this->disableIfNoData = $effect['data']['disable_if_no_data'];
-        $this->resizeAspectRatio = $effect['data']['aspect_ratio'];
+        $this->resizeAspectRatio = !empty($effect['data']['aspect_ratio']) ? $effect['data']['aspect_ratio'] : FALSE;
+        $this->downscalingAllowed = !$effect['data']['downscaling'];
         break;
       }
     }
@@ -345,11 +351,18 @@ class ImageCrop {
 
       drupal_add_library('system', 'ui.draggable');
 
-      $settings = array('manipulationUrl' => url('imagecrop/generate_image'));
+      $settings = array(
+        'manipulationUrl' => url('imagecrop/generate_image'),
+      );
+
       if ($this->isResizable) {
         drupal_add_library('system', 'ui.resizable');
         drupal_add_library('system', 'effects.scale');
         $settings['resizeAspectRatio'] = $this->resizeAspectRatio;
+        $settings['minWidth'] = ($this->downscalingAllowed ? 0 : $this->startWidth);
+        $settings['minHeight'] = ($this->downscalingAllowed ? 0 : $this->startHeight);
+        $settings['startHeight'] = $this->startHeight;
+        $settings['startWidth'] = $this->startWidth;
       }
 
       drupal_add_js(array('imagecrop' => $settings), 'setting');

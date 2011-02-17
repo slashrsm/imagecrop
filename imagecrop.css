@@ -137,3 +137,7 @@
 .ui-resizable-sw {
   cursor: ne-resize;
 }
+
+#imagecrop-crop-wrapper .boxwarning {
+  border: 1px solid red;
+}
