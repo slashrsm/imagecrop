@@ -1,4 +1,3 @@
-; $Id$
 name = Image javascript crop
 description = Provides a javascript crop toolbox via the image effects.
 dependencies[] = image

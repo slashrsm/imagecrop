@@ -1,4 +1,3 @@
-// $Id$
 
 Drupal.Imagecrop = Drupal.Imagecrop || {};
 Drupal.Imagecrop.hasUnsavedChanges = false;

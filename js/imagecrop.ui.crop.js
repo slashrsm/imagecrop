@@ -1,4 +1,3 @@
-// $Id$
 
 Drupal.Imagecrop.cropUi = Drupal.Imagecrop.cropUi || {};
 
