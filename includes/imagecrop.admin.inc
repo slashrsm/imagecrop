@@ -105,12 +105,10 @@ function imagecrop_image_styles_overview($fid, $isid, $entity_type = NULL, $bund
     $imagecrop->setfieldName($field_name);
     $imagecrop->addImagecropUi(TRUE);
 
+    $image_url = image_style_url($style_name, $imagecrop->getFile()->uri);
     return theme('imagecrop_overview', array(
       'style_selection' => drupal_get_form('imagecrop_style_selection_form', $styles, $imagecrop),
-      'viewed_style' => theme('image_style', array(
-        'style_name' => $style_name,
-        'path' => $imagecrop->getFile()->uri,
-      )),
+      'viewed_style' => theme('image', array('path' => $image_url . '?time=' . $_SERVER['REQUEST_TIME'])),
       'edit_url' => 'imagecrop/crop/' . $imagecrop->getFile()->fid . '/' . $isid . '/' . $imagecrop->getEntityType() . '/' . $imagecrop->getBundle() . '/' . $imagecrop->getFieldName(),
     ));
 

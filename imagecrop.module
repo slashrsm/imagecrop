@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * Provides a javascript toolbox through an imagecache action.
@@ -59,6 +58,10 @@ function imagecrop_theme() {
         'edit_url' => NULL,
       ),
       'template' => 'imagecrop-crop-overview',
+    ),
+    'imagecrop_effect_summary' => array(
+      'variables' => array('data' => NULL),
+      'file' => 'includes/imagecrop.theme.inc',
     ),
   );
 
