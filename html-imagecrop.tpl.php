@@ -16,7 +16,9 @@ header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
   <?php print $scripts; ?>
 </head>
 <body class="<?php print $classes; ?>" <?php print $attributes;?>>
-    <a id="cancel-crop" href="#" title="<?php print t('Cancel cropping')?>"><?php print t('Cancel cropping')?></a>
-    <?php print $page; ?>
+  <?php if (variable_get('imagecrop_show_cancel_button', FALSE)): ?>
+  <a id="cancel-crop" href="#" title="<?php print t('Cancel cropping')?>"><?php print t('Cancel cropping')?></a>
+  <?php endif; ?>
+  <?php print $page; ?>
 </body>
 </html>

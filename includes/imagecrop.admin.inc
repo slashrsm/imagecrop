@@ -45,6 +45,13 @@ function imagecrop_settings_form() {
     '#field_suffix' => 'pixels',
   );
 
+  $form['imagecrop_show_cancel_button'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Show cancel button'),
+    '#default_value' => variable_get('imagecrop_show_cancel_button', FALSE),
+    '#description' => t('Show a cancel button in the popup.'),
+  );
+
   $form['imagecrop_scale_step'] = array(
     '#type' => 'textfield',
     '#title' => t('Step size for scale dropdown'),
