@@ -282,12 +282,25 @@ class ImageCrop {
     ->execute()->fetchObject();
 
     if ($settings) {
+
       $this->xoffset = $settings->xoffset;
       $this->yoffset = $settings->yoffset;
-      $this->width = $settings->width;
-      $this->height = $settings->height;
+
+      if (!$this->inCroppingMode || $this->isResizable) {
+        $this->width = $settings->width;
+        $this->height = $settings->height;
+      }
+
       $this->scale = $settings->scale;
       $this->hasSettings = TRUE;
+
+    }
+
+    if ($this->resizeAspectRatio == 'KEEP') {
+      $this->resizeAspectRatio = $this->imageWidth / $this->imageHeight;
+    }
+    elseif ($this->resizeAspectRatio == 'CROP') {
+      $this->resizeAspectRatio = $this->width / $this->height;
     }
 
   }

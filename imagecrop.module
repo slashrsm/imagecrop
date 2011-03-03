@@ -166,6 +166,36 @@ function imagecrop_form_field_ui_field_edit_form_alter(&$form, $form_state) {
 }
 
 /**
+ * Implements hook_form_image_effect_form_alter().
+ * Add the reset checkbox when editing an effect.
+ */
+function imagecrop_form_image_effect_form_alter(&$form, $form_state, $form_id) {
+
+  if (!empty($form['data']['width']['#default_value']) && !empty($form['data']['height']['#default_value'])) {
+
+    $form['reset-crops'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Reset the already cropped images to the new width and height'),
+      '#description' => t('All crop selections that have the same width / height as old settings, will be updated to the new width and height.'),
+      '#weight' => -1,
+    );
+
+    $form['old-height'] = array(
+      '#type' => 'hidden',
+      '#value' => $form['data']['height']['#default_value'],
+    );
+
+    $form['old-width'] = array(
+      '#type' => 'hidden',
+      '#value' => $form['data']['width']['#default_value'],
+    );
+
+    $form['#submit'][] = 'imagecrop_javascript_effect_submit';
+
+  }
+}
+
+/**
  * Implements hook_element_info_alter().
  */
 function imagecrop_element_info_alter(&$type) {
@@ -423,6 +453,22 @@ function imagecrop_effect_form($data) {
   );
 
   return $form;
+
+}
+
+/**
+ * Reset the cropped images when the reset checkbox is enabled.
+ */
+function imagecrop_javascript_effect_submit($form, &$form_state) {
+
+  if ($form_state['values']['reset-crops'] === 1) {
+    db_update('image_crop_settings')
+      ->fields(array('width' => $form_state['values']['data']['width'], 'height' => $form_state['values']['data']['height']))
+      ->condition('width', $form_state['values']['old-width'])
+      ->condition('height', $form_state['values']['old-height'])
+      ->condition('isid', $form_state['image_effect']['isid'])
+      ->execute();
+  }
 
 }
 
