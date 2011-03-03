@@ -31,7 +31,7 @@ class ImageCrop {
   private $xoffset = 0;
   private $scale = 'original';
   private $disableIfNoData = FALSE;
-  private $hasSettings = TRUE;
+  private $hasSettings = FALSE;
 
   /**
    * Load the imagecrop settings for the given fid or filesource.
@@ -310,6 +310,10 @@ class ImageCrop {
    * @param $image image object from image module
    */
   public function applyCrop(&$image) {
+
+    if (!$this->hasSettings && $this->disableIfNoData) {
+      return;
+    }
 
     $data = array(
       'anchor' => $this->xoffset . '-' . $this->yoffset,
