@@ -213,7 +213,13 @@ function process_imagecrop_form_element($element) {
   }
 
   // Leave element when user doesn't have access.
-  if (!user_access('crop images with toolbox')) {
+  if (!user_access('crop any image') && !user_access('crop own images')) {
+    return $element;
+  }
+
+  // Leave element when user doesn't have access to current file.
+  global $user;
+  if ($element['#file'] && !user_access('crop any image') && $element['#file']->uid != $user->uid) {
     return $element;
   }
 
