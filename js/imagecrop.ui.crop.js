@@ -164,6 +164,8 @@ Drupal.Imagecrop.cropUi.scaleImage = function() {
       if (Drupal.Imagecrop.resizeMe.width() > dimensions[0]) {
         Drupal.Imagecrop.resizeMe.width(dimensions[0]);
       }      
+ 
+      Drupal.Imagecrop.resizeMe.css({'background-image' : 'url(' + background + ')'})
       
     }
   })
