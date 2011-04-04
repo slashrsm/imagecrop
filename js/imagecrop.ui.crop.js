@@ -13,6 +13,7 @@ Drupal.Imagecrop.imageCropWidthField = null;
 Drupal.Imagecrop.imageCropHeightField = null;
 Drupal.Imagecrop.imageCropXField = null;
 Drupal.Imagecrop.imageCropYField = null;
+Drupal.Imagecrop.imageCropScaleField = null;
 Drupal.Imagecrop.resizeMe = null;
 
 /**
@@ -20,11 +21,13 @@ Drupal.Imagecrop.resizeMe = null;
  */
 Drupal.Imagecrop.cropUi.initControls = function() {
   
-  Drupal.Imagecrop.imageCropWidthField = $('input[name="image-crop-width"]', '#imagecrop-crop-settings-form');
-  Drupal.Imagecrop.imageCropHeightField = $('input[name="image-crop-height"]', '#imagecrop-crop-settings-form');
-  Drupal.Imagecrop.imageCropXField = $('input[name="image-crop-x"]', '#imagecrop-crop-settings-form');
-  Drupal.Imagecrop.imageCropYField = $('input[name="image-crop-y"]', '#imagecrop-crop-settings-form');
-  
+  var $imagecropform = $('#imagecrop-crop-settings-form');
+  Drupal.Imagecrop.imageCropWidthField = $('input[name="image-crop-width"]', $imagecropform);
+  Drupal.Imagecrop.imageCropHeightField = $('input[name="image-crop-height"]', $imagecropform);
+  Drupal.Imagecrop.imageCropXField = $('input[name="image-crop-x"]', $imagecropform);
+  Drupal.Imagecrop.imageCropYField = $('input[name="image-crop-y"]', $imagecropform);
+  Drupal.Imagecrop.imageCropScaleField = $('input[name="image-crop-scale"]', $imagecropform);
+
   Drupal.Imagecrop.resizeMe = $('#resizeMe');
   
   if (Drupal.Imagecrop.resizeMe.resizable) { 
@@ -166,6 +169,7 @@ Drupal.Imagecrop.cropUi.scaleImage = function() {
       }      
  
       Drupal.Imagecrop.resizeMe.css({'background-image' : 'url(' + background + ')'})
+      Drupal.Imagecrop.imageCropScaleField.val(dimensions[0]);
       
     }
   })

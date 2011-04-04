@@ -230,6 +230,12 @@ function imagecrop_crop_settings_form($form, $form_state, $imagecrop) {
     '#attributes' => array('class' => 'edit-image-crop-height'),
   );
 
+  $form['image-crop-scale'] = array(
+    '#type' => 'hidden',
+    '#default_value' => $imagecrop->getScale(),
+    '#attributes' => array('class' => 'edit-image-crop-scale'),
+  );
+
   $form['fid'] = array(
     '#type' => 'hidden',
     '#value' => $imagecrop->getFile()->fid,
@@ -283,6 +289,7 @@ function imagecrop_crop_settings_form_submit($form, &$form_state) {
   $record->yoffset = $form_state['values']['image-crop-y'];
   $record->width = $form_state['values']['image-crop-width'];
   $record->height = $form_state['values']['image-crop-height'];
+  $record->scale = $form_state['values']['image-crop-scale'];
 
   drupal_write_record('image_crop_settings', $record);
 
@@ -304,8 +311,8 @@ function imagecrop_crop_settings_form_submit($form, &$form_state) {
 function imagecrop_scale_settings_form($form, $form_state, $imagecrop) {
 
   $step = variable_get('imagecrop_scale_step', 50);
-  $image_width = $scale_width = $imagecrop->getImageWidth();
-  $image_height = $imagecrop->getImageHeight();
+  $image_width = $scale_width = $imagecrop->getOriginalImageWidth();
+  $image_height = $imagecrop->getOriginalImageHeight();
   $aspect = $image_width / $image_height;
   $crop_width = $imagecrop->getWidth();
   $crop_height = $imagecrop->getHeight();
@@ -325,10 +332,11 @@ function imagecrop_scale_settings_form($form, $form_state, $imagecrop) {
 
   // only show when there are multiple scaling options available
   if (count($options) > 1) {
+    $current_width = $imagecrop->getScale();
     $form['scaling'] = array(
       '#type' => 'select',
       '#options' => $options,
-      '#default_value' => $imagecrop->getScale(),
+      '#default_value' => $current_width . 'x'. ($current_width / $aspect),
       '#title' => t('Scale image')
     );
   }

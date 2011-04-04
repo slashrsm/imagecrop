@@ -20,6 +20,9 @@ class ImageCrop {
   private $fieldName;
   private $styleDestination;
   private $cropDestination;
+  private $imageWidth;
+  private $originalImageWidth;
+  private $originalImageHeight;
 
   private $isResizable = FALSE;
   private $downscalingAllowed = TRUE;
@@ -147,6 +150,13 @@ class ImageCrop {
   }
 
   /**
+   * Get the original width from the image to crop.
+   */
+  public function getOriginalImageWidth() {
+    return $this->originalImageWidth;
+  }
+
+  /**
    * Set the scaling width from the image to crop.
    */
   public function setScale($scale) {
@@ -165,6 +175,13 @@ class ImageCrop {
    */
   public function getImageHeight() {
     return $this->imageHeight;
+  }
+
+  /**
+   * Get the original height from the image to crop.
+   */
+  public function getOriginalImageHeight() {
+    return $this->originalImageHeight;
   }
 
   /**
@@ -272,8 +289,8 @@ class ImageCrop {
   public function loadCropSettings() {
 
     $size = getimagesize(drupal_realpath($this->file->uri));
-    $this->imageWidth = $size[0];
-    $this->imageHeight = $size[1];
+    $this->imageWidth = $this->originalImageWidth = $size[0];
+    $this->imageHeight = $this->originalImageHeight = $size[1];
 
     $settings = db_select('image_crop_settings')
       ->fields('image_crop_settings')
@@ -294,6 +311,12 @@ class ImageCrop {
       $this->scale = $settings->scale;
       $this->hasSettings = TRUE;
 
+      if ($this->scale != 'original') {
+        $aspect = $this->originalImageWidth / $this->originalImageHeight;
+        $this->imageWidth = $this->scale;
+        $this->imageHeight = intval($this->imageWidth / $aspect);
+      }
+
     }
 
     if ($this->resizeAspectRatio == 'KEEP') {
@@ -313,6 +336,15 @@ class ImageCrop {
 
     if (!$this->hasSettings && $this->disableIfNoData) {
       return;
+    }
+
+    // Scale first if requested
+    if ($this->scale != 'original') {
+      $data = array(
+        'width' => $this->scale,
+        'height' => PHP_INT_MAX,
+      );
+      image_scale_effect($image, $data);
     }
 
     $data = array(
