@@ -408,6 +408,7 @@ class ImageCrop {
 
       $settings = array(
         'manipulationUrl' => url('imagecrop/generate_image'),
+        'cropped' => isset($_GET['cropping']),
       );
 
       if ($this->isResizable) {

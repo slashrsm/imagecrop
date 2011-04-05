@@ -102,6 +102,7 @@ function imagecrop_menu() {
     'page callback' => 'imagecrop_generate_cropready_image',
     'access callback' => 'imagecrop_has_access',
     'file' => 'includes/imagecrop.admin.inc',
+    'type' => MENU_CALLBACK,
   );
 
   return $items;

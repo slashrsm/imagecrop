@@ -301,7 +301,7 @@ function imagecrop_crop_settings_form_submit($form, &$form_state) {
     file_unmanaged_delete($form_state['values']['temp-style-destination']);
   }
 
-  drupal_goto('imagecrop/overview/' . $record->fid . '/' . $record->isid . '/' . $field_info[0] . '/' . $field_info[1] . '/' . $field_info[2]);
+  drupal_goto('imagecrop/overview/' . $record->fid . '/' . $record->isid . '/' . $field_info[0] . '/' . $field_info[1] . '/' . $field_info[2], array('query' => array('cropping' => 'done')));
 
 }
 
