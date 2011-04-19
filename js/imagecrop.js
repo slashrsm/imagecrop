@@ -27,7 +27,6 @@ Drupal.Imagecrop.changeViewedImage = function(isid) {
 Drupal.Imagecrop.forceUpdate = function() {
   $('.image-preview img', window.opener.document).each(function() {
     var source = $(this).attr('src');
-    console.log(source);
     $(this).attr('src', (source + '?time=' + new Date().getTime()));
   });
 }
