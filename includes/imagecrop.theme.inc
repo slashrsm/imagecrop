@@ -13,7 +13,7 @@
 function imagecrop_page($variables) {
 
   $output = '';
-  if ($variables['messages']) {
+  if (isset($variables['messages'])) {
     $output .= $variables['messages'];
   }
 
