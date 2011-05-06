@@ -1,0 +1,19 @@
+diff --git a/js/imagecrop.ui.crop.js b/js/imagecrop.ui.crop.js
+index 96891d1..993e78c 100755
+--- a/js/imagecrop.ui.crop.js
++++ b/js/imagecrop.ui.crop.js
+@@ -159,6 +159,14 @@ Drupal.Imagecrop.cropUi.scaleImage = function() {
+         'width' : dimensions[0],
+         'height' : dimensions[1]
+       });      
++            
++      // force background-size on resizeMe's background image as well.
++      Drupal.Imagecrop.resizeMe.css({
++        'background-size': dimensions[0] +'px '+ dimensions[1] +'px ',
++        '-moz-background-size': dimensions[0] +'px '+ dimensions[1] +'px ',
++        '-o-background-size': dimensions[0] +'px '+ dimensions[1] +'px ',
++        '-webkit-background-size': dimensions[0] +'px '+ dimensions[1] +'px '
++      });
+       
+       // make resize smaller when new image is smaller
+       if (Drupal.Imagecrop.resizeMe.height() > dimensions[1]) {

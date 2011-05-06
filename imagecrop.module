@@ -88,6 +88,7 @@ function imagecrop_menu() {
     'type' => MENU_CALLBACK,
     'access callback' => 'imagecrop_has_access',
     'file' => 'includes/imagecrop.admin.inc',
+    'title' => 'Imagecrop overview',
   );
 
   $items['imagecrop/crop/%/%'] = array(

@@ -17,7 +17,15 @@ function imagecrop_page($variables) {
     $output .= $variables['messages'];
   }
 
-  $output .= drupal_render($variables['page']['content']);
+  global $theme;
+  $query = db_select('block');
+  $query->addField('block', 'region');
+  $query->condition('theme', $theme);
+  $query->condition('module', 'system');
+  $query->condition('delta', 'main');
+  $region = $query->execute()->fetchField();
+
+  $output .= drupal_render($variables['page'][$region]);
   return $output;
 
 }
