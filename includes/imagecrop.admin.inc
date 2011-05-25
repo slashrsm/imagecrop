@@ -113,9 +113,12 @@ function imagecrop_image_styles_overview($fid, $isid, $entity_type = NULL, $bund
     $imagecrop->addImagecropUi(TRUE);
 
     $image_url = image_style_url($style_name, $imagecrop->getFile()->uri);
+    $image_url .= (variable_get('clean_url', 0) ? '?' : '&');
+    $image_url .= 'time=' . $_SERVER['REQUEST_TIME'];
+
     return theme('imagecrop_overview', array(
       'style_selection' => drupal_get_form('imagecrop_style_selection_form', $styles, $imagecrop),
-      'viewed_style' => theme('image', array('path' => $image_url . '?time=' . $_SERVER['REQUEST_TIME'])),
+      'viewed_style' => theme('image', array('path' => $image_url)),
       'edit_url' => 'imagecrop/crop/' . $imagecrop->getFile()->fid . '/' . $isid . '/' . $imagecrop->getEntityType() . '/' . $imagecrop->getBundle() . '/' . $imagecrop->getFieldName(),
     ));
 
