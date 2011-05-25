@@ -29,6 +29,17 @@ function imagecrop_settings_form() {
     '#options' => $all_popups,
   );
 
+  $options_modules = array(
+    'profile_picture' => t('Profile pictures'),
+  );
+
+  $form['imagecrop_modules'] = array(
+    '#type' => 'checkboxes',
+    '#title' => t('Trigger imagecrop also for'),
+    '#default_value' => variable_get('imagecrop_modules', array()),
+    '#options' => $options_modules,
+  );
+
   $form['imagecrop_popup_width'] = array(
     '#type' => 'textfield',
     '#title' => t('Popup window width'),

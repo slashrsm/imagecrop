@@ -15,10 +15,9 @@ Drupal.Imagecrop.closePopup = function() {
  * Force an update from the imagefield widgets.
  */
 Drupal.Imagecrop.forceUpdate = function() {
-  $('.image-preview img', parent.document).each(function() {
-    var source = $(this).attr('src');
-    $(this).attr('src', (source + '?time=' + new Date().getTime()));
-  });
+  $('.user-picture img', parent.document).each(Drupal.Imagecrop.refreshImage);
+  $('.image-preview img', parent.document).each(Drupal.Imagecrop.refreshImage);  
 }
+
 
 })(jQuery);

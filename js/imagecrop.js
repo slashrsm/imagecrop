@@ -21,4 +21,12 @@ Drupal.Imagecrop.changeViewedImage = function(isid) {
   document.location = $("input[name=imagecrop-url]").val().replace('/isid/', '/' + isid + '/');
 }
 
+/**
+ * Refresh the given image
+ */
+Drupal.Imagecrop.refreshImage = function() {
+  var source = $(this).attr('src');
+  $(this).attr('src', (source + '?time=' + new Date().getTime()));
+}
+
 })(jQuery); 

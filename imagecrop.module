@@ -198,6 +198,21 @@ function imagecrop_form_image_effect_form_alter(&$form, $form_state, $form_id) {
 }
 
 /**
+ * Implements hook_form_user_profile_form_alter().
+ * Add imagecrop to profile picture, if enabled.
+ */
+function imagecrop_form_user_profile_form_alter(&$form, $form_state, $form_id) {
+
+  $hooks = variable_get('imagecrop_modules', array());
+  if (isset($form['picture']['picture']) && in_array('profile_picture', $hooks)) {
+    $styles = get_imagecrop_styles();
+    if (count($styles) > 0) {
+      $form['picture']['picture_current']['#markup'] .= imagecrop_linkitem($form['picture']['picture']['#value']->fid);
+    }
+  }
+}
+
+/**
  * Implements hook_element_info_alter().
  */
 function imagecrop_element_info_alter(&$type) {
@@ -210,7 +225,7 @@ function imagecrop_element_info_alter(&$type) {
 function process_imagecrop_form_element($element) {
 
   // Leave alone if we are on the field ui settings.
-  if (!isset($element['#field_name'])) {
+  if (!isset($element['#field_name']) || $element['#id'] == 'edit-picture-upload') {
     return $element;
   }
 
@@ -318,13 +333,17 @@ function imagecrop_get_fields_enabled_styles($entity_type, $field_name, $bundle)
  *
  * @return link for opening the imagecrop admin.
  */
-function imagecrop_linkitem($fid, $element = '') {
+function imagecrop_linkitem($fid, $element = NULL) {
 
   $popup_link_function = variable_get('imagecrop_popup', 'basic');
   $width = variable_get('imagecrop_popup_width', 700);
   $height = variable_get('imagecrop_popup_height', 600);
 
-  $url = url('imagecrop/overview/' . $fid . '/0/' . $element['#entity_type'] . '/' . $element['#bundle'] . '/' . $element['#field_name'], array('absolute' => TRUE));
+  $url = 'imagecrop/overview/' . $fid . '/0/';
+  if ($element) {
+    $url .= $element['#entity_type'] . '/' . $element['#bundle'] . '/' . $element['#field_name'];
+  }
+  $url = url($url, array('absolute' => TRUE));
 
   if ($popup_link_function != 'basic' && function_exists($popup_link_function) && $link = $popup_link_function($url, $width, $height)) {
     return $link;
