@@ -25,7 +25,17 @@ function imagecrop_page($variables) {
   $query->condition('delta', 'main');
   $region = $query->execute()->fetchField();
 
-  $output .= drupal_render($variables['page'][$region]);
+  global $theme;
+
+  if (isset($variables['page'][$region])) {
+    $output .= drupal_render($variables['page'][$region]);
+  }
+  // Omega theme uses zones
+  elseif (isset($variables['page']['content_zone']['#regions']['content'])) {
+    $variables['page']['content_zone']['#regions']['content']['#omega']['page_data']['title'] = FALSE;
+    $output .= drupal_render($variables['page']['content_zone']['#regions']['content']);
+  }
+
   return $output;
 
 }
