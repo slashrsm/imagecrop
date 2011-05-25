@@ -428,7 +428,7 @@ function imagecrop_effect_form($data) {
 
   $form['resizable'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Is the toolbox resizable or not?'),
+    '#title' => t('Resizable toolbox'),
     '#default_value' => isset($data['resizable']) ? $data['resizable'] : '',
     '#description' => t('If the toolbox is resized, the crop values won\'t be respected, so you should add a Scale action after the ImageCrop.'),
   );
