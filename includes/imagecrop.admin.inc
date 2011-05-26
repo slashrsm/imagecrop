@@ -63,6 +63,13 @@ function imagecrop_settings_form() {
     '#description' => t('Show a cancel button in the popup.'),
   );
 
+  $form['imagecrop_skip_preview'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Skip image previews'),
+    '#default_value' => variable_get('imagecrop_skip_preview', FALSE),
+    '#description' => t('Popup opens crop page, instead of preview first.'),
+  );
+
   $form['imagecrop_scale_step'] = array(
     '#type' => 'textfield',
     '#title' => t('Step size for scale dropdown'),
@@ -198,10 +205,17 @@ function imagecrop_style_selection_form($form, $form_state, $styles, $imagecrop)
 
   $image_style = $imagecrop->getImageStyle();
 
+  $action = 'preview';
+  $path_action = 'overview';
+  if ($imagecrop->skipPreview) {
+    $action = $path_action = 'crop';
+  }
+
+
   $form = array();
   $form['styles'] = array(
     '#type' => 'select',
-    '#title' => $imagecrop->getInCroppingMode() ? t('Select other style to preview') : t('Select style to preview'),
+    '#title' => $imagecrop->getInCroppingMode() ? t('Select other style to '. $action) : t('Select style to preview'),
     '#options' => $styles,
     '#default_value' => $image_style['isid'],
   );
@@ -209,7 +223,7 @@ function imagecrop_style_selection_form($form, $form_state, $styles, $imagecrop)
   $path = $imagecrop->getFile()->fid . '/isid/' . $imagecrop->getEntityType() . '/' . $imagecrop->getBundle() . '/' . $imagecrop->getFieldName();
   $form['imagecrop-url'] = array(
     '#type' => 'hidden',
-    '#value' => url('imagecrop/overview/' . $path, array('absolute' => TRUE)),
+    '#value' => url('imagecrop/' . $path_action . '/' . $path, array('absolute' => TRUE)),
   );
 
   return $form;

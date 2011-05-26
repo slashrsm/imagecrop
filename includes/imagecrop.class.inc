@@ -12,6 +12,7 @@ class ImageCrop {
 
   private $allowedExtensions = array('image/jpeg', 'image/gif', 'image/png', 'image/pjpeg');
   private $inCroppingMode = FALSE;
+  public $skipPreview = FALSE;
 
   private $file;
   private $imageStyle;
@@ -35,6 +36,13 @@ class ImageCrop {
   private $scale = 'original';
   private $disableIfNoData = FALSE;
   private $hasSettings = FALSE;
+
+  /**
+   * Construct imagecrop.
+   */
+  public function __construct() {
+    $this->skipPreview = variable_get('imagecrop_skip_preview', FALSE);
+  }
 
   /**
    * Load the imagecrop settings for the given fid or filesource.

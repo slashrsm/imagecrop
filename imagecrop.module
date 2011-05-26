@@ -136,6 +136,7 @@ function imagecrop_imagecrop_popups() {
 
   $popups = array();
 
+  $popups['imagecrop_iframe'] = t('Iframe');
   if (module_exists('colorbox')) {
     $popups['imagecrop_colorbox'] = t('Colorbox');
   }
@@ -207,7 +208,7 @@ function imagecrop_form_user_profile_form_alter(&$form, $form_state, $form_id) {
   if (isset($form['picture']['picture']) && in_array('profile_picture', $hooks)) {
     $styles = get_imagecrop_styles();
     if (count($styles) > 0) {
-      $form['picture']['picture_current']['#markup'] .= imagecrop_linkitem($form['picture']['picture']['#value']->fid);
+      $form['picture']['picture_current']['#markup'] .= imagecrop_linkitem($form['picture']['picture']['#value']->fid, $styles);
     }
   }
 }
@@ -254,8 +255,8 @@ function process_imagecrop_form_element($element) {
   );
 
   if ($element['fid']['#value']) {
-    $element['imagecrop']['#prefix'] = '<div class="imagecrop form-item container-inline">';
-    $element['imagecrop']['#markup'] = imagecrop_linkitem($element['fid']['#value'], $element);
+    $element['imagecrop']['#prefix'] = '<div class="imagecrop form-item">';
+    $element['imagecrop']['#markup'] = imagecrop_linkitem($element['fid']['#value'], $element, $enabled_styles);
   }
   else {
     $element['imagecrop']['#prefix'] = '<div class="description">';
@@ -330,16 +331,21 @@ function imagecrop_get_fields_enabled_styles($entity_type, $field_name, $bundle)
  *
  * @param $fid fid from the file to crop
  * @param $element the form element
+ * @param $styles The enabled styles
  *
  * @return link for opening the imagecrop admin.
  */
-function imagecrop_linkitem($fid, $element = NULL) {
+function imagecrop_linkitem($fid, $element = NULL, $styles) {
 
   $popup_link_function = variable_get('imagecrop_popup', 'basic');
   $width = variable_get('imagecrop_popup_width', 700);
   $height = variable_get('imagecrop_popup_height', 600);
 
-  $url = 'imagecrop/overview/' . $fid . '/0/';
+  $skip_preview = variable_get('imagecrop_skip_preview', FALSE);
+  $first_style = current($styles);
+  $action = ($skip_preview) ? 'crop' : 'overview';
+
+  $url = 'imagecrop/' . $action . '/' . $fid . '/' . $first_style . '/';
   if ($element) {
     $url .= $element['#entity_type'] . '/' . $element['#bundle'] . '/' . $element['#field_name'];
   }
@@ -585,5 +591,20 @@ function imagecrop_colorbox($url, $width, $height) {
   $conf['colorbox_pages'] = $colorbox_pages;
 
   return '[<a class="colorbox-load" href="'. $url .'?iframe=true&height='. $height .'&width='. $width .'">'. t('Crop this image') .'</a>]';
+
+}
+
+/**
+ * Render the imagecrop as an iframe.
+ */
+function imagecrop_iframe($url, $width, $height) {
+
+  $output = '<div class="form-item">';
+  $output .= '<div><label>' . t('Crop this image') . '</label></div>';
+  $output .= '<div>';
+  $output .= '<iframe src="' . $url . '" width="' . $width . '" height="' . $height . '"></iframe>';
+  $output .= '</div></div>';
+
+  return $output;
 
 }
