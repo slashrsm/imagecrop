@@ -261,7 +261,9 @@ class ImageCrop {
    * @param $filepath Boolean, TRUE to return the filepath, FALSE to return the uri.
    */
   public function getCropDestination($filepath = TRUE) {
-    return ($filepath) ?  file_create_url($this->cropDestination) : $this->cropDestination;
+    $image_url = ($filepath) ?  file_create_url($this->cropDestination) : $this->cropDestination;
+    $image_url .= '?time=' . $_SERVER['REQUEST_TIME'];
+    return $image_url;
   }
 
   /**
