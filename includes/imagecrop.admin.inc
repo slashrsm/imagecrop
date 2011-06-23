@@ -70,6 +70,13 @@ function imagecrop_settings_form() {
     '#description' => t('Popup opens crop page, instead of preview first.'),
   );
 
+  $form['imagecrop_ui_controls'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Extra UI controls'),
+    '#default_value' => variable_get('imagecrop_ui_controls', FALSE),
+    '#description' => t('Show a sidebar with live cropping info and live preview'),
+  );
+
   $form['imagecrop_scale_step'] = array(
     '#type' => 'textfield',
     '#title' => t('Step size for scale dropdown'),
@@ -183,7 +190,7 @@ function imagecrop_cropping_page($fid, $isid, $entity_type = NULL, $bundle = NUL
     $imagecrop->writeCropreadyImage();
     $imagecrop->addImagecropUi(TRUE);
 
-    return theme('imagecrop_crop_ui', array(
+    return theme(($imagecrop->extraControls ? 'imagecrop_crop_ui_advanced' : 'imagecrop_crop_ui'), array(
       'style_selection' => drupal_get_form('imagecrop_style_selection_form', $styles, $imagecrop),
       'settings_form' => drupal_get_form('imagecrop_crop_settings_form', $imagecrop),
       'scale_form' => drupal_get_form('imagecrop_scale_settings_form', $imagecrop),
@@ -235,33 +242,34 @@ function imagecrop_style_selection_form($form, $form_state, $styles, $imagecrop)
  */
 function imagecrop_crop_settings_form($form, $form_state, $imagecrop) {
 
+  $type = ($imagecrop->extraControls ? 'textfield' : 'hidden');
   $form['image-crop-x'] = array(
-    '#type' => 'hidden',
+    '#type' => $type,
+    '#title' => t('X position'),
     '#default_value' => $imagecrop->getXOffset(),
-    '#attributes' => array('class' => 'edit-image-crop-x'),
   );
 
   $form['image-crop-y'] = array(
-    '#type' => 'hidden',
+    '#type' => $type,
+    '#title' => t('Y position'),
     '#default_value' => $imagecrop->getYOffset(),
   );
 
   $form['image-crop-width'] = array(
-    '#type' => 'hidden',
+    '#type' => $imagecrop->isResizable() ? $type : 'hidden',
+    '#title' => t('Width'),
     '#default_value' => $imagecrop->getWidth(),
-    '#attributes' => array('class' => 'edit-image-crop-width'),
   );
 
   $form['image-crop-height'] = array(
-    '#type' => 'hidden',
+    '#type' => $imagecrop->isResizable() ? $type : 'hidden',
+    '#title' => t('Height'),
     '#default_value' => $imagecrop->getHeight(),
-    '#attributes' => array('class' => 'edit-image-crop-height'),
   );
 
   $form['image-crop-scale'] = array(
     '#type' => 'hidden',
     '#default_value' => $imagecrop->getScale(),
-    '#attributes' => array('class' => 'edit-image-crop-scale'),
   );
 
   $form['fid'] = array(
@@ -329,7 +337,8 @@ function imagecrop_crop_settings_form_submit($form, &$form_state) {
     file_unmanaged_delete($form_state['values']['temp-style-destination']);
   }
 
-  drupal_goto('imagecrop/overview/' . $record->fid . '/' . $record->isid . '/' . $field_info[0] . '/' . $field_info[1] . '/' . $field_info[2], array('query' => array('cropping' => 'done')));
+  $action = variable_get('imagecrop_skip_preview', FALSE) ? 'crop' : 'overview';
+  drupal_goto('imagecrop/' . $action . '/' . $record->fid . '/' . $record->isid . '/' . $field_info[0] . '/' . $field_info[1] . '/' . $field_info[2], array('query' => array('cropping' => 'done')));
 
 }
 
@@ -364,10 +373,43 @@ function imagecrop_scale_settings_form($form, $form_state, $imagecrop) {
     $form['scaling'] = array(
       '#type' => 'select',
       '#options' => $options,
-      '#default_value' => $current_width . 'x'. ($current_width / $aspect),
+      '#default_value' => $current_width . 'x'. floor($current_width / $aspect),
       '#title' => t('Scale image')
     );
   }
+
+  return $form;
+
+}
+
+/**
+ * Form for controlling live cropping data.
+ */
+function imagecrop_controls_form($imagecrop) {
+
+  $form = array();
+  $form['crop-width'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Width'),
+    '#default_value' => $imagecrop->getWidth(),
+  );
+
+  $form['crop-height'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Height'),
+    '#default_value' => $imagecrop->getHeight(),
+  );
+
+  $form['x'] = array(
+    '#type' => 'textfield',
+    '#title' => t('X position'),
+    '#default_value' => $imagecrop->getWidth(),
+  );
+
+  $form['y'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Y position'),
+  );
 
   return $form;
 

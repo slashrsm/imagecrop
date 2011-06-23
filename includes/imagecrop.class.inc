@@ -13,6 +13,7 @@ class ImageCrop {
   private $allowedExtensions = array('image/jpeg', 'image/gif', 'image/png', 'image/pjpeg');
   private $inCroppingMode = FALSE;
   public $skipPreview = FALSE;
+  public $extraControls = FALSE;
 
   private $file;
   private $imageStyle;
@@ -42,6 +43,7 @@ class ImageCrop {
    */
   public function __construct() {
     $this->skipPreview = variable_get('imagecrop_skip_preview', FALSE);
+    $this->extraControls = variable_get('imagecrop_ui_controls', FALSE);
   }
 
   /**
@@ -120,6 +122,13 @@ class ImageCrop {
    */
   public function getFieldName() {
     return $this->fieldName;
+  }
+
+  /**
+   * Is the crop resizable or not.
+   */
+  public function isResizable() {
+    return $this->isResizable;
   }
 
   /**

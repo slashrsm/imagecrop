@@ -1,9 +1,10 @@
 /** Basic layout **/
 
-.page-imagecrop {
+body.page-imagecrop {
   background: #fff;
   height: 100%;
   color: #333;
+  padding: 0 !important;
 }
 
 .page-imagecrop a {
@@ -56,15 +57,31 @@
   top: 16px;
 }
 
-/** Imagecrop crop UI **/
-#imagecrop-crop-settings-form,
-#imagecrop-scale-settings-form {
+/** Normal Imagecrop crop UI **/
+#imagecrop-ui #imagecrop-crop-settings-form,
+#imagecrop-ui #imagecrop-scale-settings-form {
   float: left;
 }
 
 #imagecrop-crop-settings-form {
   float: left;
   margin-right: 40px;
+}
+
+/** Advanced imagecrop UI **/
+#imagecrop-left-controls {
+  float: left;
+  width: 215px;
+  border: 1px solid #ccc;
+  border-top: none;
+}
+
+#imagecrop-right {
+  float: left;
+}
+
+#imagecrop-left-controls .form-text {
+  width: 40px;
 }
 
 /* Classes and divs to create the crop area */

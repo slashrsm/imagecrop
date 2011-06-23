@@ -47,9 +47,18 @@ function imagecrop_theme() {
         'style_selection' => array(),
         'settings_form' => array(),
         'scale_form' => array(),
-        'imagecrop' => NULL
+        'imagecrop' => NULL,
       ),
       'template' => 'imagecrop-crop-ui',
+    ),
+    'imagecrop_crop_ui_advanced' => array(
+      'variables' => array(
+        'style_selection' => array(),
+        'settings_form' => array(),
+        'scale_form' => array(),
+        'imagecrop' => NULL,
+      ),
+      'template' => 'imagecrop-crop-ui-advanced',
     ),
     'imagecrop_overview' => array(
       'variables' => array(
@@ -208,7 +217,7 @@ function imagecrop_form_user_profile_form_alter(&$form, $form_state, $form_id) {
   if (isset($form['picture']['picture']) && in_array('profile_picture', $hooks)) {
     $styles = get_imagecrop_styles();
     if (count($styles) > 0) {
-      $form['picture']['picture_current']['#markup'] .= imagecrop_linkitem($form['picture']['picture']['#value']->fid, $styles);
+      $form['picture']['picture_current']['#markup'] .= imagecrop_linkitem($form['picture']['picture']['#value']->fid, NULL, $styles);
     }
   }
 }
@@ -344,7 +353,6 @@ function imagecrop_linkitem($fid, $element = NULL, $styles) {
   $skip_preview = variable_get('imagecrop_skip_preview', FALSE);
   $first_style = current($styles);
   $action = ($skip_preview) ? 'crop' : 'overview';
-
   $url = 'imagecrop/' . $action . '/' . $fid . '/' . $first_style . '/';
   if ($element) {
     $url .= $element['#entity_type'] . '/' . $element['#bundle'] . '/' . $element['#field_name'];
