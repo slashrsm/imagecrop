@@ -86,9 +86,8 @@ Drupal.Imagecrop.cropUi.initScaling = function() {
  */
 Drupal.Imagecrop.cropUi.resizeListener = function(e, ui) {
   
-  var curr_width = parseInteger(Drupal.Imagecrop.resizeMe.width());
-  var curr_height = parseInteger(Drupal.Imagecrop.resizeMe.height());
-  
+  var curr_width = parseInt(Drupal.Imagecrop.resizeMe.width());
+  var curr_height = parseInt(Drupal.Imagecrop.resizeMe.height());
   Drupal.Imagecrop.imageCropWidthField.val(curr_width);
   Drupal.Imagecrop.imageCropHeightField.val(curr_height);
   

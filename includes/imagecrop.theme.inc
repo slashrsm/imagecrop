@@ -75,3 +75,15 @@ function theme_imagecrop_effect_summary($variables) {
   return $description;
 
 }
+
+/**
+ * Theme the summary from an imagecrop re-use effect.
+ */
+function theme_imagecrop_reuse($element) {
+
+  $data = $element['#value'];
+  $description = t('Crop settings from @preset', array('@preset' => $data['imagecrop_presetname']));
+
+  return $description;
+
+}
