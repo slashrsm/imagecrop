@@ -17,9 +17,9 @@ class ImageCrop {
 
   private $file;
   private $imageStyle;
-  private $entityType;
-  private $bundle;
-  private $fieldName;
+  private $entityType = 'none';
+  private $bundle = 'none';
+  private $fieldName = 'none';
   private $styleDestination;
   private $cropDestination;
   private $imageWidth;
@@ -80,6 +80,13 @@ class ImageCrop {
    */
   public function getFile() {
     return $this->file;
+  }
+
+  /**
+   * Set the current file
+   */
+  public function setFile($file) {
+    $this->file = $file;
   }
 
   /**
@@ -294,7 +301,7 @@ class ImageCrop {
     }
 
     // If not administer nodes, check if the files uid is the same like users uid.
-    if (!user_access('administer nodes') && $account->uid != $this->file->uid) {
+    if ($this->file && !user_access('administer nodes') && $account->uid != $this->file->uid) {
       return FALSE;
     }
 
@@ -315,7 +322,7 @@ class ImageCrop {
       ->fields('image_crop_settings')
       ->condition('fid', $this->file->fid)
       ->condition('isid', $this->imageStyle['isid'])
-    ->execute()->fetchObject();
+      ->execute()->fetchObject();
 
     if ($settings) {
 

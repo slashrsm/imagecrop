@@ -132,9 +132,18 @@ function imagecrop_image_styles_overview($fid, $isid, $entity_type = NULL, $bund
     }
 
     $imagecrop->setImageStyle($isid);
-    $imagecrop->setEntityType($entity_type);
-    $imagecrop->setBundle($bundle);
-    $imagecrop->setfieldName($field_name);
+    if ($entity_type) {
+      $imagecrop->setEntityType($entity_type);
+    }
+
+    if ($bundle) {
+      $imagecrop->setBundle($bundle);
+    }
+
+    if ($field_name) {
+      $imagecrop->setfieldName($field_name);
+    }
+
     $imagecrop->addImagecropUi(TRUE);
 
     $image_url = image_style_url($style_name, $imagecrop->getFile()->uri);

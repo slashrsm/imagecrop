@@ -23,10 +23,7 @@ function imagecrop_schema() {
       'height' => array('type' => 'int', 'not null' => TRUE, 'unsigned' => TRUE),
       'scale' => array('type' => 'varchar', 'length' => '10', 'not null' => TRUE, 'default' => 'original'),
     ),
-    'indexes' => array(
-      'fid' => array('fid'),
-      'isid' => array('isid'),
-    ),
+    'primary key' => array('fid', 'isid'),
   );
 
   return $schema;
