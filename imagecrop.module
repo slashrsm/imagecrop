@@ -282,7 +282,7 @@ function process_imagecrop_form_element($element) {
   else {
     $new_element = FALSE;
     if (!empty($element['fid']['#value'])) {
-      $imagecrop->loadFile($fid, TRUE);
+      $imagecrop->loadFile($element['fid']['#value'], TRUE);
     }
   }
 
@@ -465,15 +465,20 @@ function get_imagecrop_styles($enabled_styles = array()) {
 
   $all_styles = image_styles();
   $styles = array();
-  foreach ($all_styles as $key => $style) {
+  foreach ($all_styles as $machine_name => $style) {
     foreach ($style['effects'] as $effect) {
       if ($effect['name'] == 'imagecrop_javascript') {
 
         // Skip if current style is not enabled.
-        if ($apply_filter && !in_array($style['isid'], $enabled_styles)) {
-          continue;
+        if ($apply_filter && !in_array($machine_name, $enabled_styles)) {
+
+          // Make sure old versions still work.
+          if (!isset($style['isid']) || !in_array($style['isid'], $enabled_styles)) {
+            continue;
+          }
+
         }
-        $styles[$style['isid']] = $style['name'];
+        $styles[$machine_name] = $style['name'];
 
       }
     }
