@@ -346,6 +346,11 @@ function imagecrop_crop_settings_form_submit($form, &$form_state) {
     file_unmanaged_delete($form_state['values']['temp-style-destination']);
   }
 
+  $record->style_destination = $form_state['values']['style-destination'];
+  $record->temp_style_destination = $form_state['values']['temp-style-destination'];
+
+  module_invoke_all('imagecrop_settings_update', $record);
+
   $action = variable_get('imagecrop_skip_preview', FALSE) ? 'crop' : 'overview';
   drupal_goto('imagecrop/' . $action . '/' . $record->fid . '/' . $record->style_name . '/' . $field_info[0] . '/' . $field_info[1] . '/' . $field_info[2], array('query' => array('cropping' => 'done')));
 
