@@ -359,7 +359,11 @@ class ImageCrop {
 
         $step = variable_get('imagecrop_scale_step', 50);
         $popup_width = variable_get('imagecrop_popup_width', 700);
-        $popup_height = variable_get('imagecrop_popup_height', 600);
+        $popup_height = variable_get('imagecrop_popup_height', 600) - 50;
+
+        if ($this->extraControls) {
+          $popup_width -= 215;
+        }
 
         $scale_width = $this->originalImageWidth;
         $aspect = $this->originalImageWidth / $this->originalImageHeight;

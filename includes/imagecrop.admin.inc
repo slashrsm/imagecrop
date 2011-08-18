@@ -87,7 +87,7 @@ function imagecrop_settings_form() {
 
   $form['imagecrop_scale_default'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Autoscale the initial crop to the popup width / height settings.'),
+    '#title' => t('Autoscale the initial crop to fit the popup.'),
     '#default_value' => variable_get('imagecrop_scale_default', FALSE),
   );
 
