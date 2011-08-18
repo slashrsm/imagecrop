@@ -144,10 +144,6 @@ class ImageCrop {
    */
   public function getXOffset() {
 
-    if ($this->xoffset == 'left') {
-      return 0;
-    }
-
     return $this->xoffset;
 
   }
@@ -156,10 +152,6 @@ class ImageCrop {
    * Get the X offset from the current imagecrop object.
    */
   public function getYOffset() {
-
-    if ($this->yoffset == 'top') {
-      return 0;
-    }
 
     return $this->yoffset;
 
@@ -371,6 +363,48 @@ class ImageCrop {
     }
     elseif ($this->resizeAspectRatio == 'CROP') {
       $this->resizeAspectRatio = $this->width / $this->height;
+    }
+
+    if (!is_numeric($this->xoffset)) {
+
+      switch ($this->xoffset) {
+
+        case 'right':
+          $this->xoffset = $this->imageWidth - $this->width;
+        break;
+
+        case 'center':
+          $this->xoffset = round(($this->imageWidth / 2) - ($this->width / 2));
+        break;
+
+        case 'left':
+        default:
+          $this->xoffset = 0;
+        break;
+
+      }
+
+    }
+
+    if (!is_numeric($this->yoffset)) {
+
+      switch ($this->yoffset) {
+
+        case 'bottom':
+          $this->yoffset = $this->imageHeight - $this->height;
+        break;
+
+        case 'center':
+          $this->yoffset = round(($this->imageHeight / 2) - ($this->height / 2));
+        break;
+
+        case 'top':
+        default:
+          $this->yoffset = 0;
+        break;
+
+      }
+
     }
 
   }
