@@ -85,6 +85,12 @@ function imagecrop_settings_form() {
     '#field_suffix' => 'pixels',
   );
 
+  $form['imagecrop_scale_default'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Autoscale the initial crop to the popup width / height settings.'),
+    '#default_value' => variable_get('imagecrop_scale_default', FALSE),
+  );
+
   // drupal message if no action is found with javascript_crop
   if (count(get_imagecrop_styles()) == 0) {
     drupal_set_message(t('No image style is found with the javascript_crop action so far. If you want to take advantage of this module, you will need to create at least one image style with that action.'));

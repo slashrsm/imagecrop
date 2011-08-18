@@ -337,6 +337,7 @@ class ImageCrop {
       ->condition('style_name', $this->imageStyle['name'])
       ->execute()->fetchObject();
 
+    // Load settings
     if ($settings) {
 
       $this->xoffset = $settings->xoffset;
@@ -350,12 +351,38 @@ class ImageCrop {
       $this->scale = $settings->scale;
       $this->hasSettings = TRUE;
 
-      if ($this->scale != 'original') {
+    }
+    // Check for default scale.
+    else {
+
+      if (variable_get('imagecrop_scale_default', FALSE)) {
+
+        $step = variable_get('imagecrop_scale_step', 50);
+        $popup_width = variable_get('imagecrop_popup_width', 700);
+        $popup_height = variable_get('imagecrop_popup_height', 600);
+
+        $scale_width = $this->originalImageWidth;
         $aspect = $this->originalImageWidth / $this->originalImageHeight;
-        $this->imageWidth = $this->scale;
-        $this->imageHeight = intval($this->imageWidth / $aspect);
+        if ($step > 0) {
+          $scale_width -= $step;
+          while ($scale_width > $this->width && ($scale_width / $aspect) > $this->height) {
+            $scaled_height = intval($scale_width / $aspect);
+            if ($scaled_height < $popup_height && $scale_width < $popup_width) {
+              $this->scale = $scale_width;
+              break;
+            }
+            $scale_width -= $step;
+          }
+        }
+
       }
 
+    }
+
+    if ($this->scale != 'original') {
+      $aspect = $this->originalImageWidth / $this->originalImageHeight;
+      $this->imageWidth = $this->scale;
+      $this->imageHeight = intval($this->imageWidth / $aspect);
     }
 
     if ($this->resizeAspectRatio == 'KEEP') {
