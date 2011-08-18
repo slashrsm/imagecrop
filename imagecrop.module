@@ -471,13 +471,9 @@ function get_imagecrop_styles($enabled_styles = array()) {
 
         // Skip if current style is not enabled.
         if ($apply_filter && !in_array($machine_name, $enabled_styles)) {
-
-          // Make sure old versions still work.
-          if (!isset($style['isid']) || !in_array($style['isid'], $enabled_styles)) {
-            continue;
-          }
-
+          continue;
         }
+
         $styles[$machine_name] = $style['name'];
 
       }
@@ -489,25 +485,15 @@ function get_imagecrop_styles($enabled_styles = array()) {
 }
 
 /**
- * Get the isid from the current requested url.
+ * Get the style name from the current requested url.
  */
-function imagecrop_get_isid_from_url() {
+function imagecrop_get_style_name_from_url() {
 
   $args = explode('/', $_GET['q']);
   $key = array_search('styles', $args);
 
   if ($key != FALSE) {
-
-    $key++;
-    $stylename = $args[$key];
-    $styles = get_imagecrop_styles();
-    foreach ($styles as $isid => $style) {
-      if ($style == $stylename) {
-        return $isid;
-        break;
-      }
-    }
-
+    return $args[$key + 1];
   }
 
   return 0;

@@ -34,6 +34,7 @@ class ImageCrop {
   private $height = 0;
   private $startHeight = 0;
   private $xoffset = 0;
+  private $yoffset = 0;
   private $scale = 'original';
   private $disableIfNoData = FALSE;
   private $hasSettings = FALSE;
@@ -142,14 +143,26 @@ class ImageCrop {
    * Get the X offset from the current imagecrop object.
    */
   public function getXOffset() {
+
+    if ($this->xoffset == 'left') {
+      return 0;
+    }
+
     return $this->xoffset;
+
   }
 
   /**
    * Get the X offset from the current imagecrop object.
    */
   public function getYOffset() {
+
+    if ($this->yoffset == 'top') {
+      return 0;
+    }
+
     return $this->yoffset;
+
   }
 
   /**
@@ -225,9 +238,10 @@ class ImageCrop {
   /**
    * Set the current cropped image style.
    */
-  public function setImageStyle($isid) {
+  public function setImageStyle($style_name) {
 
-    $this->imageStyle = image_style_load(NULL, $isid);
+    $this->imageStyle = image_style_load($style_name);
+
     if (!$this->imageStyle) {
       throw new Exception('The image style to crop was not found.');
     }
@@ -239,8 +253,15 @@ class ImageCrop {
         $this->startWidth = $effect['data']['width'];
         $this->height = $effect['data']['height'];
         $this->startHeight = $effect['data']['height'];
-        $this->xoffset = $effect['data']['xoffset'];
-        $this->yoffset = $effect['data']['yoffset'];
+
+        if ($effect['data']['xoffset']) {
+          $this->xoffset = $effect['data']['xoffset'];
+        }
+
+        if ($effect['data']['yoffset']) {
+          $this->yoffset = $effect['data']['yoffset'];
+        }
+
         $this->isResizable = $effect['data']['resizable'];
         $this->disableIfNoData = $effect['data']['disable_if_no_data'];
         $this->resizeAspectRatio = !empty($effect['data']['aspect_ratio']) ? $effect['data']['aspect_ratio'] : FALSE;
@@ -321,7 +342,7 @@ class ImageCrop {
     $settings = db_select('image_crop_settings')
       ->fields('image_crop_settings')
       ->condition('fid', $this->file->fid)
-      ->condition('isid', $this->imageStyle['isid'])
+      ->condition('style_name', $this->imageStyle['name'])
       ->execute()->fetchObject();
 
     if ($settings) {

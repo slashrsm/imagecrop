@@ -60,6 +60,7 @@ Drupal.Imagecrop.cropUi.initControls = function() {
   
   var leftpos = Drupal.Imagecrop.imageCropXField.val();
   var toppos = Drupal.Imagecrop.imageCropYField.val();
+  
   Drupal.Imagecrop.resizeMe.css({backgroundPosition: '-'+ leftpos + 'px -'+ toppos +'px'});
   Drupal.Imagecrop.resizeMe.width(Drupal.Imagecrop.imageCropWidthField.val() + 'px');
   Drupal.Imagecrop.resizeMe.height($('#edit-image-crop-height', '#imagecrop-crop-settings-form').val() + 'px');
@@ -74,7 +75,7 @@ Drupal.Imagecrop.cropUi.initControls = function() {
 Drupal.Imagecrop.cropUi.initScaling = function() {
   
   Drupal.Imagecrop.fid = $('input[name="fid"]', '#imagecrop-crop-settings-form').val();
-  Drupal.Imagecrop.isid = $('input[name="isid"]', '#imagecrop-crop-settings-form').val();
+  Drupal.Imagecrop.style = $('input[name="style"]', '#imagecrop-crop-settings-form').val();
   Drupal.Imagecrop.cropFile = $('input[name="temp-style-destination"]', '#imagecrop-crop-settings-form').val();
   $('#edit-scaling', '#imagecrop-scale-settings-form').bind('change', Drupal.Imagecrop.cropUi.scaleImage);
   Drupal.Imagecrop.cropUi.cropWrapper = $('#imagecrop-crop-wrapper');
@@ -267,7 +268,7 @@ Drupal.Imagecrop.cropUi.scaleImage = function() {
   
   var imagecropData = {
     'fid' : Drupal.Imagecrop.fid,
-    'isid' : Drupal.Imagecrop.isid,
+    'style' : Drupal.Imagecrop.style,
     'scale' : dimensions[0]
   }
   

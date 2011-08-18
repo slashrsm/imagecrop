@@ -48,15 +48,15 @@ function imagecrop_effect(&$image, $data) {
     $imagecrop->loadFile($image->source, FALSE);
 
     // if a global presetid is been set, it meens the image is generated from the imagecrop module
-    if (isset($GLOBALS['imagecrop_isid'])) {
-      $isid = $GLOBALS['imagecrop_isid'];
+    if (isset($GLOBALS['imagecrop_style'])) {
+      $style_name = $GLOBALS['imagecrop_style'];
     }
     // and if not, then get the id from list of all presets
     else {
-      $isid = imagecrop_get_isid_from_url();
+      $style_name = imagecrop_get_style_name_from_url();
     }
 
-    $imagecrop->setImageStyle($isid);
+    $imagecrop->setImageStyle($style_name);
     $imagecrop->loadCropSettings();
     $imagecrop->applyCrop($image);
 
@@ -141,7 +141,7 @@ function imagecrop_javascript_effect_submit($form, &$form_state) {
       ->fields(array('width' => $form_state['values']['data']['width'], 'height' => $form_state['values']['data']['height']))
       ->condition('width', $form_state['values']['old-width'])
       ->condition('height', $form_state['values']['old-height'])
-      ->condition('isid', $form_state['image_effect']['isid'])
+      ->condition('style_name', $form_state['image_style']['name'])
       ->execute();
   }
 
@@ -236,7 +236,7 @@ function imagecrop_reuse_effect(&$image, $data) {
   $style = image_style_load(NULL, $data['imagecrop_sid']);
   foreach ($style['effects'] as $effect) {
     if ($effect['name'] == 'imagecrop_javascript') {
-      $GLOBALS['imagecrop_isid'] = $style['isid'];
+      $GLOBALS['imagecrop_style'] = $style['name'];
       image_effect_apply($image, $effect);
       return TRUE;
     }

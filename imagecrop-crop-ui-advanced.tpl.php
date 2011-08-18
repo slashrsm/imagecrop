@@ -12,7 +12,7 @@ $style = $imagecrop->getImageStyle();
   <div id="imagecrop-selection" class="clearfix">
     <?php print drupal_render($style_selection); ?>
     <?php if (!$imagecrop->skipPreview): ?>
-    <a href="#" onclick="javascript: Drupal.Imagecrop.changeViewedImage(<?php print $style['isid'] ?>); return false;" class="form-item imagecrop-form-link"><?php print t('Back to preview from this style') ?></a>
+    <a href="#" onclick="javascript: Drupal.Imagecrop.changeViewedImage('<?php print $style['name'] ?>'); return false;" class="form-item imagecrop-form-link"><?php print t('Back to preview from this style') ?></a>
     <?php endif; ?>
   </div>
 

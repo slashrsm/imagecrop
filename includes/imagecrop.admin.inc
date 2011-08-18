@@ -99,26 +99,26 @@ function imagecrop_settings_form() {
  * Show an example from the first (or selected) image.
  *
  * @param $fid fid from file to be viewed
- * @param $isid Style id that default needs to be shown
+ * @param $style_name Style name that default needs to be shown
  * @param $entity_type entity type from the field that triggered the imagecrop overview
  * @param $bundle bundle from the field that triggered the imagecrop overview
  * @param $field_name Field name that triggered the imagecrop overview.
  */
-function imagecrop_image_styles_overview($fid, $isid, $entity_type = NULL, $bundle = NULL, $field_name = NULL) {
+function imagecrop_image_styles_overview($fid, $style_name, $entity_type = NULL, $bundle = NULL, $field_name = NULL) {
 
   try {
 
     $styles = imagecrop_get_enabled_styles_for_crop($entity_type, $bundle, $field_name);
 
-    $style_name = current($styles);
-    if ($isid > 0) {
-      if (!isset($styles[$isid])) {
+    if ($style_name) {
+
+      if (!isset($styles[$style_name])) {
         throw new Exception('The image style to crop was not found.');
       }
-      $style_name = $styles[$isid];
+
     }
     else {
-      $isid = key($styles);
+      $style_name = key($styles);
     }
 
     global $user;
@@ -131,7 +131,7 @@ function imagecrop_image_styles_overview($fid, $isid, $entity_type = NULL, $bund
       throw new Exception("You don't have permissions to crop this image.");
     }
 
-    $imagecrop->setImageStyle($isid);
+    $imagecrop->setImageStyle($style_name);
     if ($entity_type) {
       $imagecrop->setEntityType($entity_type);
     }
@@ -153,7 +153,7 @@ function imagecrop_image_styles_overview($fid, $isid, $entity_type = NULL, $bund
     return theme('imagecrop_overview', array(
       'style_selection' => drupal_get_form('imagecrop_style_selection_form', $styles, $imagecrop),
       'viewed_style' => theme('image', array('path' => $image_url)),
-      'edit_url' => 'imagecrop/crop/' . $imagecrop->getFile()->fid . '/' . $isid . '/' . $imagecrop->getEntityType() . '/' . $imagecrop->getBundle() . '/' . $imagecrop->getFieldName(),
+      'edit_url' => 'imagecrop/crop/' . $imagecrop->getFile()->fid . '/' . $style_name. '/' . $imagecrop->getEntityType() . '/' . $imagecrop->getBundle() . '/' . $imagecrop->getFieldName(),
     ));
 
   }
@@ -168,12 +168,12 @@ function imagecrop_image_styles_overview($fid, $isid, $entity_type = NULL, $bund
  * Show the cropping page for the selected image style.
  *
  * @param $fid fid from file to be cropped
- * @param $isid Style id that is being changed
+ * @param $style_name Style that is being changed
  * @param $entity_type entity type from the field that triggered the imagecrop overview
  * @param $bundle bundle from the field that triggered the imagecrop overview
  * @param $field_name Field name that triggered the imagecrop overview.
  */
-function imagecrop_cropping_page($fid, $isid, $entity_type = NULL, $bundle = NULL, $field_name = NULL) {
+function imagecrop_cropping_page($fid, $style_name, $entity_type = NULL, $bundle = NULL, $field_name = NULL) {
 
   try {
 
@@ -182,7 +182,7 @@ function imagecrop_cropping_page($fid, $isid, $entity_type = NULL, $bundle = NUL
     global $user;
     $imagecrop = new ImageCrop();
     $imagecrop->loadFile($fid);
-    $imagecrop->setImageStyle($isid);
+    $imagecrop->setImageStyle($style_name);
     $imagecrop->setEntityType($entity_type);
     $imagecrop->setBundle($bundle);
     $imagecrop->setFieldName($field_name);
@@ -233,10 +233,10 @@ function imagecrop_style_selection_form($form, $form_state, $styles, $imagecrop)
     '#type' => 'select',
     '#title' => $imagecrop->getInCroppingMode() ? t('Select other style to '. $action) : t('Select style to preview'),
     '#options' => $styles,
-    '#default_value' => $image_style['isid'],
+    '#default_value' => $image_style['name'],
   );
 
-  $path = $imagecrop->getFile()->fid . '/isid/' . $imagecrop->getEntityType() . '/' . $imagecrop->getBundle() . '/' . $imagecrop->getFieldName();
+  $path = $imagecrop->getFile()->fid . '/style_name/' . $imagecrop->getEntityType() . '/' . $imagecrop->getBundle() . '/' . $imagecrop->getFieldName();
   $form['imagecrop-url'] = array(
     '#type' => 'hidden',
     '#value' => url('imagecrop/' . $path_action . '/' . $path, array('absolute' => TRUE)),
@@ -293,9 +293,9 @@ function imagecrop_crop_settings_form($form, $form_state, $imagecrop) {
 
   $image_style = $imagecrop->getImageStyle();
 
-  $form['isid'] = array(
+  $form['style'] = array(
     '#type' => 'hidden',
-    '#value' => $image_style['isid'],
+    '#value' => $image_style['name'],
   );
 
   $form['style-destination'] = array(
@@ -324,12 +324,12 @@ function imagecrop_crop_settings_form_submit($form, &$form_state) {
 
   db_delete('image_crop_settings')
     ->condition('fid', $form_state['values']['fid'])
-    ->condition('isid', $form_state['values']['isid'])
+    ->condition('style_name', $form_state['values']['style'])
   ->execute();
 
   $record = new stdClass();
   $record->fid = $form_state['values']['fid'];
-  $record->isid = $form_state['values']['isid'];
+  $record->style_name = $form_state['values']['style'];
   $record->xoffset = $form_state['values']['image-crop-x'];
   $record->yoffset = $form_state['values']['image-crop-y'];
   $record->width = $form_state['values']['image-crop-width'];
@@ -347,7 +347,7 @@ function imagecrop_crop_settings_form_submit($form, &$form_state) {
   }
 
   $action = variable_get('imagecrop_skip_preview', FALSE) ? 'crop' : 'overview';
-  drupal_goto('imagecrop/' . $action . '/' . $record->fid . '/' . $record->isid . '/' . $field_info[0] . '/' . $field_info[1] . '/' . $field_info[2], array('query' => array('cropping' => 'done')));
+  drupal_goto('imagecrop/' . $action . '/' . $record->fid . '/' . $record->style_name . '/' . $field_info[0] . '/' . $field_info[1] . '/' . $field_info[2], array('query' => array('cropping' => 'done')));
 
 }
 
@@ -434,13 +434,13 @@ function imagecrop_generate_cropready_image() {
 
   try {
 
-    if (!isset($_POST['fid']) && !isset($_POST['isid']) && !isset($_POST['scale'])) {
+    if (!isset($_POST['fid']) && !isset($_POST['style']) && !isset($_POST['scale'])) {
       throw new Exception('Required fields are empty');
     }
 
     $imagecrop = new ImageCrop();
     $imagecrop->loadFile($_POST['fid']);
-    $imagecrop->setImageStyle($_POST['isid']);
+    $imagecrop->setImageStyle($_POST['style']);
     $imagecrop->setCropDestinations();
 
     $imagecrop->setScale($_POST['scale']);

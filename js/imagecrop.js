@@ -17,8 +17,8 @@ $(document).ready(function() {
 /**
  * Event listener, go to the view url when user selected a style.
  */
-Drupal.Imagecrop.changeViewedImage = function(isid) {
-  document.location = $("input[name=imagecrop-url]").val().replace('/isid/', '/' + isid + '/');
+Drupal.Imagecrop.changeViewedImage = function(style_name) {
+  document.location = $("input[name=imagecrop-url]").val().replace('/style_name/', '/' + style_name + '/');
 }
 
 /**
