@@ -98,10 +98,17 @@ function imagecrop_update_7001() {
     $isids = db_query('SELECT DISTINCT(isid) FROM {image_crop_settings}')->fetchCol();
 
     foreach ($isids as $isid) {
+
+      // Make sure only not exported styles are updated.
+      if (!isset($styles[$isid])) {
+        continue;
+      }
+
       db_update('image_crop_settings')
         ->condition('isid', $isid)
         ->fields(array('style_name' => $styles[$isid]))
         ->execute();
+
     }
 
     // Delete the isid info from table
