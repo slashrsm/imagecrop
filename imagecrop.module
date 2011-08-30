@@ -282,6 +282,11 @@ function process_imagecrop_form_element($element) {
   else {
     $new_element = FALSE;
     if (!empty($element['fid']['#value'])) {
+      $file = file_load($element['fid']['#value']);
+      // Only add when the file is an image
+      if ($file->type != 'image') {
+        return $element;
+      }
       $imagecrop->loadFile($element['fid']['#value'], TRUE);
     }
   }
@@ -420,7 +425,7 @@ function imagecrop_linkitem($fid, &$element, $styles) {
 
   $element['#attached']['js'][] = array('type' => 'setting', 'data' => $setting);
   $element['#attached']['js'][] = drupal_get_path('module', 'imagecrop') . '/js/imagecrop_field.js';
-
+$element['#attached']['library'][] = 'ui.dialog';
   if (isset($element['#entity_type'], $element['#bundle'], $element['#field_name'])) {
     $url .= $element['#entity_type'] . '/' . $element['#bundle'] . '/' . $element['#field_name'];
   }
