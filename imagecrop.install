@@ -88,11 +88,10 @@ function imagecrop_update_7001() {
 
     db_drop_primary_key('image_crop_settings');
 
-    $field_info = array('type' => 'varchar', 'length' => 255, 'not null' => TRUE,);
-    $new_keys = array('primary key' => array('fid', 'style_name'),);
+    $field_info = array('type' => 'varchar', 'length' => 255);
 
     // Use style name as identifier.
-    db_add_field('image_crop_settings', 'style_name', $field_info, $new_keys);
+    db_add_field('image_crop_settings', 'style_name', $field_info);
 
     // Update the table with correct style name.
     $isids = db_query('SELECT DISTINCT(isid) FROM {image_crop_settings}')->fetchCol();
@@ -113,6 +112,9 @@ function imagecrop_update_7001() {
 
     // Delete the isid info from table
     db_drop_field('image_crop_settings', 'isid');
+
+    // Add primary key
+    db_add_primary_key('image_crop_settings', array('fid', 'style_name'));
 
   }
 
