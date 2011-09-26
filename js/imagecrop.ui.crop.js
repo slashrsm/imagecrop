@@ -121,6 +121,7 @@ Drupal.Imagecrop.cropUi.positionListener = function() {
 
   // Top must be integer
   if (isNaN(y)) {
+    console.log('d');
     var position = Drupal.Imagecrop.resizeMe.position();
     Drupal.Imagecrop.imageCropYField.val(position.top);
     return;
@@ -134,8 +135,8 @@ Drupal.Imagecrop.cropUi.positionListener = function() {
   }
   
   // Y position can not be higher then height from container - height from cropping. 
-  var max_y = Drupal.Imagecrop.cropUi.cropWrapper.width() - Drupal.Imagecrop.imageCropWidthField.val();
-  if (y > max_x) {
+  var max_y = Drupal.Imagecrop.cropUi.cropWrapper.height() - Drupal.Imagecrop.imageCropWidthField.val();
+  if (y > max_y) {
     y = max_y;
     changeInput = true;
   }
@@ -150,6 +151,16 @@ Drupal.Imagecrop.cropUi.positionListener = function() {
  */
 Drupal.Imagecrop.cropUi.setBackgroundPosition = function(x, y, changeInput) {
 
+  if (y < 0) {
+    y = 0;
+    changeInput = true;
+  }
+  
+  if (x < 0) {
+    x = 0;
+    changeInput = true;
+  }
+  
   Drupal.Imagecrop.resizeMe.css({'background-position' : '-' + x + 'px -' + y + 'px'});
   if (changeInput) {
     Drupal.Imagecrop.imageCropXField.val(x);
