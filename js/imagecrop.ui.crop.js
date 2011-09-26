@@ -121,7 +121,6 @@ Drupal.Imagecrop.cropUi.positionListener = function() {
 
   // Top must be integer
   if (isNaN(y)) {
-    console.log('d');
     var position = Drupal.Imagecrop.resizeMe.position();
     Drupal.Imagecrop.imageCropYField.val(position.top);
     return;
