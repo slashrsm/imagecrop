@@ -425,10 +425,14 @@ function imagecrop_linkitem($fid, &$element, $styles) {
 
   $element['#attached']['js'][] = array('type' => 'setting', 'data' => $setting);
   $element['#attached']['js'][] = drupal_get_path('module', 'imagecrop') . '/js/imagecrop_field.js';
-$element['#attached']['library'][] = 'ui.dialog';
+
   if (isset($element['#entity_type'], $element['#bundle'], $element['#field_name'])) {
     $url .= $element['#entity_type'] . '/' . $element['#bundle'] . '/' . $element['#field_name'];
   }
+  elseif ($skip_preview) {
+    $url .= 'none/none';
+  }
+
   $url = url($url, array('absolute' => TRUE));
 
   if ($popup_link_function != 'basic' && function_exists($popup_link_function) && $link = $popup_link_function($url, $width, $height)) {

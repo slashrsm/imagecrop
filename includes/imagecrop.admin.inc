@@ -201,8 +201,8 @@ function imagecrop_cropping_page($fid, $style_name, $entity_type = NULL, $bundle
       throw new Exception("You don't have permissions to crop this image.");
     }
 
-    $imagecrop->loadCropSettings();
     $imagecrop->writeCropreadyImage();
+    $imagecrop->loadCropSettings();
     $imagecrop->addImagecropUi(TRUE);
 
     return theme(($imagecrop->extraControls ? 'imagecrop_crop_ui_advanced' : 'imagecrop_crop_ui'), array(

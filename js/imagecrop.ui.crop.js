@@ -36,11 +36,12 @@ Drupal.Imagecrop.cropUi.initControls = function() {
   
   Drupal.Imagecrop.resizeMe = $('#resizeMe');
   Drupal.Imagecrop.cropUi.cropContainer = $('#image-crop-container');
+  Drupal.Imagecrop.cropUi.cropWrapper = $('#imagecrop-crop-wrapper');
   
   if (Drupal.Imagecrop.resizeMe.resizable) { 
 
     Drupal.Imagecrop.resizeMe.resizable({
-      containment: Drupal.Imagecrop.cropUi.cropContainer,
+      containment: Drupal.Imagecrop.cropUi.cropWrapper,
       aspectRatio: Drupal.settings.imagecrop.resizeAspectRatio,
       autohide: true,
       handles: 'n, e, s, w, ne, se, sw, nw',
@@ -51,7 +52,7 @@ Drupal.Imagecrop.cropUi.initControls = function() {
 
   Drupal.Imagecrop.resizeMe.draggable({
     cursor: 'move',
-    containment: Drupal.Imagecrop.cropUi.cropContainer,
+    containment: Drupal.Imagecrop.cropUi.cropWrapper,
     drag: Drupal.Imagecrop.cropUi.dragListener
   });
   

@@ -327,9 +327,11 @@ class ImageCrop {
    */
   public function loadCropSettings() {
 
-    $size = getimagesize(drupal_realpath($this->file->uri));
-    $this->imageWidth = $this->originalImageWidth = $size[0];
-    $this->imageHeight = $this->originalImageHeight = $size[1];
+    if (!$this->inCroppingMode) {
+      $size = getimagesize($this->file->uri);
+      $this->imageWidth = $this->originalImageWidth = $size[0];
+      $this->imageHeight = $this->originalImageHeight = $size[1];
+    }
 
     $settings = db_select('image_crop_settings')
       ->fields('image_crop_settings')
@@ -477,10 +479,15 @@ class ImageCrop {
     $style = $this->imageStyle;
 
     foreach ($this->imageStyle['effects'] as $key => $effect) {
+
       if ($effect['name'] == 'imagecrop_javascript') {
         $unset = TRUE;
       }
-      unset($style['effects'][$key]);
+
+      if ($unset) {
+        unset($style['effects'][$key]);
+      }
+
     }
 
     if ($this->scale !== 'original') {
@@ -493,6 +500,11 @@ class ImageCrop {
     }
 
     image_style_create_derivative($style, $this->file->uri, $this->cropDestination);
+
+    // Set imageWidth and height after effects are done.
+    $size = getimagesize($this->cropDestination);
+    $this->imageWidth = $this->originalImageWidth = $size[0];
+    $this->imageHeight = $this->originalImageHeight = $size[1];
 
   }
 
