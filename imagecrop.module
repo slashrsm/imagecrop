@@ -172,7 +172,7 @@ function imagecrop_form_field_ui_field_edit_form_alter(&$form, $form_state) {
  */
 function imagecrop_form_media_edit_alter(&$form, $form_state) {
 
-  if (isset($form['preview']['#file']) && $form['preview']['#file']->type == 'image') {
+  if (isset($form['preview']['#file']) && $form['preview']['#file']->type == 'image' && in_array('media', variable_get('imagecrop_modules', array()))) {
 
     $imagecrop = new Imagecrop();
     $imagecrop->setFile($form['preview']['#file']);

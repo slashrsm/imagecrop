@@ -31,6 +31,7 @@ function imagecrop_settings_form() {
 
   $options_modules = array(
     'profile_picture' => t('Profile pictures'),
+    'media' => t('Media edit form (not media fields)'),
   );
 
   $form['imagecrop_modules'] = array(

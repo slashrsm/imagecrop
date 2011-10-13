@@ -27,7 +27,7 @@ $style = $imagecrop->getImageStyle();
 
   </div>
 
-  <div id="imagecrop-right" style="width: <?php print (variable_get('imagecrop_popup_width', 700) - 217) ?>px">
+  <div id="imagecrop-right" style="width: <?php print (variable_get('imagecrop_popup_width', 700) - 237) ?>px">
 
     <div id="imagecrop-help">
       <?php print t("Resize image if needed, then select a crop area. Click 'Save selection' to save the changes."); ?>
