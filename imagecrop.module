@@ -171,6 +171,15 @@ function imagecrop_form_field_ui_field_edit_form_alter(&$form, $form_state) {
  * Add imagecrop to media edit form.
  */
 function imagecrop_form_media_edit_alter(&$form, $form_state) {
+  imagecrop_form_file_entity_edit_alter($form, $form_state);
+}
+
+
+/**
+ * Implements hook_form_file_entity_edit_alter().
+ * Add imagecrop to file_entity edit form.
+ */
+function imagecrop_form_file_entity_edit_alter(&$form, $form_state) {
 
   if (isset($form['preview']['#file']) && $form['preview']['#file']->type == 'image' && in_array('media', variable_get('imagecrop_modules', array()))) {
 
@@ -184,7 +193,6 @@ function imagecrop_form_media_edit_alter(&$form, $form_state) {
 
     $form['imagecrop'] = array(
       '#type' => 'markup',
-      '#weight' => 10,
       '#prefix' => '<div class="imagecrop form-item">',
       '#suffix' => '</div>',
       '#markup' => imagecrop_linkitem($form['fid']['#value'], $form, get_imagecrop_styles()),
@@ -540,6 +548,28 @@ function imagecrop_iframe($url, $width, $height) {
   $output .= '<div>';
   $output .= '<iframe src="' . $url . '" width="' . $width . '" height="' . $height . '"></iframe>';
   $output .= '</div></div>';
+
+  return $output;
+
+}
+
+function imagecrop_render_main_content($element) {
+
+  $output = '';
+  foreach (element_children($element) as $key) {
+
+    if ($key == 'system_main') {
+      return drupal_render($element[$key]);
+    }
+    else {
+      $output = imagecrop_render_main_content($element[$key]);
+    }
+
+    if (!empty($output)) {
+      return $output;
+    }
+
+  }
 
   return $output;
 
