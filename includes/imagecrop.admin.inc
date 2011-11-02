@@ -353,6 +353,17 @@ function imagecrop_crop_settings_form_submit($form, &$form_state) {
     file_unmanaged_delete($form_state['values']['temp-style-destination']);
   }
 
+  // Delete old images of styles that use this style just for data.
+  $styles = image_styles();
+  foreach ($styles as $name => $style) {
+    foreach ($style['effects'] as $effect) {
+      if ($effect['name'] == 'imagecrop_reuse' && $effect['data']['imagecrop_style'] == $form_state['values']['style']) {
+        $file = file_load($form_state['values']['fid']);
+        file_unmanaged_delete(image_style_path($name, $file->uri));
+      }
+    }
+  }
+
   $record->style_destination = $form_state['values']['style-destination'];
   $record->temp_style_destination = $form_state['values']['temp-style-destination'];
 
