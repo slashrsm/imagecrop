@@ -47,7 +47,7 @@ body.page-imagecrop {
 }
 
 #imagecrop-preview,
-#imagecrop-crop-wrapper {
+#imagecrop-crop-container {
   margin: 0 12px;
 }
 

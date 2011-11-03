@@ -33,9 +33,11 @@ $style = $imagecrop->getImageStyle();
       <?php print t("Resize image if needed, then select a crop area. Click 'Save selection' to save the changes."); ?>
     </div>
 
-    <div id="imagecrop-crop-wrapper" style="width: <?php print $imagecrop->getImageWidth() ?>px; height: <?php print $imagecrop->getImageHeight() ?>px;">
-      <div id="image-crop-container" style="background-image: url('<?php print $imagecrop->getCropDestination(); ?>'); width:<?php print $imagecrop->getImageWidth() ?>px; height:<?php print $imagecrop->getImageHeight() ?>px;"></div>
-      <div id="resizeMe" style="background-image: url('<?php print $imagecrop->getCropDestination(); ?>'); width:<?php print $imagecrop->getWidth() ?>px; height:<?php print $imagecrop->getHeight() ?>px; top: 20px;"></div>
+    <div id="imagecrop-crop-container">
+      <div id="imagecrop-crop-wrapper" style="width: <?php print $imagecrop->getImageWidth() ?>px; height: <?php print $imagecrop->getImageHeight() ?>px;">
+        <div id="image-crop-container" style="background-image: url('<?php print $imagecrop->getCropDestination(); ?>'); width:<?php print $imagecrop->getImageWidth() ?>px; height:<?php print $imagecrop->getImageHeight() ?>px;"></div>
+        <div id="resizeMe" style="background-image: url('<?php print $imagecrop->getCropDestination(); ?>'); width:<?php print $imagecrop->getWidth() ?>px; height:<?php print $imagecrop->getHeight() ?>px; top: 20px;"></div>
+      </div>
     </div>
   </div>
 </div>
