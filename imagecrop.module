@@ -491,7 +491,7 @@ function get_imagecrop_styles($enabled_styles = array()) {
           continue;
         }
 
-        $styles[$machine_name] = $style['name'];
+        $styles[$machine_name] = t($style['name']);
 
       }
     }
