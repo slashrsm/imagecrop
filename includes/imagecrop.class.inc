@@ -36,6 +36,7 @@ class ImageCrop {
   private $xoffset = 0;
   private $yoffset = 0;
   private $scale = 'original';
+  private $rotation = 0;
   private $disableIfNoData = FALSE;
   private $hasSettings = FALSE;
 
@@ -200,6 +201,20 @@ class ImageCrop {
   }
 
   /**
+   * Set the rotation from the image to crop.
+   */
+  public function setRotation($rotation) {
+    $this->rotation = $rotation;
+  }
+
+  /**
+   * Get the rotation from the image to crop.
+   */
+  public function getRotation() {
+    return $this->rotation;
+  }
+
+  /**
    * Get the height from the image to crop.
    */
   public function getImageHeight() {
@@ -351,6 +366,7 @@ class ImageCrop {
       }
 
       $this->scale = $settings->scale;
+      $this->rotation = $settings->rotation;
       $this->hasSettings = TRUE;
 
     }
@@ -391,13 +407,16 @@ class ImageCrop {
       $this->imageHeight = intval($this->imageWidth / $aspect);
     }
 
+    // Keep the aspect ratio from original image
     if ($this->resizeAspectRatio == 'KEEP') {
       $this->resizeAspectRatio = $this->imageWidth / $this->imageHeight;
     }
+    // Keep the aspect ratio from the crop settings
     elseif ($this->resizeAspectRatio == 'CROP') {
       $this->resizeAspectRatio = $this->width / $this->height;
     }
 
+    // Set correct xoffset when a keyword is entered.
     if (!is_numeric($this->xoffset)) {
 
       switch ($this->xoffset) {
@@ -419,6 +438,7 @@ class ImageCrop {
 
     }
 
+    // Set correct yoffset when a keyword is entered.
     if (!is_numeric($this->yoffset)) {
 
       switch ($this->yoffset) {
@@ -461,6 +481,16 @@ class ImageCrop {
       image_scale_effect($image, $data);
     }
 
+    // Rotate if requested
+    if ($this->rotation > 0) {
+
+      $data = array(
+        'degrees' => $this->rotation,
+      );
+      image_rotate_effect($image, $data);
+
+    }
+
     $data = array(
       'anchor' => $this->xoffset . '-' . $this->yoffset,
       'width' => $this->width,
@@ -490,21 +520,45 @@ class ImageCrop {
 
     }
 
-    if ($this->scale !== 'original') {
-      $style['effects'][] = array(
-        'effect callback' => 'image_scale_effect',
-        'data' => array(
-          'width' => $this->scale,
-        ),
-      );
-    }
-
+    // Save a first time, after the effects are done, for knowing the resulted width / height
     image_style_create_derivative($style, $this->file->uri, $this->cropDestination);
 
     // Set imageWidth and height after effects are done.
     $size = getimagesize($this->cropDestination);
     $this->imageWidth = $this->originalImageWidth = $size[0];
     $this->imageHeight = $this->originalImageHeight = $size[1];
+
+    $changed = FALSE;
+    if ($this->scale !== 'original') {
+
+      $style['effects'][] = array(
+        'effect callback' => 'image_scale_effect',
+        'data' => array(
+          'width' => $this->scale,
+        ),
+      );
+
+      $changed = TRUE;
+
+    }
+
+    if ($this->rotation > 0) {
+
+      $style['effects'][] = array(
+        'effect callback' => 'image_rotate_effect',
+        'data' => array(
+          'degrees' => $this->rotation,
+        ),
+      );
+
+      $changed = TRUE;
+
+    }
+
+    // Extra changes need to be done, save second time.
+    if ($changed) {
+      image_style_create_derivative($style, $this->file->uri, $this->cropDestination);
+    }
 
   }
 
@@ -513,10 +567,11 @@ class ImageCrop {
    */
   public function addImagecropUi($in_cropping_mode) {
 
-    drupal_add_js(drupal_get_path('module', 'imagecrop') . '/js/imagecrop.js');
-    drupal_add_css(drupal_get_path('module', 'imagecrop') . '/imagecrop.css');
+    $path = drupal_get_path('module', 'imagecrop');
+    drupal_add_js($path . '/js/imagecrop.js');
+    drupal_add_css($path . '/css/imagecrop.css');
 
-    $popup_js = drupal_get_path('module', 'imagecrop') . '/js/popups/' . variable_get('imagecrop_popup', 'basic') . '.js';
+    $popup_js = $path . '/js/popups/' . variable_get('imagecrop_popup', 'basic') . '.js';
     if (file_exists($popup_js)) {
       drupal_add_js($popup_js);
     }
@@ -524,19 +579,22 @@ class ImageCrop {
     // Add crop ui if in cropping mode.
     if ($in_cropping_mode) {
 
-      drupal_add_js(drupal_get_path('module', 'imagecrop') . '/js/imagecrop.ui.crop.js');
-
-      drupal_add_library('system', 'ui.draggable');
+      drupal_add_js($path . '/js/jcrop/jquery.Jcrop.js');
+      drupal_add_css($path.'/css/jquery.Jcrop.css');
+      drupal_add_js($path . '/js/imagecrop.ui.crop.js');
 
       $settings = array(
         'manipulationUrl' => url('imagecrop/generate_image'),
         'cropped' => isset($_GET['cropping']),
+        'resizable' => $this->isResizable,
+        'aspectRatio' => FALSE,
+        'minWidth' => 0,
+        'minHeight' => 0,
+        'rotation' => variable_get('imagecrop_rotation', FALSE),
       );
 
       if ($this->isResizable) {
-        drupal_add_library('system', 'ui.resizable');
-        drupal_add_library('system', 'effects.scale');
-        $settings['resizeAspectRatio'] = $this->resizeAspectRatio;
+        $settings['aspectRatio'] = $this->resizeAspectRatio;
         $settings['minWidth'] = ($this->downscalingAllowed ? 0 : $this->startWidth);
         $settings['minHeight'] = ($this->downscalingAllowed ? 0 : $this->startHeight);
         $settings['startHeight'] = $this->startHeight;

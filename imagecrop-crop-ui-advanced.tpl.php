@@ -20,8 +20,13 @@ $style = $imagecrop->getImageStyle();
 
     <div id="imagecrop-forms" class="clearfix">
     <?php
-    print drupal_render($scale_form);
-    print drupal_render($settings_form);
+      print drupal_render($scale_form);
+
+      if ($rotation_form) {
+        print drupal_render($rotation_form);
+      }
+
+      print drupal_render($settings_form);
     ?>
     </div>
 
@@ -34,10 +39,8 @@ $style = $imagecrop->getImageStyle();
     </div>
 
     <div id="imagecrop-crop-container">
-      <div id="imagecrop-crop-wrapper" style="width: <?php print $imagecrop->getImageWidth() ?>px; height: <?php print $imagecrop->getImageHeight() ?>px;">
-        <div id="image-crop-container" style="background-image: url('<?php print $imagecrop->getCropDestination(); ?>'); width:<?php print $imagecrop->getImageWidth() ?>px; height:<?php print $imagecrop->getImageHeight() ?>px;"></div>
-        <div id="resizeMe" style="background-image: url('<?php print $imagecrop->getCropDestination(); ?>'); width:<?php print $imagecrop->getWidth() ?>px; height:<?php print $imagecrop->getHeight() ?>px; top: 20px;"></div>
-      </div>
+      <?php print theme('image', array('path' => $imagecrop->getCropDestination(), 'attributes' => array('id' => 'imagecrop-image'))); ?>
     </div>
+
   </div>
 </div>
