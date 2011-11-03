@@ -8,7 +8,9 @@ $(document).ready(function() {
   
   $("#imagecrop-style-selection-form #edit-styles").change(function() { Drupal.Imagecrop.changeViewedImage($(this).val()); });
   if (Drupal.settings.imagecrop.cropped) {
-    Drupal.Imagecrop.forceUpdate();
+    if (Drupal.Imagecrop.forceUpdate) {
+      Drupal.Imagecrop.forceUpdate();      
+    }
     $('#cancel-crop').html(Drupal.t('Done cropping'));
   }
   

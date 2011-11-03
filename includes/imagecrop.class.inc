@@ -516,11 +516,9 @@ class ImageCrop {
     drupal_add_js(drupal_get_path('module', 'imagecrop') . '/js/imagecrop.js');
     drupal_add_css(drupal_get_path('module', 'imagecrop') . '/imagecrop.css');
 
-    if (variable_get('imagecrop_show_cancel_button', FALSE)) {
-      $popup_js = drupal_get_path('module', 'imagecrop') . '/js/popups/' . variable_get('imagecrop_popup', 'basic') . '.js';
-      if (file_exists($popup_js)) {
-        drupal_add_js($popup_js);
-      }
+    $popup_js = drupal_get_path('module', 'imagecrop') . '/js/popups/' . variable_get('imagecrop_popup', 'basic') . '.js';
+    if (file_exists($popup_js)) {
+      drupal_add_js($popup_js);
     }
 
     // Add crop ui if in cropping mode.
