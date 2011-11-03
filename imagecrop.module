@@ -302,7 +302,7 @@ function process_imagecrop_form_element($element) {
   // Leave alone if no access.
   global $user;
   if (!$imagecrop->hasUserAccess($user)) {
-    return;
+    return $element;
   }
 
   $enabled_styles = imagecrop_get_fields_enabled_styles($element['#entity_type'], $element['#field_name'], $element['#bundle']);
