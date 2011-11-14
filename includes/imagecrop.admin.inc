@@ -331,7 +331,7 @@ function imagecrop_crop_settings_form($form, $form_state, $imagecrop) {
 
   $form['temp-style-destination'] = array(
     '#type' => 'hidden',
-    '#value' => $imagecrop->getCropDestination(),
+    '#value' => $imagecrop->getCropDestination(FALSE),
   );
 
   $form['submit'] = array(
