@@ -513,7 +513,7 @@ class ImageCrop {
 
       if ($effect['name'] == 'smartcrop_crop') {
         $smartcrop = $effect;
-        $unset = TRUE;
+      //  $unset = TRUE;
       }
 
       if ($effect['name'] == 'imagecrop_javascript') {
@@ -526,14 +526,14 @@ class ImageCrop {
 
     }
 
-    if ($smartcrop) {
+    /*if ($smartcrop) {
       $image = image_load($this->file->uri);
       $coordinates = _smartcrop_get_coordinates($image, $this->width, $this->height);
       if (!$this->hasSettings) {
         $this->xoffset = $coordinates['dst_x'];
         $this->yoffset = $coordinates['dst_y'];
       }
-    }
+    }*/
 
     // Save a first time, after the effects are done, for knowing the resulted width / height
     image_style_create_derivative($style, $this->file->uri, $this->cropDestination);
