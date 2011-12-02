@@ -506,9 +506,15 @@ class ImageCrop {
   public function writeCropreadyImage() {
 
     $unset = FALSE;
+    $smartcrop = FALSE;
     $style = $this->imageStyle;
 
     foreach ($this->imageStyle['effects'] as $key => $effect) {
+
+      if ($effect['name'] == 'smartcrop_crop') {
+        $smartcrop = $effect;
+        $unset = TRUE;
+      }
 
       if ($effect['name'] == 'imagecrop_javascript') {
         $unset = TRUE;
@@ -518,6 +524,15 @@ class ImageCrop {
         unset($style['effects'][$key]);
       }
 
+    }
+
+    if ($smartcrop) {
+      $image = image_load($this->file->uri);
+      $coordinates = _smartcrop_get_coordinates($image, $this->width, $this->height);
+      if (!$this->hasSettings) {
+        $this->xoffset = $coordinates['dst_x'];
+        $this->yoffset = $coordinates['dst_y'];
+      }
     }
 
     // Save a first time, after the effects are done, for knowing the resulted width / height
