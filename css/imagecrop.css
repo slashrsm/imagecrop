@@ -28,15 +28,15 @@ body.page-imagecrop {
 }
 
 .page-imagecrop .form-item {
-  margin-bottom: 12px; 
+  padding: 0; 
 }
 
 #imagecrop-style-selection-form {
   float: left;
 }
 
-.imagecrop-form-link {
-  padding: 4px;
+.page-imagecrop .imagecrop-form-link {
+  padding: 0 4px 4px;
   margin-left: 20px;
   float: left;
 }
@@ -54,18 +54,19 @@ body.page-imagecrop {
 #cancel-crop {
   position: absolute;
   right: 20px;
-  top: 16px;
+  top: 12px;
 }
 
 /** Normal Imagecrop crop UI **/
 #imagecrop-ui #imagecrop-crop-settings-form,
-#imagecrop-ui #imagecrop-scale-settings-form {
+#imagecrop-ui #imagecrop-rotation-settings-form {
   float: left;
 }
 
+#imagecrop-ui #imagecrop-rotation-settings-form,
 #imagecrop-crop-settings-form {
   float: left;
-  margin-right: 40px;
+  margin-right: 15px;
 }
 
 /** Advanced imagecrop UI **/
