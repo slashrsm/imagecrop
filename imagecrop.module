@@ -304,10 +304,9 @@ function process_imagecrop_form_element($element) {
     if (!empty($element['fid']['#default_value'])) {
       $file = file_load($element['fid']['#default_value']);
       // Only add when the file is an image
-      if ($file->type != 'image') {
-        return $element;
+      if ($file->type == 'image') {
+        $imagecrop->loadFile($element['fid']['#default_value'], TRUE);
       }
-      $imagecrop->loadFile($element['fid']['#default_value'], TRUE);
     }
   }
 

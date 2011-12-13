@@ -13,7 +13,7 @@
 Drupal.behaviors.mediaElement = {
     
   attach: function (context, settings) {  
-    console.log($('.media-widget', context));
+    
     $('.media-widget', context).once('mediaBrowserLaunch', function () {
       
       var options = settings.media.elements[this.id];
@@ -42,6 +42,7 @@ Drupal.behaviors.mediaElement = {
             return;
           }
           var mediaFile = mediaFiles[0];
+          
           // Set the value of the filefield fid (hidden).
           fidField.val(mediaFile.fid);
           // Set the preview field HTML.
@@ -52,20 +53,28 @@ Drupal.behaviors.mediaElement = {
           // Show the imagecrop link
           imagecropDiv.css({display : 'inline-block'});
 
-          var oldHref = imagecropLink.attr('href');
-          var queryStringStart = oldHref.indexOf('?');
-          var queryString = '';
-          if (queryStringStart >= 0) {
-            queryString = '?' + oldHref.slice(queryStringStart + 1);  
+          if (mediaFile.type != 'image') {
+            imagecropLink.hide();
           }
-          
-          // Set correct file
-          var href = Drupal.settings.imagecrop.cropUrl.replace('/fid/', '/' + mediaFile.fid + '/');
-          if (queryString != '') {
-            href = href + queryString;
+          else {
+            
+            var oldHref = imagecropLink.attr('href');
+            var queryStringStart = oldHref.indexOf('?');
+            var queryString = '';
+            if (queryStringStart >= 0) {
+              queryString = '?' + oldHref.slice(queryStringStart + 1);  
+            }
+            
+            // Set correct file
+            var href = Drupal.settings.imagecrop.cropUrl.replace('/fid/', '/' + mediaFile.fid + '/');
+            if (queryString != '') {
+              href = href + queryString;
+            }
+            
+            imagecropLink.attr('href', href);
+            imagecropLink.show();
+            
           }
-          
-          imagecropLink.attr('href', href);
           
         }, globalOptions);
         return false;
