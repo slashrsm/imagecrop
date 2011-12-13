@@ -13,7 +13,7 @@
 Drupal.behaviors.mediaElement = {
     
   attach: function (context, settings) {  
-    
+    console.log($('.media-widget', context));
     $('.media-widget', context).once('mediaBrowserLaunch', function () {
       
       var options = settings.media.elements[this.id];

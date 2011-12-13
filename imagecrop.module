@@ -301,13 +301,13 @@ function process_imagecrop_form_element($element) {
   // Media widget
   else {
     $new_element = FALSE;
-    if (!empty($element['fid']['#value'])) {
-      $file = file_load($element['fid']['#value']);
+    if (!empty($element['fid']['#default_value'])) {
+      $file = file_load($element['fid']['#default_value']);
       // Only add when the file is an image
       if ($file->type != 'image') {
         return $element;
       }
-      $imagecrop->loadFile($element['fid']['#value'], TRUE);
+      $imagecrop->loadFile($element['fid']['#default_value'], TRUE);
     }
   }
 
@@ -334,7 +334,7 @@ function process_imagecrop_form_element($element) {
 
     if ($element['fid']['#value']) {
       $element['imagecrop']['#prefix'] = '<div class="imagecrop form-item">';
-      $element['imagecrop']['#markup'] = imagecrop_linkitem($element['fid']['#value'], $element, $enabled_styles);
+//      $element['imagecrop']['#markup'] = imagecrop_linkitem($element['fid']['#value'], $element, $enabled_styles);
     }
     else {
       $element['imagecrop']['#prefix'] = '<div class="description">';
@@ -345,9 +345,9 @@ function process_imagecrop_form_element($element) {
   // Media module
   else {
 
-    $fid = (empty($element['fid']['#value']) ? 0 : $element['fid']['#value']);
+    $fid = (empty($element['fid']['#default_value']) ? 0 : $element['fid']['#default_value']);
     $prefix = '<div class="imagecrop form-item" style="display: '. ($fid ? 'inline-block' : 'none' ).'">';
-    $markup = imagecrop_linkitem($element['fid']['#value'], $element, $enabled_styles);
+    $markup = imagecrop_linkitem($element['fid']['#default_value'], $element, $enabled_styles);
     $element['preview']['#suffix'] .= $prefix . $markup . '</div>';
 
   }
@@ -470,7 +470,8 @@ function imagecrop_linkitem($fid, &$element, $styles) {
   ));
 
   $element['#attached']['js'][] = array('type' => 'setting', 'data' => $setting);
-  $element['#attached']['js'][] = drupal_get_path('module', 'imagecrop') . '/js/imagecrop_field.js';
+  // Make sure we come as last
+  array_unshift($element['#attached']['js'], drupal_get_path('module', 'imagecrop') . '/js/imagecrop_field.js');
 
   if (isset($element['#entity_type'], $element['#bundle'], $element['#field_name'])) {
     $url .= $element['#entity_type'] . '/' . $element['#bundle'] . '/' . $element['#field_name'];
