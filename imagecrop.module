@@ -333,7 +333,7 @@ function process_imagecrop_form_element($element) {
 
     if ($element['fid']['#value']) {
       $element['imagecrop']['#prefix'] = '<div class="imagecrop form-item">';
-//      $element['imagecrop']['#markup'] = imagecrop_linkitem($element['fid']['#value'], $element, $enabled_styles);
+      $element['imagecrop']['#markup'] = imagecrop_linkitem($element['fid']['#value'], $element, $enabled_styles);
     }
     else {
       $element['imagecrop']['#prefix'] = '<div class="description">';
