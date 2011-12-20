@@ -110,11 +110,8 @@ Drupal.Imagecrop = {}
 /**
  * Open the imagecrop popup to the given link
  */
-Drupal.Imagecrop.openPopup = function(link) {
-  
-  var url = $(link).attr('href');
+Drupal.Imagecrop.openPopup = function(url) {
   window.open(url, 'imagecrop', 'menubar=0,scrollbars=1,resizable=1,width=' + Drupal.settings.imagecrop.popupWidth + ',height=' + Drupal.settings.imagecrop.popupWidth + "'");  
-  
 }
 
 })(jQuery);

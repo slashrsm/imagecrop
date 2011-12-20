@@ -342,11 +342,9 @@ class ImageCrop {
    */
   public function loadCropSettings() {
 
-    if (!$this->inCroppingMode) {
-      $size = getimagesize($this->file->uri);
-      $this->imageWidth = $this->originalImageWidth = $size[0];
-      $this->imageHeight = $this->originalImageHeight = $size[1];
-    }
+    $size = getimagesize($this->file->uri);
+    $this->imageWidth = $this->originalImageWidth = $size[0];
+    $this->imageHeight = $this->originalImageHeight = $size[1];
 
     $settings = db_select('image_crop_settings')
       ->fields('image_crop_settings')

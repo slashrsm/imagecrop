@@ -130,16 +130,6 @@ function imagecrop_menu() {
 }
 
 /**
- * Implements hook_admin_paths().
- */
-function imagecrop_admin_paths() {
-  return array(
-    'imagecrop/overview/*' => TRUE,
-    'imagecrop/crop/*' => TRUE,
-  );
-}
-
-/**
  * Implements hook_imagecrop_popups().
  */
 function imagecrop_imagecrop_popups() {
