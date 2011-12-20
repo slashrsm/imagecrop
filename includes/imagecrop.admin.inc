@@ -120,6 +120,7 @@ function imagecrop_settings_form() {
  */
 function imagecrop_image_styles_overview($fid, $style_name, $entity_type = NULL, $bundle = NULL, $field_name = NULL) {
 
+  $imagecrop = new ImageCrop();
   try {
 
     $styles = imagecrop_get_enabled_styles_for_crop($entity_type, $bundle, $field_name);
@@ -136,7 +137,6 @@ function imagecrop_image_styles_overview($fid, $style_name, $entity_type = NULL,
     }
 
     global $user;
-    $imagecrop = new ImageCrop();
     $imagecrop->loadFile($fid);
 
     global $user;
@@ -172,6 +172,7 @@ function imagecrop_image_styles_overview($fid, $style_name, $entity_type = NULL,
 
   }
   catch (Exception $e) {
+    $imagecrop->addImagecropUi(TRUE);
     drupal_set_message(check_plain(t($e->getMessage())), 'error');
     return '';
   }

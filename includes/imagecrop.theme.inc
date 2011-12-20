@@ -26,7 +26,7 @@ function imagecrop_page($variables) {
   $region = $query->execute()->fetchField();
 
   if (isset($variables['page'][$region])) {
-    $output = imagecrop_render_main_content($variables['page'][$region]);
+    $output .= imagecrop_render_main_content($variables['page'][$region]);
   }
   // Old version from Omega theme uses zones
   elseif (isset($variables['page']['content_zone']['#regions']['content'])) {

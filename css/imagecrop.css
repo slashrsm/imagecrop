@@ -57,6 +57,10 @@ body.page-imagecrop {
   top: 12px;
 }
 
+.page-imagecrop .messages {
+  margin: 10px;
+}
+
 /** Normal Imagecrop crop UI **/
 #imagecrop-ui #imagecrop-crop-settings-form,
 #imagecrop-ui #imagecrop-rotation-settings-form {
