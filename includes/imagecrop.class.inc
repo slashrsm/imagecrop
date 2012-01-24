@@ -312,9 +312,11 @@ class ImageCrop {
    * Get the destination from the image for cropping the current style.
    * @param $filepath Boolean, TRUE to return the filepath, FALSE to return the uri.
    */
-  public function getCropDestination($filepath = TRUE) {
+  public function getCropDestination($filepath = TRUE, $add_timestamp = TRUE) {
     $image_url = ($filepath) ?  file_create_url($this->cropDestination) : $this->cropDestination;
-    $image_url .= '?time=' . $_SERVER['REQUEST_TIME'];
+    if ($add_timestamp) {
+      $image_url .= '?time=' . $_SERVER['REQUEST_TIME'];
+    }
     return $image_url;
   }
 
