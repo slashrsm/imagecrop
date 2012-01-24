@@ -326,6 +326,11 @@ function process_imagecrop_form_element($element) {
       $element['imagecrop']['#markup'] = imagecrop_linkitem($element['fid']['#value'], $element, $enabled_styles);
     }
     else {
+      // Make sure colorbox is loaded
+      $popup_link_function = variable_get('imagecrop_popup', 'basic');
+      if ($popup_link_function == 'imagecrop_load_colorbox' && module_exists('colorbox')) {
+        imagecrop_load_colorbox();
+      }
       $element['imagecrop']['#prefix'] = '<div class="description">';
       $element['imagecrop']['#markup'] = t('After uploading an image you\'ll be able to crop it.');
     }
@@ -554,13 +559,7 @@ function imagecrop_colorbox($url, $width, $height) {
     return FALSE;
   }
 
-  // Force colorbox to load on this path.
-  global $conf;
-  $colorbox_pages = variable_get('colorbox_pages', "admin*\nimg_assist*\nimce*\nnode/add/*\nnode/*/edit");
-  $conf['colorbox_pages'] = 'none';
-  _colorbox_doheader();
-  drupal_add_js(drupal_get_path('module', 'colorbox') . '/js/colorbox_load.js');
-  $conf['colorbox_pages'] = $colorbox_pages;
+  imagecrop_load_colorbox();
 
   return '<a class="colorbox-load button" href="'. $url .'?iframe=true&height='. $height .'&width='. $width .'">'. t('Crop this image') .'</a>';
 
@@ -581,6 +580,9 @@ function imagecrop_iframe($url, $width, $height) {
 
 }
 
+/**
+ * Render the main content block from drupal.
+ */
 function imagecrop_render_main_content($element) {
 
   $output = '';
@@ -600,5 +602,22 @@ function imagecrop_render_main_content($element) {
   }
 
   return $output;
+
+}
+
+/**
+ * Load the colorbox plugin for current page.
+ */
+function imagecrop_load_colorbox() {
+
+  // Force colorbox to load on this path.
+  global $conf;
+  $colorbox_pages = variable_get('colorbox_pages', "admin*\nimg_assist*\nimce*\nnode/add/*\nnode/*/edit");
+  $conf['colorbox_pages'] = 'none';
+  _colorbox_doheader();
+  drupal_add_js(drupal_get_path('module', 'colorbox') . '/js/colorbox_load.js');
+  $conf['colorbox_pages'] = $colorbox_pages;
+
+  return TRUE;
 
 }
