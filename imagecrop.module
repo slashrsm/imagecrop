@@ -464,9 +464,7 @@ function imagecrop_linkitem($fid, &$element, $styles) {
   ));
 
   $element['#attached']['js'][] = array('type' => 'setting', 'data' => $setting);
-  // Make sure we come as last
-  array_unshift($element['#attached']['js'], drupal_get_path('module', 'imagecrop') . '/js/imagecrop_field.js');
-
+  $element['#attached']['js'][] = drupal_get_path('module', 'imagecrop') . '/js/imagecrop_field.js';
   if (isset($element['#entity_type'], $element['#bundle'], $element['#field_name'])) {
     $url .= $element['#entity_type'] . '/' . $element['#bundle'] . '/' . $element['#field_name'];
   }
@@ -619,5 +617,20 @@ function imagecrop_load_colorbox() {
   $conf['colorbox_pages'] = $colorbox_pages;
 
   return TRUE;
+
+}
+
+/**
+ * Does an imagecrop button has been loaded.
+ */
+function imagecrop_button_has_loaded($loaded) {
+
+  static $has_loaded = FALSE;
+
+  if ($loaded) {
+    $has_loaded = $loaded;
+  }
+
+  return $has_loaded;
 
 }

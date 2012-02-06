@@ -38,6 +38,7 @@ Drupal.behaviors.mediaElement = {
         // Launch the browser, providing the following callback function
         // @TODO: This should not be an anomyous function.
         Drupal.media.popups.mediaBrowser(function (mediaFiles) {
+        	
           if (mediaFiles.length < 0) {
             return;
           }
@@ -45,6 +46,7 @@ Drupal.behaviors.mediaElement = {
           
           // Set the value of the filefield fid (hidden).
           fidField.val(mediaFile.fid);
+          
           // Set the preview field HTML.
           previewField.html(mediaFile.preview);
           // Show the Remove button.
@@ -53,25 +55,23 @@ Drupal.behaviors.mediaElement = {
           // Show the imagecrop link
           imagecropDiv.css({display : 'inline-block'});
 
+          oldFid = 0;
           if (mediaFile.type != 'image') {
             imagecropLink.hide();
           }
           else {
             
             var oldHref = imagecropLink.attr('href');
-            var queryStringStart = oldHref.indexOf('?');
-            var queryString = '';
-            if (queryStringStart >= 0) {
-              queryString = '?' + oldHref.slice(queryStringStart + 1);  
-            }
-            
+            var hrefParts = oldHref.split('/');
+          	for (var i in hrefParts) {
+          		if (hrefParts[i] == 'crop') {
+          			oldFid = hrefParts[parseInt(i) + 1];
+          			break;
+          		}
+          	}
+
             // Set correct file
-            var href = Drupal.settings.imagecrop.cropUrl.replace('/fid/', '/' + mediaFile.fid + '/');
-            if (queryString != '') {
-              href = href + queryString;
-            }
-            
-            imagecropLink.attr('href', href);
+            imagecropLink.attr('href', oldHref.replace('/' + oldFid + '/', '/' + mediaFile.fid + '/'));
             imagecropLink.show();
             
           }
