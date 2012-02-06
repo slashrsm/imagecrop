@@ -1,0 +1,14 @@
+diff --git a/sites/all/modules/imagecrop/includes/imagecrop.admin.inc b/sites/all/modules/imagecrop/includes/imagecrop.admin.inc
+index 45b844d..3b5546e 100644
+--- a/sites/all/modules/imagecrop/includes/imagecrop.admin.inc
++++ b/sites/all/modules/imagecrop/includes/imagecrop.admin.inc
+@@ -388,7 +388,8 @@ function imagecrop_scale_settings_form($form, $form_state, $imagecrop) {
+   }
+   // Set the smallest scaling option to match the width of the crop.
+   $cropped_height = intval($crop_width / $aspect);
+-  $options[$crop_width . 'x' . $cropped_height] = $crop_width . ' x ' . $cropped_height . 'px (' . round((($scale_width / $image_width) * 100), 2) . '%)';
++  $crop_width_width_border = $crop_width+2;
++  $options[$crop_width_width_border . 'x' . $cropped_height] = $crop_width_width_border . ' x ' . $cropped_height . 'px (' . round((($scale_width / $image_width) * 100), 2) . '%)';
+ 
+   // only show when there are multiple scaling options available
+   if (count($options) > 1) {

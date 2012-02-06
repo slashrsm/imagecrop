@@ -332,7 +332,7 @@ function imagecrop_crop_settings_form($form, $form_state, $imagecrop) {
 
   $form['temp-style-destination'] = array(
     '#type' => 'hidden',
-    '#value' => $imagecrop->getCropDestination(FALSE, FALSE),
+    '#value' => $imagecrop->getCropDestination(TRUE, FALSE),
   );
 
   $form['submit'] = array(
@@ -424,6 +424,11 @@ function imagecrop_scale_settings_form($form, $form_state, $imagecrop) {
       $scale_width -= $step;
     }
   }
+
+  // Set the smallest scaling option to match the width of the crop.
+  $cropped_height = intval($crop_width / $aspect);
+  $crop_width_with_border = $crop_width + 2;
+  $options[$crop_width_with_border . 'x' . $cropped_height] = $crop_width_with_border . ' x ' . $cropped_height . 'px (' . round((($scale_width / $image_width) * 100), 2) . '%)';
 
   // only show when there are multiple scaling options available
   if (count($options) > 1) {
