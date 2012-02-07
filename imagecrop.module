@@ -272,6 +272,15 @@ function imagecrop_element_info_alter(&$type) {
 }
 
 /**
+ * Implements hook_media_update_updated().
+ */
+function imagecrop_media_update_updated($file) {
+  db_delete('image_crop_settings')
+  ->condition('style_name', $file->fid)
+  ->execute();
+}
+
+/**
  * Process function for imagecrop-enabled fields.
  */
 function process_imagecrop_form_element($element) {
