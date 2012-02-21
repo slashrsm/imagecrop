@@ -89,7 +89,7 @@ function imagecrop_effect_form($data) {
     '#type' => 'textfield',
     '#title' => t('Y offset'),
     '#default_value' => isset($data['yoffset']) ? $data['yoffset'] : '',
-    '#description' => t('Enter an offset in pixels (without px) or use a keyword: <em>top</em>, <em>center</em>, or <em>bottom</em>.'),
+    '#description' => t('Enter an offset in pixels (without px) or use a keyword: <em>top</em>, <em>center</em> or <em>bottom</em>.'),
     '#element_validate' => array('imagecrop_validate_offset'),
   );
 
@@ -161,8 +161,15 @@ function imagecrop_validate_offset($element, &$form_state) {
     return;
   }
 
+  if ($element['#name'] == 'data[yoffset]') {
+    $allowed_values = array('center', 'top', 'bottom');
+  }
+  else {
+    $allowed_values = array('center', 'left', 'right');
+  }
+
   // if the value is a string, check on allowed strings
-  if ($element['#value'] != 'center' && $element['#value'] != 'left' && $element['#value'] != 'right') {
+  if (!in_array($element['#value'], $allowed_values)) {
     form_error($element, t('@name must be a correct offset value', array('@name' => $element['#title'])));
   }
 

@@ -28,7 +28,7 @@ Drupal.Imagecrop.changeViewedImage = function(style_name) {
  */
 Drupal.Imagecrop.refreshImage = function() {
   var source = $(this).attr('src');
-  $(this).attr('src', (source + '?time=' + new Date().getTime()));
+  $(this).delay(1000).attr('src', (source + '?time=' + new Date().getTime()));
 }
 
 })(jQuery); 

@@ -151,7 +151,7 @@ function imagecrop_imagecrop_popups() {
  */
 function imagecrop_form_field_ui_field_edit_form_alter(&$form, $form_state) {
 
-  if ($form['#field']['type'] == 'image' || $form['#field']['type'] == 'media') {
+  if ($form['#field']['type'] == 'image' || $form['#field']['type'] == 'file' || $form['#field']['type'] == 'media') {
     $styles = get_imagecrop_styles();
     if (count($styles) > 0) {
       $form['instance']['settings']['imagecrop'] = array(
@@ -267,8 +267,8 @@ function imagecrop_form_user_profile_form_alter(&$form, $form_state, $form_id) {
  * Implements hook_element_info_alter().
  */
 function imagecrop_element_info_alter(&$type) {
-  $type['managed_file']['#after_build'][] = 'process_imagecrop_form_element';
-  $type['media']['#after_build'][] = 'process_imagecrop_form_element';
+  $type['managed_file']['#after_build'][] = 'imagecrop_process_form_element';
+  $type['media']['#after_build'][] = 'imagecrop_process_form_element';
 }
 
 /**
@@ -276,14 +276,14 @@ function imagecrop_element_info_alter(&$type) {
  */
 function imagecrop_media_update_updated($file) {
   db_delete('image_crop_settings')
-  ->condition('style_name', $file->fid)
+  ->condition('fid', $file->fid)
   ->execute();
 }
 
 /**
  * Process function for imagecrop-enabled fields.
  */
-function process_imagecrop_form_element($element) {
+function imagecrop_process_form_element($element) {
 
   // Leave alone if we are on the field ui settings.
   if (!isset($element['#field_name']) || $element['#id'] == 'edit-picture-upload') {

@@ -144,18 +144,14 @@ class ImageCrop {
    * Get the X offset from the current imagecrop object.
    */
   public function getXOffset() {
-
     return $this->xoffset;
-
   }
 
   /**
    * Get the X offset from the current imagecrop object.
    */
   public function getYOffset() {
-
     return $this->yoffset;
-
   }
 
   /**
