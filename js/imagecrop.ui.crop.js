@@ -131,6 +131,22 @@ Drupal.Imagecrop.cropUi.applyEffects = function() {
     return false;
   }  
   
+  // Calculate new x offset, if crop area would go outside image
+  if (dimensions[0] < Drupal.Imagecrop.x2) {
+  	var x = Drupal.Imagecrop.imageCropXField.val();
+  	x = x - (Drupal.Imagecrop.x2 - dimensions[0]);
+  	Drupal.Imagecrop.x2 = dimensions[0];
+  	Drupal.Imagecrop.imageCropXField.val(x);
+  }
+  
+  // Calculate new y offset, if crop area would go outside image
+  if (dimensions[1] < Drupal.Imagecrop.y2) {
+  	var y = Drupal.Imagecrop.imageCropYField.val();
+  	y = y - (Drupal.Imagecrop.y2 - dimensions[1]);
+  	Drupal.Imagecrop.y2 = dimensions[1];
+  	Drupal.Imagecrop.imageCropYField.val(y);
+  }  
+  
   var imagecropData = {
     'fid' : Drupal.Imagecrop.fid,
     'style' : Drupal.Imagecrop.style,
@@ -149,24 +165,18 @@ Drupal.Imagecrop.cropUi.applyEffects = function() {
     success : function(result) {
       
       if (result.success) {
-        
-        // force new backgrounds and width / height
-        var background = Drupal.Imagecrop.cropFile + '?time=' +  new Date().getTime();
-        Drupal.Imagecrop.jcrop.setImage(background, function() {
-          this.animateTo(
-            [
-              Drupal.Imagecrop.imageCropXField.val(),
-              Drupal.Imagecrop.imageCropYField.val(),
-              Drupal.Imagecrop.x2,
-              Drupal.Imagecrop.y2
-            ]
-          )
-        });
-        
+
         Drupal.Imagecrop.imageCropScaleField.val(dimensions[0]);   
         if (Drupal.Imagecrop.imageCropRotationField) {
           Drupal.Imagecrop.imageCropRotationField.val(rotation);
-        }
+        }      	
+      	
+        // force new backgrounds and width / height
+        var background = Drupal.Imagecrop.cropFile + '?time=' +  new Date().getTime();
+        Drupal.Imagecrop.jcrop.setImage(background, function() {
+        	var coordinates = Drupal.Imagecrop.cropUi.getCoordinates();
+          this.animateTo(coordinates);
+        });
         
       }
       else {

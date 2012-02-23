@@ -18,6 +18,7 @@ function imagecrop_image_effect_info() {
     'effect callback' => 'imagecrop_effect',
     'form callback' => 'imagecrop_effect_form',
     'summary theme' => 'imagecrop_effect_summary',
+    //'dimensions callback' => 'imagecrop_javascript_dimensions',
   );
 
   $effects['imagecrop_reuse'] = array(
@@ -26,6 +27,7 @@ function imagecrop_image_effect_info() {
     'effect callback' => 'imagecrop_reuse_effect',
     'form callback' => 'imagecrop_reuse_form',
     'summary theme' => 'theme_imagecrop_reuse',
+    //'dimensions callback' => 'imagecrop_reuse_dimensions',
   );
 
   return $effects;
@@ -44,21 +46,36 @@ function imagecrop_effect(&$image, $data) {
 
   try {
 
-    $imagecrop = new ImageCrop();
-    $imagecrop->loadFile($image->source, FALSE);
-
-    // if a global presetid is been set, it meens the image is generated from the imagecrop module
-    if (isset($GLOBALS['imagecrop_style'])) {
-      $style_name = $GLOBALS['imagecrop_style'];
-    }
-    // and if not, then get the id from list of all presets
-    else {
-      $style_name = imagecrop_get_style_name_from_url();
-    }
-
-    $imagecrop->setImageStyle($style_name);
-    $imagecrop->loadCropSettings();
+    $imagecrop = Imagecrop::getInstance($image);
     $imagecrop->applyCrop($image);
+
+  }
+  catch (Exception $e) {
+    watchdog($e->getMessage(), 'error');
+    return FALSE;
+  }
+
+  return TRUE;
+
+}
+
+/**
+ * Image dimensions callback; imagecrop.
+ *
+ * @param $dimensions
+ *   Dimensions to be modified - an array with components width and height, in
+ *   pixels.
+ * @param $data
+ *   An array of attributes to use when performing the imagecrop effect.
+ */
+function imagecrop_javascript_dimensions(array &$dimensions, array $data) {
+
+  try {
+return;
+
+    $imagecrop = Imagecrop::getInstance();
+    $dimensions['width'] = $imagecrop->getWidth();
+    $dimensions['height'] = $imagecrop->getHeight();
 
   }
   catch (Exception $e) {
