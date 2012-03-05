@@ -437,7 +437,7 @@ class ImageCrop {
     }
     // Keep the aspect ratio from the crop settings
     elseif ($this->resizeAspectRatio == 'CROP') {
-      $this->resizeAspectRatio = $this->width / $this->height;
+      $this->resizeAspectRatio = $this->startWidth / $this->startHeight;
     }
 
     // Set correct xoffset when a keyword is entered.
