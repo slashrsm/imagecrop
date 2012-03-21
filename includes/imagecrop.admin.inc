@@ -34,6 +34,13 @@ function imagecrop_settings_form() {
     'media' => t('Media edit form (not media fields)'),
   );
 
+  $form['imagecrop_theme'] = array(
+    '#type' => 'radios',
+    '#title' => t('Theme beïng used'),
+    '#default_value' => variable_get('imagecrop_theme', 'admin_theme'),
+    '#options' => array('admin_theme' => t('Admin theme'), 'theme_default' => t('Frontend theme')),
+  );
+
   $form['imagecrop_modules'] = array(
     '#type' => 'checkboxes',
     '#title' => t('Trigger imagecrop also for'),

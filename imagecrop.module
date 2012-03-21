@@ -106,6 +106,7 @@ function imagecrop_menu() {
     'page arguments' => array(2, 3),
     'type' => MENU_CALLBACK,
     'access callback' => 'imagecrop_has_access',
+    'theme callback' => 'imagecrop_get_theme',
     'file' => 'includes/imagecrop.admin.inc',
     'title' => 'Imagecrop overview',
   );
@@ -115,6 +116,7 @@ function imagecrop_menu() {
     'page arguments' => array(2, 3, 4),
     'type' => MENU_CALLBACK,
     'access callback' => 'imagecrop_has_access',
+    'theme callback' => 'imagecrop_get_theme',
     'file' => 'includes/imagecrop.admin.inc',
   );
 
@@ -671,4 +673,11 @@ function imagecrop_button_has_loaded($loaded) {
 
   return $has_loaded;
 
+}
+
+/**
+ * Return the theme beïng used for imagecrop.
+ */
+function imagecrop_get_theme() {
+  return variable_get(variable_get('imagecrop_theme', 'admin_theme'), 'admin_theme');
 }
