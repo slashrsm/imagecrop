@@ -206,7 +206,7 @@ function imagecrop_cropping_page($fid, $style_name, $entity_type = NULL, $bundle
 
     global $user;
     if (!$imagecrop->hasUserAccess($user)) {
-      watchdog('imagecrop', 'Access denied for user @name on fid @fid', array('@name' => $user->name, '@fid' => $imagecrop->file->fid));
+      watchdog('imagecrop', 'Access denied for user @name on fid @fid', array('@name' => $user->name, '@fid' => $imagecrop->getFile()->fid));
       throw new Exception("You don't have permissions to crop this image.");
     }
 
