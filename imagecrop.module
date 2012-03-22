@@ -195,12 +195,25 @@ function imagecrop_form_file_entity_edit_alter(&$form, $form_state) {
       return;
     }
 
-    $form['imagecrop'] = array(
+    $variables = array(
+      'styles' => get_imagecrop_styles(),
+      'js_file' => isset($form['#js_file']) ? $form['#js_file']: 'imagecrop_field.js',
+      'text' => t('Crop media'),
+    );
+
+    if (empty($form['fid']['#value'])) {
+      $variables['fid'] = 0;
+      $variables['display'] = 'none';
+    }
+    else {
+      $variables['fid'] = $form['fid']['#value'];
+      $variables['display'] = 'inline-block';
+    }
+
+    $form['actions']['imagecrop'] = array(
       '#type' => 'markup',
-      '#prefix' => '<div class="imagecrop form-item">',
-      '#suffix' => '</div>',
-      '#markup' => imagecrop_linkitem($form['fid']['#value'], $form, get_imagecrop_styles()),
-      '#weight' => -9,
+      '#markup' => imagecrop_linkitem($form, $variables),
+      '#weight' => 6,
     );
 
   }
@@ -320,7 +333,12 @@ function imagecrop_process_form_element($element) {
     return $element;
   }
 
-  $enabled_styles = imagecrop_get_fields_enabled_styles($element['#entity_type'], $element['#field_name'], $element['#bundle']);
+  if ($element['#entity_type'] == 'file') {
+    $enabled_styles = get_imagecrop_styles();
+  }
+  else {
+    $enabled_styles = imagecrop_get_fields_enabled_styles($element['#entity_type'], $element['#field_name'], $element['#bundle']);
+  }
 
   // Leave element when no image styles are found for current field.
   if (count($enabled_styles) == 0) {
@@ -328,7 +346,6 @@ function imagecrop_process_form_element($element) {
   }
 
   $variables = array(
-    'element' => $element,
     'styles' => $enabled_styles,
     'js_file' => 'imagecrop_field.js',
   );
