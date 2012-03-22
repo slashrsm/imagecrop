@@ -273,7 +273,14 @@ function imagecrop_form_user_profile_form_alter(&$form, $form_state, $form_id) {
         return;
       }
 
-      $form['picture']['picture_current']['#markup'] .= imagecrop_linkitem($form['picture']['picture']['#value']->fid, $form, $styles);
+    $variables = array(
+      'styles' => $styles,
+      'js_file' => 'imagecrop_field.js',
+      'text' => t('Crop picture'),
+      'fid' => $form['picture']['picture']['#value']->fid,
+    );
+
+      $form['picture']['picture_current']['#markup'] .= imagecrop_linkitem($form, $variables);
     }
   }
 }

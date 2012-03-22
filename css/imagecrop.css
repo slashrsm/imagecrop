@@ -29,6 +29,16 @@ body.page-imagecrop {
 
 .page-imagecrop .form-item {
   padding: 0; 
+  border: none;
+}
+
+.page-imagecrop .form-item label {
+	display: inline;
+}
+
+.page-imagecrop .form-item-styles label,
+.page-imagecrop .form-item-scaling label {
+  padding-right: 10px;
 }
 
 #imagecrop-style-selection-form {
@@ -71,6 +81,10 @@ body.page-imagecrop {
 #imagecrop-crop-settings-form {
   float: left;
   margin-right: 15px;
+}
+
+#imagecrop-scale-settings-form {
+  float: left;
 }
 
 /** Advanced imagecrop UI **/
