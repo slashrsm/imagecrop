@@ -80,9 +80,9 @@ function imagecrop_settings_form() {
 
   $form['imagecrop_ui_controls'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Extra UI controls'),
+    '#title' => t('Advanced UI controls'),
     '#default_value' => variable_get('imagecrop_ui_controls', FALSE),
-    '#description' => t('Show a sidebar with live cropping info and live preview'),
+    '#description' => t('Show a sidebar with live cropping info and the possibility to insert width / height'),
   );
 
   $form['imagecrop_scale_step'] = array(
