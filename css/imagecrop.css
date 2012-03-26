@@ -61,6 +61,10 @@ body.page-imagecrop {
   margin: 0 12px;
 }
 
+#imagecrop-crop-container img {
+   width: auto !important;
+}
+
 #cancel-crop {
   position: absolute;
   right: 20px;
