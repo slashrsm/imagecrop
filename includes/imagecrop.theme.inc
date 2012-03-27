@@ -17,14 +17,20 @@ function imagecrop_page($variables) {
     $output .= $variables['messages'];
   }
 
-  global $theme;
-  $query = db_select('block');
-  $query->addField('block', 'region');
-  $query->condition('theme', $theme);
-  $query->condition('module', 'system');
-  $query->condition('delta', 'main');
-  $region = $query->execute()->fetchField();
+  if (!module_exists('block')) {
+    $region = 'content';
+  }
+  else {
+    global $theme;
+    $query = db_select('block');
+    $query->addField('block', 'region');
+    $query->condition('theme', $theme);
+    $query->condition('module', 'system');
+    $query->condition('delta', 'main');
+    $region = $query->execute()->fetchField();
+  }
 
+  // Render only the main content.
   if (isset($variables['page'][$region])) {
     $output .= imagecrop_render_main_content($variables['page'][$region]);
   }

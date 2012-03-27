@@ -109,6 +109,7 @@ function imagecrop_menu() {
     'theme callback' => 'imagecrop_get_theme',
     'file' => 'includes/imagecrop.admin.inc',
     'title' => 'Imagecrop overview',
+    'delivery callback' => 'imagecrop_deliver_page',
   );
 
   $items['imagecrop/crop/%/%/%'] = array(
@@ -118,6 +119,7 @@ function imagecrop_menu() {
     'access callback' => 'imagecrop_has_access',
     'theme callback' => 'imagecrop_get_theme',
     'file' => 'includes/imagecrop.admin.inc',
+    'delivery callback' => 'imagecrop_deliver_page',
   );
 
   $items['imagecrop/generate_image'] = array(
@@ -704,4 +706,49 @@ function imagecrop_button_has_loaded($loaded) {
  */
 function imagecrop_get_theme() {
   return variable_get(variable_get('imagecrop_theme', 'admin_theme'), 'admin_theme');
+}
+
+/**
+ * Deliver the imagecrop page.
+ * By using an own deliver callback, we make sure no other modules (ex: panels everywhere) add extra stuff to the page.
+ */
+function imagecrop_deliver_page($page_callback_result) {
+
+  // Emit the correct charset HTTP header, but not if the page callback
+  // result is NULL, since that likely indicates that it printed something
+  // in which case, no further headers may be sent, and not if code running
+  // for this page request has already set the content type header.
+  if (isset($page_callback_result) && is_null(drupal_get_http_header('Content-Type'))) {
+    drupal_add_http_header('Content-Type', 'text/html; charset=utf-8');
+  }
+
+  // Send appropriate HTTP-Header for browsers and search engines.
+  global $language;
+  drupal_add_http_header('Content-Language', $language->language);
+
+  // Menu status constants are integers; page content is a string or array.
+  if (is_int($page_callback_result)) {
+    drupal_deliver_html_page($page_callback_result);
+  }
+  elseif (isset($page_callback_result)) {
+
+    $main_content_display = &drupal_static('system_main_content_added', FALSE);
+    drupal_set_page_content($page_callback_result);
+    $page = element_info('page');
+
+    // If no module has taken care of the main content, add it to the page now.
+    // This allows the site to still be usable even if no modules that
+    // control page regions (for example, the Block module) are enabled.
+    if (!$main_content_display) {
+      $page['content']['system_main'] = drupal_set_page_content();
+    }
+
+    // Render immediately. By not executing hooks, blocks are not added.
+    print drupal_render($page);
+
+  }
+
+  // Perform end-of-request tasks.
+  drupal_page_footer();
+
 }
