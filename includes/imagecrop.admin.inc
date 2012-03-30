@@ -342,6 +342,11 @@ function imagecrop_crop_settings_form($form, $form_state, $imagecrop) {
     '#value' => $imagecrop->getCropDestination(TRUE, FALSE),
   );
 
+  $form['temp-style-uri'] = array(
+    '#type' => 'hidden',
+    '#value' => $imagecrop->getCropDestination(FALSE, FALSE),
+  );
+
   $form['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Save selection'),
@@ -374,27 +379,12 @@ function imagecrop_crop_settings_form_submit($form, &$form_state) {
   drupal_write_record('image_crop_settings', $record);
 
   $field_info = unserialize($form_state['values']['field']);
+  $file = file_load($form_state['values']['fid']);
   // delete old imagestyles, so newest file is generated.
-  if (file_exists($form_state['values']['style-destination'])) {
-    file_unmanaged_delete($form_state['values']['style-destination']);
-  }
+  image_path_flush($file->uri);
 
   if ($form_state['values']['style-destination'] != $form_state['values']['temp-style-destination']) {
-    file_unmanaged_delete($form_state['values']['temp-style-destination']);
-  }
-
-  // Delete old images of styles that use this style just for data.
-  $styles = image_styles();
-  $file = file_load($form_state['values']['fid']);
-  foreach ($styles as $name => $style) {
-    foreach ($style['effects'] as $effect) {
-      if ($effect['name'] == 'imagecrop_reuse' && $effect['data']['imagecrop_style'] == $form_state['values']['style']) {
-        $path = image_style_path($name, $file->uri);
-        if (file_exists($path)) {
-          file_unmanaged_delete($path);
-        }
-      }
-    }
+    file_unmanaged_delete($form_state['values']['temp-style-uri']);
   }
 
   $record->style_destination = $form_state['values']['style-destination'];
