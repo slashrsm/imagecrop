@@ -320,10 +320,15 @@ function imagecrop_process_form_element($element) {
   $media_field = ($element['#type'] == 'media');
   $new_element = isset($element['#file']);
   if ($new_element) {
-    $mime = array_shift(explode('/', $element['#file']->filemime));
-    if ($element['#file'] && $mime == 'image') {
-      $imagecrop->setFile($file);
+
+    // type is gone in latest imagefield
+    if ($element['#file']) {
+      $mime = isset($element['#file']->type) ? $element['#file']->type : array_shift(explode('/', $element['#file']->filemime));
+      if ($mime == 'image') {
+        $imagecrop->setFile($file);
+      }
     }
+
   }
   // Old media widget
   else {
