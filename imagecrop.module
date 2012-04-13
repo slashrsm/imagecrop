@@ -320,7 +320,8 @@ function imagecrop_process_form_element($element) {
   $media_field = ($element['#type'] == 'media');
   $new_element = isset($element['#file']);
   if ($new_element) {
-    if ($element['#file'] && $element['#file']->type == 'image') {
+    $mime = array_shift(explode('/', $element['#file']->filemime));
+    if ($element['#file'] && $mime == 'image') {
       $imagecrop->setFile($file);
     }
   }
