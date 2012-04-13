@@ -369,8 +369,8 @@ function imagecrop_crop_settings_form_submit($form, &$form_state) {
   $record = new stdClass();
   $record->fid = $form_state['values']['fid'];
   $record->style_name = $form_state['values']['style'];
-  $record->xoffset = $form_state['values']['image-crop-x'];
-  $record->yoffset = $form_state['values']['image-crop-y'];
+  $record->xoffset = max($form_state['values']['image-crop-x'], 0);
+  $record->yoffset = max($form_state['values']['image-crop-y'], 0);
   $record->width = $form_state['values']['image-crop-width'];
   $record->height = $form_state['values']['image-crop-height'];
   $record->scale = $form_state['values']['image-crop-scale'];
