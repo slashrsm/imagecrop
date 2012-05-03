@@ -394,6 +394,8 @@ function imagecrop_process_form_element($element) {
       $variables['display'] = 'inline-block';
     }
 
+    $element['#attributes']['class'][] = 'imagecrop-media';
+
     // Old versus new version of media
     if (isset ($element['remove'])) {
       $element['remove']['#prefix'] = imagecrop_linkitem($element, $variables);
@@ -404,6 +406,8 @@ function imagecrop_process_form_element($element) {
     }
 
   }
+
+  $element['#attributes']['class'][] = 'imagecrop-widget';
 
   return $element;
 

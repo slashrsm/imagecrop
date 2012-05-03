@@ -15,7 +15,7 @@
 Drupal.behaviors.imagecropMediaElement = {
     
   attach: function (context, settings) {  
-  	$('.media-widget', context).find('.fid').bind('change', Drupal.Imagecrop.mediaChangeListener);
+  	$('.imagecrop-media', context).find('.fid').bind('change', Drupal.Imagecrop.mediaChangeListener);
   }
   
 }
