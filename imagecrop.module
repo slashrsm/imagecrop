@@ -381,7 +381,7 @@ function imagecrop_process_form_element($element) {
     }
     else {
       // Make sure colorbox is loaded
-      $popup_link_function = variable_get('imagecrop_popup', 'basic');
+      $popup_link_function = variable_get('imagecrop_popup', 'imagecrop_jquery_dialog');
       if ($popup_link_function == 'imagecrop_load_colorbox' && module_exists('colorbox')) {
         imagecrop_load_colorbox();
       }
@@ -519,7 +519,7 @@ function imagecrop_get_fields_enabled_styles($entity_type, $field_name, $bundle)
  */
 function imagecrop_linkitem(&$element, $variables) {
 
-  $popup_link_function = variable_get('imagecrop_popup', 'basic');
+  $popup_link_function = variable_get('imagecrop_popup', 'imagecrop_jquery_dialog');
   $width = variable_get('imagecrop_popup_width', 700);
   $height = variable_get('imagecrop_popup_height', 600);
   $styles = $variables['styles'];

@@ -25,7 +25,7 @@ function imagecrop_settings_form() {
   $form['imagecrop_popup'] = array(
     '#type' => 'radios',
     '#title' => t('Popup window type'),
-    '#default_value' => variable_get('imagecrop_popup', 'basic'),
+    '#default_value' => variable_get('imagecrop_popup', 'imagecrop_jquery_dialog'),
     '#options' => $all_popups,
   );
 
