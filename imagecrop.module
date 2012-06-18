@@ -140,7 +140,7 @@ function imagecrop_imagecrop_popups() {
 
   $popups = array();
 
-  //$popups['imagecrop_jquery_dialog'] = t('Jquery UI Dialog');
+  $popups['imagecrop_jquery_dialog'] = t('Jquery UI Dialog');
   $popups['imagecrop_iframe'] = t('Iframe');
   if (module_exists('colorbox')) {
     $popups['imagecrop_colorbox'] = t('Colorbox');
@@ -322,9 +322,15 @@ function imagecrop_process_form_element($element) {
   $new_element = isset($element['#file']);
   if ($new_element) {
 
-    // type is gone in latest imagefield
+    // Type is gone in latest imagefield.
     if ($element['#file']) {
-      $mime = isset($element['#file']->type) ? $element['#file']->type : array_shift(explode('/', $element['#file']->filemime));
+      if (isset($element['#file']->type)) {
+        $mime = $element['#file']->type;
+      }
+      else {
+        $mime_parts = explode('/', $element['#file']->filemime);
+        $mime = array_shift($mime_parts);
+      }
       if ($mime == 'image') {
         $imagecrop->setFile($file);
       }
@@ -559,7 +565,7 @@ function imagecrop_linkitem(&$element, $variables) {
   $url = url($url, array('absolute' => TRUE));
   $style = (isset($variables['display']) ? ' style="display:' . $variables['display'] . ';"' : '');
 
-  if ($popup_link_function != 'basic' && function_exists($popup_link_function) && $link = $popup_link_function($url, $width, $height, $variables['text'], $style)) {
+  if ($popup_link_function != 'basic' && function_exists($popup_link_function) && $link = $popup_link_function($url, $width, $height, $variables['text'], $style, $element)) {
     return $link;
   }
   else {
@@ -634,9 +640,21 @@ function imagecrop_get_style_name_from_url() {
 }
 
 /**
+ * Render the imagecrop links for jquery ui dialog.
+ */
+function imagecrop_jquery_dialog($url, $width, $height, $text, $style, &$element) {
+
+  $element['#attached']['library'][] = array('system', 'ui.dialog');
+  $element['#attached']['js'][] = drupal_get_path('module', 'imagecrop') . '/js/dialog.js';
+
+  return l($text, $url, array('attributes' => array('class' => 'imagecrop-button button', 'title' => t('Crop image'), 'style' => $style)));
+
+}
+
+/**
  * Render the imagecrop links for colorbox.
  */
-function imagecrop_colorbox($url, $width, $height, $text, $style) {
+function imagecrop_colorbox($url, $width, $height, $text, $style, $element) {
 
   if (!module_exists('colorbox')) {
     return FALSE;
@@ -651,7 +669,7 @@ function imagecrop_colorbox($url, $width, $height, $text, $style) {
 /**
  * Render the imagecrop as an iframe.
  */
-function imagecrop_iframe($url, $width, $height, $text, $style) {
+function imagecrop_iframe($url, $width, $height, $text, $style, $element) {
 
   $output = '<div class="form-item imagecrop-button"' . $style . '>';
   $output .= '<div><label>' . t('Crop this image') . '</label></div>';

@@ -9,7 +9,7 @@ $(document).ready(function() {
   $("#imagecrop-style-selection-form #edit-styles").change(function() { Drupal.Imagecrop.changeViewedImage($(this).val()); });
   if (Drupal.settings.imagecrop.cropped) {
     if (Drupal.Imagecrop.forceUpdate) {
-      Drupal.Imagecrop.forceUpdate();      
+      $('img', '#imagecrop-preview').bind('load', Drupal.Imagecrop.forceUpdate);      
     }
     $('#cancel-crop').html(Drupal.t('Done cropping'));
   }
@@ -28,7 +28,7 @@ Drupal.Imagecrop.changeViewedImage = function(style_name) {
  */
 Drupal.Imagecrop.refreshImage = function() {
   var source = $(this).attr('src');
-  $(this).delay(1000).attr('src', (source + '?time=' + new Date().getTime()));
+  $(this).attr('src', (source + '?time=' + new Date().getTime()));
 }
 
 })(jQuery); 
