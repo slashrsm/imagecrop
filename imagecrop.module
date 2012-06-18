@@ -140,6 +140,7 @@ function imagecrop_imagecrop_popups() {
 
   $popups = array();
 
+  //$popups['imagecrop_jquery_dialog'] = t('Jquery UI Dialog');
   $popups['imagecrop_iframe'] = t('Iframe');
   if (module_exists('colorbox')) {
     $popups['imagecrop_colorbox'] = t('Colorbox');
@@ -517,6 +518,7 @@ function imagecrop_linkitem(&$element, $variables) {
   $height = variable_get('imagecrop_popup_height', 600);
   $styles = $variables['styles'];
 
+  // Construct all required urls
   $skip_preview = variable_get('imagecrop_skip_preview', FALSE);
   $first_style = current($styles);
   $action = ($skip_preview) ? 'crop' : 'overview';
@@ -530,8 +532,15 @@ function imagecrop_linkitem(&$element, $variables) {
     'popupHeight' => $height,
   ));
 
+  // Attach js
   $element['#attached']['js'][] = array('type' => 'setting', 'data' => $setting);
   $element['#attached']['js'][] = drupal_get_path('module', 'imagecrop') . '/js/' . $variables['js_file'];
+
+  // Attach dialog if required
+  if ($popup_link_function == 'dialog') {
+    $element['#attached']['library'][] = 'ui.dialog';
+  }
+
   if (isset($element['#entity_type'], $element['#bundle'], $element['#field_name'])) {
     $url .= $element['#entity_type'] . '/' . $element['#bundle'] . '/' . $element['#field_name'];
     $media_url .= $element['#entity_type'] . '/' . $element['#bundle'] . '/' . $element['#field_name'];

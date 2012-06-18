@@ -13,7 +13,7 @@
  */
 function imagecrop_settings_form() {
 
-  $all_popups = array('basic' => t('Basic popup window'));
+  $all_popups = array('basic' => t('Basic popup window'), 'dialog' => t('Jquery UI Dialog'));
   foreach (module_implements('imagecrop_popups') as $module_name) {
     $function = $module_name . '_imagecrop_popups';
     $popups = $function();

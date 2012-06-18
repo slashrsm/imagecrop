@@ -92,7 +92,26 @@ return;
  */
 function imagecrop_effect_form($data) {
 
-  $form = image_resize_form($data);
+  $form = array();
+  $form['width'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Width'),
+    '#default_value' => isset($data['width']) ? $data['width'] : '',
+    '#required' => TRUE,
+    '#size' => 10,
+    '#element_validate' => array('image_crop_validate_size'),
+    '#description' => t('Enter the width in pixels or %'),
+  );
+
+  $form['height'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Height'),
+    '#default_value' => isset($data['height']) ? $data['height'] : '',
+    '#required' => TRUE,
+    '#size' => 10,
+    '#element_validate' => array('image_crop_validate_size'),
+    '#description' => t('Enter the height in pixels or %'),
+  );
 
   $form['xoffset'] = array(
     '#type' => 'textfield',
@@ -160,6 +179,18 @@ function imagecrop_javascript_effect_submit($form, &$form_state) {
       ->condition('height', $form_state['values']['old-height'])
       ->condition('style_name', $form_state['image_style']['name'])
       ->execute();
+  }
+
+}
+
+/**
+ * Validate the entered height / width. (can be procent or numeric)
+ */
+function image_crop_validate_size($element, &$form_state) {
+
+  $value = str_replace('%', '', $element['#value']);
+  if ($value != '' && (!is_numeric($value) || intval($value) <= 0)) {
+    form_error($element, t('!name must be a correct size.', array('!name' => $element['#title'])));
   }
 
 }

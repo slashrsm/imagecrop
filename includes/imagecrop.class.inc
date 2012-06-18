@@ -383,26 +383,23 @@ class ImageCrop {
 
       $this->xoffset = $settings->xoffset;
       $this->yoffset = $settings->yoffset;
-
-      if (!$this->inCroppingMode || $this->isResizable) {
-        $this->width = $settings->width;
-        $this->height = $settings->height;
-      }
-
+      $this->width = $settings->width;
+      $this->height = $settings->height;
       $this->scale = $settings->scale;
       $this->rotation = $settings->rotation;
       $this->hasSettings = TRUE;
 
     }
-    // Check for default scale.
     else {
 
+      // Check for default scale
       if (variable_get('imagecrop_scale_default', FALSE)) {
 
         $step = variable_get('imagecrop_scale_step', 50);
         $popup_width = variable_get('imagecrop_popup_width', 700);
         $popup_height = variable_get('imagecrop_popup_height', 600) - 50;
 
+        // If controls are in sidebar, count this also.
         if ($this->extraControls) {
           $popup_width -= 215;
         }
@@ -425,10 +422,26 @@ class ImageCrop {
 
     }
 
+    // Scale to requested width
     if ($this->scale != 'original') {
       $aspect = $this->originalImageWidth / $this->originalImageHeight;
       $this->imageWidth = $this->scale;
       $this->imageHeight = intval($this->imageWidth / $aspect);
+    }
+
+    // Extra actions after the scaling action.
+    if (!$this->hasSettings) {
+      // Check if the default width is a %
+      if (strpos($this->width, '%')) {
+        $procent_width = str_replace('%', '', $this->width);
+        $this->width = ($this->imageWidth * ($procent_width / 100));
+      }
+
+      // Check if the default width is a %
+      if (strpos($this->height, '%')) {
+        $procent_height = str_replace('%', '', $this->height);
+        $this->height = ($this->imageHeight * ($procent_height / 100));
+      }
     }
 
     // Keep the aspect ratio from original image
