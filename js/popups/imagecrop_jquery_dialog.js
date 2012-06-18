@@ -8,7 +8,7 @@ $(document).ready(function() {
  * Event listener, close the current popup.
  */
 Drupal.Imagecrop.closePopup = function() {
-  parent.jQuery.colorbox.close();
+  parent.Drupal.Imagecrop.dialogContainer.dialog('close');
 }
 
 /**
