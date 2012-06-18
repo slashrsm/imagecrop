@@ -100,8 +100,8 @@ Drupal.Imagecrop.cropUi.getCoordinates = function() {
  */
 Drupal.Imagecrop.cropUi.selectListener = function(data) {
   
-  Drupal.Imagecrop.imageCropXField.val(data.x);
-  Drupal.Imagecrop.imageCropYField.val(data.y)
+  Drupal.Imagecrop.imageCropXField.val(Math.round(data.x));
+  Drupal.Imagecrop.imageCropYField.val(Math.round(data.y));
   Drupal.Imagecrop.imageCropWidthField.val(data.w);
   Drupal.Imagecrop.imageCropHeightField.val(data.h);
   
