@@ -21,7 +21,7 @@
     e.preventDefault();
     var page = $(this).attr("href");
     var pagetitle = $(this).attr("title");
-    Drupal.Paf.dialogContainer = $('<div id="imagecrop-modal-container"></div>')
+    Drupal.Imagecrop.dialogContainer = $('<div id="imagecrop-modal-container"></div>')
       .html('<iframe style="border: 0px; " src="' + page + '" width="100%" height="100%"></iframe>')
       .dialog({
         autoOpen: true,
