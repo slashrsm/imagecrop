@@ -260,7 +260,7 @@ function imagecrop_form_image_effect_form_alter(&$form, $form_state, $form_id) {
 function imagecrop_form_user_profile_form_alter(&$form, $form_state, $form_id) {
 
   $hooks = variable_get('imagecrop_modules', array());
-  if (!empty($form['picture']['picture']['#value']) && in_array('profile_picture', $hooks)) {
+  if (!empty($form['picture']['picture']['#value']) && !empty($hooks['profile_picture'])) {
     $styles = get_imagecrop_styles();
     if (count($styles) > 0) {
 
