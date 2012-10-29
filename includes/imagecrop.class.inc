@@ -7,37 +7,37 @@
 
 class ImageCrop {
 
-  private $allowedExtensions = array('image/jpeg', 'image/gif', 'image/png', 'image/pjpeg');
-  private $inCroppingMode = FALSE;
+  protected $allowedExtensions = array('image/jpeg', 'image/gif', 'image/png', 'image/pjpeg');
+  protected $inCroppingMode = FALSE;
   public $skipPreview = FALSE;
   public $extraControls = FALSE;
 
-  private $file;
-  private $imageStyle;
-  private $entityType = 'none';
-  private $bundle = 'none';
-  private $fieldName = 'none';
-  private $styleDestination;
-  private $cropDestination;
-  private $imageWidth;
-  private $originalImageWidth;
-  private $originalImageHeight;
+  protected $file;
+  protected $imageStyle;
+  protected $entityType = 'none';
+  protected $bundle = 'none';
+  protected $fieldName = 'none';
+  protected $styleDestination;
+  protected $cropDestination;
+  protected $imageWidth;
+  protected $originalImageWidth;
+  protected $originalImageHeight;
 
-  private $isResizable = FALSE;
-  private $downscalingAllowed = TRUE;
-  private $resizeAspectRatio = FALSE;
-  private $width = 0;
-  private $startWidth = 0;
-  private $height = 0;
-  private $startHeight = 0;
-  private $xoffset = 0;
-  private $yoffset = 0;
-  private $scale = 'original';
-  private $rotation = 0;
-  private $disableIfNoData = FALSE;
-  private $hasSettings = FALSE;
+  protected $isResizable = FALSE;
+  protected $downscalingAllowed = TRUE;
+  protected $resizeAspectRatio = FALSE;
+  protected $width = 0;
+  protected $startWidth = 0;
+  protected $height = 0;
+  protected $startHeight = 0;
+  protected $xoffset = 0;
+  protected $yoffset = 0;
+  protected $scale = 'original';
+  protected $rotation = 0;
+  protected $disableIfNoData = FALSE;
+  protected $hasSettings = FALSE;
 
-  private static $instance = NULL;
+  protected static $instance = NULL;
 
   /**
    * Get instance of current imagecrop context.
