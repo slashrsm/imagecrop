@@ -39,6 +39,9 @@ function imagecrop_page($variables) {
     $variables['page']['content_zone']['#regions']['content']['#omega']['page_data']['title'] = FALSE;
     $output .= drupal_render($variables['page']['content_zone']['#regions']['content']);
   }
+  else {
+    $output = t('The main content block was not found.');
+  }
 
   return $output;
 
