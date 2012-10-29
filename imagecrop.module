@@ -190,7 +190,7 @@ function imagecrop_form_file_entity_edit_alter(&$form, $form_state) {
 
   if (isset($form['preview']['#file']) && $form['preview']['#file']->type == 'image' && in_array('media', variable_get('imagecrop_modules', array()))) {
 
-    $imagecrop = new Imagecrop();
+    $imagecrop = new ImageCrop();
     $imagecrop->setFile($form['preview']['#file']);
 
     global $user;
@@ -268,7 +268,7 @@ function imagecrop_form_user_profile_form_alter(&$form, $form_state, $form_id) {
       $file = new stdClass();
       $file->uid = $form['#user']->uid;
 
-      $imagecrop = new Imagecrop();
+      $imagecrop = new ImageCrop();
       $imagecrop->setFile($file);
 
       global $user;
@@ -742,7 +742,7 @@ function imagecrop_button_has_loaded($loaded) {
  * Return the theme beïng used for imagecrop.
  */
 function imagecrop_get_theme() {
-  return variable_get(variable_get('imagecrop_theme', 'admin_theme'), 'admin_theme');
+  return variable_get('imagecrop_theme', 'admin_theme');
 }
 
 /**

@@ -46,7 +46,7 @@ function imagecrop_effect(&$image, $data) {
 
   try {
 
-    $imagecrop = Imagecrop::getInstance($image);
+    $imagecrop = ImageCrop::getInstance($image);
     $imagecrop->applyCrop($image);
 
   }
@@ -71,9 +71,8 @@ function imagecrop_effect(&$image, $data) {
 function imagecrop_javascript_dimensions(array &$dimensions, array $data) {
 
   try {
-return;
 
-    $imagecrop = Imagecrop::getInstance();
+    $imagecrop = ImageCrop::getInstance();
     $dimensions['width'] = $imagecrop->getWidth();
     $dimensions['height'] = $imagecrop->getHeight();
 
