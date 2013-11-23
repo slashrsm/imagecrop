@@ -199,7 +199,7 @@ function imagecrop_form_file_entity_edit_alter(&$form, $form_state) {
     }
 
     $variables = array(
-      'styles' => get_imagecrop_styles(),
+      'styles' => array_keys(get_imagecrop_styles()),
       'js_file' => isset($form['#js_file']) ? $form['#js_file']: 'imagecrop_field.js',
       'text' => t('Crop media'),
     );
@@ -261,7 +261,7 @@ function imagecrop_form_user_profile_form_alter(&$form, $form_state, $form_id) {
 
   $hooks = variable_get('imagecrop_modules', array());
   if (!empty($form['picture']['picture']['#value']) && !empty($hooks['profile_picture'])) {
-    $styles = get_imagecrop_styles();
+    $styles = array_keys(get_imagecrop_styles());
     if (count($styles) > 0) {
 
       // Create fake file object for permission check.
@@ -276,12 +276,12 @@ function imagecrop_form_user_profile_form_alter(&$form, $form_state, $form_id) {
         return;
       }
 
-    $variables = array(
-      'styles' => $styles,
-      'js_file' => 'imagecrop_field.js',
-      'text' => t('Crop picture'),
-      'fid' => $form['picture']['picture']['#value']->fid,
-    );
+      $variables = array(
+        'styles' => $styles,
+        'js_file' => 'imagecrop_field.js',
+        'text' => t('Crop picture'),
+        'fid' => $form['picture']['picture']['#value']->fid,
+      );
 
       $form['picture']['picture_current']['#markup'] .= imagecrop_linkitem($form, $variables);
     }
@@ -356,10 +356,10 @@ function imagecrop_process_form_element($element) {
   }
 
   if ($element['#entity_type'] == 'file') {
-    $enabled_styles = get_imagecrop_styles();
+    $enabled_styles = array_keys(get_imagecrop_styles());
   }
   else {
-    $enabled_styles = imagecrop_get_fields_enabled_styles($element['#entity_type'], $element['#field_name'], $element['#bundle']);
+    $enabled_styles = array_keys(imagecrop_get_fields_enabled_styles($element['#entity_type'], $element['#field_name'], $element['#bundle']));
   }
 
   // Leave element when no image styles are found for current field.
@@ -613,7 +613,8 @@ function get_imagecrop_styles($enabled_styles = array()) {
           continue;
         }
 
-        $styles[$machine_name] = t($style['name']);
+        // $style['label'] introduced in Drupal 7.23
+        $styles[$machine_name] = isset($style['label']) ? $style['label'] : t($style['name']);
 
       }
     }
