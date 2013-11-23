@@ -169,7 +169,7 @@ function imagecrop_image_styles_overview($fid, $style_name, $entity_type = NULL,
 
     $image_url = image_style_url($style_name, $imagecrop->getFile()->uri);
     $clean_url = variable_get('clean_url', 0);
-    $image_url .= ($clean_url || !strpos($image_url, '?') ? '?' : '&');
+    $image_url .= (!$clean_url || strpos($image_url, '?') !== FALSE) ? '&' : '?';
     $image_url .= 'time=' . $_SERVER['REQUEST_TIME'];
 
     return theme('imagecrop_overview', array(

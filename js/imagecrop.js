@@ -28,7 +28,8 @@ Drupal.Imagecrop.changeViewedImage = function(style_name) {
  */
 Drupal.Imagecrop.refreshImage = function() {
   var source = $(this).attr('src');
-  $(this).attr('src', (source + '?time=' + new Date().getTime()));
+  var delimiter = source.indexOf('?') === -1 ? '?' : '&';
+  $(this).attr('src', (source + delimiter + 'time=' + new Date().getTime()));
 }
 
 })(jQuery); 

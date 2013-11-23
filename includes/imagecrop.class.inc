@@ -339,7 +339,8 @@ class ImageCrop {
   public function getCropDestination($filepath = TRUE, $add_timestamp = TRUE) {
     $image_url = ($filepath) ?  file_create_url($this->cropDestination) : $this->cropDestination;
     if ($add_timestamp) {
-      $image_url .= '?time=' . $_SERVER['REQUEST_TIME'];
+      $image_url .= (strpos($image_url, '?') !== FALSE) ? '&' : '?';
+      $image_url .= 'time=' . $_SERVER['REQUEST_TIME'];
     }
     return $image_url;
   }

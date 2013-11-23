@@ -172,7 +172,8 @@ Drupal.Imagecrop.cropUi.applyEffects = function() {
         }      	
       	
         // force new backgrounds and width / height
-        var background = Drupal.Imagecrop.cropFile + '?time=' +  new Date().getTime();
+        var delimiter = Drupal.Imagecrop.cropFile.indexOf('?') === -1 ? '?' : '&';
+        var background = Drupal.Imagecrop.cropFile + delimiter + 'time=' + new Date().getTime();
         Drupal.Imagecrop.jcrop.setImage(background, function() {
         	var coordinates = Drupal.Imagecrop.cropUi.getCoordinates();
           this.animateTo(coordinates);
