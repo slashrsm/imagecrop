@@ -62,7 +62,7 @@ Drupal.Imagecrop.cropUi.initControls = function() {
       aspectRatio: Drupal.settings.imagecrop.aspectRatio,
       handleSize: 9,
       onSelect: Drupal.Imagecrop.cropUi.selectListener,
-      setSelect: coordinates,      
+      setSelect: coordinates
     },
     function() {
       Drupal.Imagecrop.jcrop = this;
@@ -150,7 +150,7 @@ Drupal.Imagecrop.cropUi.applyEffects = function() {
   var imagecropData = {
     'fid' : Drupal.Imagecrop.fid,
     'style' : Drupal.Imagecrop.style,
-    'scale' : dimensions[0],
+    'scale' : dimensions[0]
   }
 
   if (Drupal.Imagecrop.rotationDropdown) {
