@@ -554,6 +554,7 @@ function imagecrop_get_enabled_styles_for_crop($entity_type, $bundle, $field_nam
 
   $styles = get_imagecrop_styles($enabled_styles);
   if (count($styles) == 0) {
+    drupal_set_message(t('No javascript crop image styles are enabled for the current field.'), 'error');
     throw new Exception('No preset is found with the javascript_crop action so far. If you want to take advantage of this module, you will need to create at least one preset with that action.');
   }
 
