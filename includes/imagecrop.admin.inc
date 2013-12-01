@@ -251,17 +251,19 @@ function imagecrop_style_selection_form($form, $form_state, $styles, $imagecrop)
 
   $image_style = $imagecrop->getImageStyle();
 
-  $action = 'preview';
-  $path_action = 'overview';
   if ($imagecrop->skipPreview) {
-    $action = $path_action = 'crop';
+    $path_action = 'crop';
+    $select_title = t('Select style to crop');
   }
-
+  else {
+    $path_action = 'overview';
+    $select_title = $imagecrop->getInCroppingMode() ? t('Select other style to preview') : t('Select style to preview');
+  }
 
   $form = array();
   $form['styles'] = array(
     '#type' => 'select',
-    '#title' => $imagecrop->getInCroppingMode() ? t('Select other style to '. $action) : t('Select style to preview'),
+    '#title' => $select_title,
     '#options' => $styles,
     '#default_value' => $image_style['name'],
   );
