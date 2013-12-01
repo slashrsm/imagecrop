@@ -37,37 +37,6 @@ class ImageCrop {
   protected $disableIfNoData = FALSE;
   protected $hasSettings = FALSE;
 
-  protected static $instance = NULL;
-
-  /**
-   * Get instance of current imagecrop context.
-   */
-  public static function getInstance($image = NULL) {
-
-    if (!isset(self::$instance) && $image) {
-      $imagecrop = new ImageCrop();
-      $imagecrop->loadFile($image->source, FALSE);
-
-      // if a global presetid is been set, it meens the image is generated from the imagecrop module
-      if (isset($GLOBALS['imagecrop_style'])) {
-        $style_name = $GLOBALS['imagecrop_style'];
-      }
-      // and if not, then get the id from list of all presets
-      else {
-        $style_name = imagecrop_get_style_name_from_url();
-      }
-
-      $imagecrop->setImageStyle($style_name);
-      $imagecrop->loadCropSettings();
-
-      self::$instance = $imagecrop;
-
-    }
-
-    return self::$instance;
-
-  }
-
   /**
    * Construct imagecrop.
    */

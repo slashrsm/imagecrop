@@ -43,8 +43,20 @@ function imagecrop_image_effect_info() {
 function imagecrop_effect(&$image, $data) {
 
   try {
+    $imagecrop = new ImageCrop();
+    $imagecrop->loadFile($image->source, FALSE);
 
-    $imagecrop = ImageCrop::getInstance($image);
+    // if a global presetid is been set, it meens the image is generated from the imagecrop module
+    if (isset($GLOBALS['imagecrop_style'])) {
+      $style_name = $GLOBALS['imagecrop_style'];
+    }
+    // and if not, then get the id from list of all presets
+    else {
+      $style_name = imagecrop_get_style_name_from_url();
+    }
+
+    $imagecrop->setImageStyle($style_name);
+    $imagecrop->loadCropSettings();
     $imagecrop->applyCrop($image);
 
   }
