@@ -51,7 +51,8 @@ function imagecrop_effect(&$image, $data) {
 
   }
   catch (Exception $e) {
-    watchdog($e->getMessage(), 'error');
+    drupal_set_message(t('Unable to crop image.'), 'error');
+    watchdog_exception('imagecrop', $e);
     return FALSE;
   }
 
@@ -78,7 +79,8 @@ function imagecrop_javascript_dimensions(array &$dimensions, array $data) {
 
   }
   catch (Exception $e) {
-    watchdog($e->getMessage(), 'error');
+    drupal_set_message(t('Unable to get image dimensions'), 'error');
+    watchdog_exception('imagecrop', $e);
     return FALSE;
   }
 

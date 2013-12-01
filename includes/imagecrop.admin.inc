@@ -135,7 +135,8 @@ function imagecrop_image_styles_overview($fid, $style_name, $entity_type = NULL,
     if ($style_name) {
 
       if (!isset($styles[$style_name])) {
-        throw new Exception('The image style to crop was not found.');
+        drupal_set_message(t('The image style to crop was not found.'), 'error');
+        throw new Exception(t('The image style to crop was not found.'));
       }
 
     }
@@ -143,13 +144,12 @@ function imagecrop_image_styles_overview($fid, $style_name, $entity_type = NULL,
       $style_name = key($styles);
     }
 
-    global $user;
     $imagecrop->loadFile($fid);
 
     global $user;
     if (!$imagecrop->hasUserAccess($user)) {
-      watchdog('imagecrop', 'Access denied for user @name on fid @fid', array('@name' => $user->name, '@fid' => $imagecrop->getFile()->fid));
-      throw new Exception("You don't have permissions to crop this image.");
+      drupal_set_message(t("You don't have permissions to crop this image."), 'error');
+      throw new Exception(t('Access denied for user @name on fid @fid', array('@name' => $user->name, '@fid' => $imagecrop->getFile()->fid)));
     }
 
     $imagecrop->setImageStyle($style_name);
@@ -181,7 +181,7 @@ function imagecrop_image_styles_overview($fid, $style_name, $entity_type = NULL,
   }
   catch (Exception $e) {
     $imagecrop->addImagecropUi(TRUE);
-    drupal_set_message(check_plain(t($e->getMessage())), 'error');
+    watchdog_exception('imagecrop', $e);
     return '';
   }
 
@@ -215,7 +215,7 @@ function imagecrop_cropping_page($fid, $style_name, $entity_type = NULL, $bundle
     global $user;
     if (!$imagecrop->hasUserAccess($user)) {
       watchdog('imagecrop', 'Access denied for user @name on fid @fid', array('@name' => $user->name, '@fid' => $imagecrop->getFile()->fid));
-      throw new Exception("You don't have permissions to crop this image.");
+      throw new Exception(t("You don't have permissions to crop this image."));
     }
 
     $imagecrop->loadCropSettings();
@@ -238,7 +238,7 @@ function imagecrop_cropping_page($fid, $style_name, $entity_type = NULL, $bundle
 
   }
   catch (Exception $e) {
-    drupal_set_message(check_plain(t($e->getMessage())), 'error');
+    drupal_set_message(check_plain($e->getMessage()), 'error');
     return '';
   }
 
@@ -512,7 +512,7 @@ function imagecrop_generate_cropready_image() {
   try {
 
     if (!isset($_POST['fid']) && !isset($_POST['style']) && !isset($_POST['scale'])) {
-      throw new Exception('Required fields are empty');
+      throw new Exception(t('Required fields are empty'));
     }
 
     $imagecrop = new ImageCrop();
@@ -533,7 +533,7 @@ function imagecrop_generate_cropready_image() {
 
   }
   catch (Exception $e) {
-    watchdog('imagecrop', $e->getMessage());
+    watchdog_exception('imagecrop', $e);
     $result->message = $e->getMessage();
     drupal_json_output($result);
   }
