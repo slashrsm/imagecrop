@@ -648,6 +648,11 @@ function imagecrop_jquery_dialog($url, $width, $height, $text, $style, &$element
   $element['#attached']['library'][] = array('system', 'ui.dialog');
   $element['#attached']['js'][] = drupal_get_path('module', 'imagecrop') . '/js/dialog.js';
 
+  if (!empty($style)) {
+    preg_match('/style="(.*?)"/', $style, $style_contents);
+    $style = isset($style_contents[1]) ? $style_contents[1] : '';
+  }
+
   return l($text, $url, array('attributes' => array('class' => 'imagecrop-button button', 'title' => t('Crop image'), 'style' => $style)));
 
 }
