@@ -745,10 +745,14 @@ function imagecrop_button_has_loaded($loaded) {
 }
 
 /**
- * Return the theme beïng used for imagecrop.
+ * Return the theme to use for imagecrop popups.
  */
 function imagecrop_get_theme() {
-  return variable_get('imagecrop_theme', 'admin_theme');
+  $imagecrop_theme = variable_get('imagecrop_theme', 'admin_theme');
+  $admin_theme = variable_get('admin_theme');
+  if ($imagecrop_theme == 'admin_theme' && user_access('view the administration theme') && !empty($admin_theme)) {
+    return $admin_theme;
+  }
 }
 
 /**

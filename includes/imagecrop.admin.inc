@@ -36,7 +36,7 @@ function imagecrop_settings_form() {
 
   $form['imagecrop_theme'] = array(
     '#type' => 'radios',
-    '#title' => t('Theme beïng used'),
+    '#title' => t('Theme for imagecrop popups'),
     '#default_value' => variable_get('imagecrop_theme', 'admin_theme'),
     '#options' => array('admin_theme' => t('Admin theme'), 'theme_default' => t('Frontend theme')),
   );
