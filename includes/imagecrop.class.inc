@@ -346,21 +346,24 @@ class ImageCrop {
   }
 
   /**
-   * Check if a user has permissions to the current file.
+   * Check if a user has permissions to crop the current file.
+   *
+   * @param object $account
+   *   The user whose access you want to check
    */
   public function hasUserAccess($account) {
 
-    // access to all images
-    if (user_access('crop any image')) {
+    // User has access to all images
+    if (user_access('crop any image', $account) || user_access('administer nodes', $account)) {
       return TRUE;
     }
 
-    // If not administer nodes, check if the files uid is the same like users uid.
-    if ($this->file && !user_access('administer nodes') && $account->uid != $this->file->uid) {
-      return FALSE;
+    // User has access to this specific image
+    if ($this->file && user_access('crop own images', $account) && $account->uid == $this->file->uid) {
+      return TRUE;
     }
 
-    return TRUE;
+    return FALSE;
 
   }
 
