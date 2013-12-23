@@ -316,8 +316,6 @@ function imagecrop_process_form_element($element) {
   }
 
   $imagecrop = new ImageCrop();
-  $file = NULL;
-  $fid = 0;
   $media_field = ($element['#type'] == 'media');
   $new_element = isset($element['#file']);
   if ($new_element) {
