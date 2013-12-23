@@ -332,7 +332,7 @@ function imagecrop_process_form_element($element) {
         $mime = array_shift($mime_parts);
       }
       if ($mime == 'image') {
-        $imagecrop->setFile($file);
+        $imagecrop->setFile($element['#file']);
       }
     }
 
