@@ -82,6 +82,19 @@ class ImageCropReuse extends ConfigurableImageEffectBase implements ContainerFac
   /**
    * {@inheritdoc}
    */
+  public function getSummary() {
+    $summary = array(
+      '#theme' => 'imagecrop_reuse_effect_summary',
+      '#data' => $this->configuration,
+    );
+    $summary += parent::getSummary();
+
+    return $summary;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function applyEffect(ImageInterface $image) {
     // TODO - port this code
 
