@@ -20,7 +20,7 @@ use Drupal\imagecrop\ImageCropInterface;
  *   id = "imagecrop",
  *   label = @Translation("Image crop"),
  *   handlers = {
- *     "storage" = "Drupal\Core\Entity\Sql\SqlContentEntityStorage",
+ *     "storage" = "Drupal\imagecrop\ImageCropStorage",
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
  *     "access" = "Drupal\Core\Entity\EntityAccessControlHandler",
  *     "form" = {
