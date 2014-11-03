@@ -1,0 +1,7 @@
+crop any image:
+  title: 'Crop any image'
+crop own images:
+  title: 'Crop own images'
+administer imagecrop:
+  title: 'Administer imagecrop settings'
+  description: 'Administer the basic settings from image javascript crop'

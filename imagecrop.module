@@ -9,28 +9,6 @@
  * Oct 13, 2010
  */
 
-// @todo There doesn't seem to be a way to specify a file in hook_image_effect_info
-// so placing this here for the time being.
-module_load_include('inc', 'imagecrop', 'includes/imagecrop.effects');
-
-/**
- * Implements hook_permission().
- */
-function imagecrop_permission() {
-  return array(
-    'crop any image' => array(
-      'title' => t('Crop any image'),
-    ),
-    'crop own images' => array(
-      'title' => t('Crop own images'),
-    ),
-    'administer imagecrop' => array(
-      'title' => t('Administer imagecrop settings'),
-      'description' => t('Administer the basic settings from image javascript crop'),
-    ),
-  );
-}
-
 /**
  * Implements hook_theme().
  */
@@ -221,36 +199,6 @@ function imagecrop_form_file_entity_edit_alter(&$form, $form_state) {
 
   }
 
-}
-
-/**
- * Implements hook_form_image_effect_form_alter().
- * Add the reset checkbox when editing an effect.
- */
-function imagecrop_form_image_effect_form_alter(&$form, $form_state, $form_id) {
-
-  if (!empty($form['data']['width']['#default_value']) && !empty($form['data']['height']['#default_value'])) {
-
-    $form['reset-crops'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Reset the already cropped images to the new width and height'),
-      '#description' => t('All crop selections that have the same width / height as old settings, will be updated to the new width and height.'),
-      '#weight' => -1,
-    );
-
-    $form['old-height'] = array(
-      '#type' => 'hidden',
-      '#value' => $form['data']['height']['#default_value'],
-    );
-
-    $form['old-width'] = array(
-      '#type' => 'hidden',
-      '#value' => $form['data']['width']['#default_value'],
-    );
-
-    $form['#submit'][] = 'imagecrop_javascript_effect_submit';
-
-  }
 }
 
 /**
