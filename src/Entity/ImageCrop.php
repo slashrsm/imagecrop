@@ -133,6 +133,40 @@ class ImageCrop extends ContentEntityBase implements ImageCropInterface {
       ->setSetting('target_type', 'image_style')
       ->setReadOnly(TRUE);
 
+    $fields['height'] = BaseFieldDefinition::create('integer')
+      ->setLabel(t('Height'))
+      ->setDescription(t('The crop height.'))
+      ->setReadOnly(TRUE)
+      ->setSetting('unsigned', TRUE);
+
+    $fields['width'] = BaseFieldDefinition::create('integer')
+      ->setLabel(t('Width'))
+      ->setDescription(t('The crop width.'))
+      ->setReadOnly(TRUE)
+      ->setSetting('unsigned', TRUE);
+
+    $fields['xoffset'] = BaseFieldDefinition::create('integer')
+      ->setLabel(t('X offset'))
+      ->setDescription(t("The crop's X offset."))
+      ->setReadOnly(TRUE)
+      ->setSetting('unsigned', TRUE);
+
+    $fields['yoffset'] = BaseFieldDefinition::create('integer')
+      ->setLabel(t('Y offset'))
+      ->setDescription(t("The crop's Y offset."))
+      ->setReadOnly(TRUE)
+      ->setSetting('unsigned', TRUE);
+
+    $fields['scale'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('Scale'))
+      ->setDescription(t("The crop's scale."))
+      ->setReadOnly(TRUE);
+
+    $fields['rotation'] = BaseFieldDefinition::create('boolean')
+      ->setLabel(t('Rotation'))
+      ->setDescription(t('The crop rotation.'))
+      ->setReadOnly(TRUE);
+
     $fields['revision_timestamp'] = BaseFieldDefinition::create('created')
       ->setLabel(t('Revision timestamp'))
       ->setDescription(t('The time that the current revision was created.'))

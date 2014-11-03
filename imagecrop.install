@@ -8,50 +8,6 @@
  */
 
 /**
- * Implements hook_schema().
- */
-function imagecrop_schema() {
-
-  $schema['image_crop_settings'] = array(
-    'description' => 'Stores imagecrop settings for files.',
-    'fields' => array(
-      'fid' => array('type' => 'int', 'not null' => TRUE, 'unsigned' => TRUE),
-      'style_name' => array('type' => 'varchar', 'length' => 255, 'not null' => TRUE),
-      'xoffset' => array(
-        'type' => 'int',
-        'not null' => TRUE,
-        'unsigned' => TRUE,
-        'size' => 'big',
-      ),
-      'yoffset' => array(
-        'type' => 'int',
-        'not null' => TRUE,
-        'unsigned' => TRUE,
-        'size' => 'big',
-      ),
-      'width' => array(
-        'type' => 'int',
-        'not null' => TRUE,
-        'unsigned' => TRUE,
-        'size' => 'big',
-      ),
-      'height' => array(
-        'type' => 'int',
-        'not null' => TRUE,
-        'unsigned' => TRUE,
-        'size' => 'big',
-      ),
-      'scale' => array('type' => 'varchar', 'length' => '10', 'not null' => TRUE, 'default' => 'original'),
-      'rotation' => array('type' => 'int', 'not null' => TRUE, 'unsigned' => TRUE, 'default' => 0),
-    ),
-    'primary key' => array('fid', 'style_name'),
-  );
-
-  return $schema;
-
-}
-
-/**
  * Implements hook_uninstall().
  */
 function imagecrop_uninstall() {
